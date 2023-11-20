@@ -162,16 +162,17 @@ public class MedicamentController implements Initializable{
                             if (item <= 3) {
                                 // Si la quantité est inférieure ou égale à 3, définissez la couleur de fond en rouge
                                 setTextFill(Color.WHITE);
-                                setStyle("-fx-background-color: red;");
+                                setStyle("-fx-background-color: red; -fx-font-size: 14;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow;");
+                                setStyle("-fx-background-color: yellow; -fx-font-size: 14;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent;");
+                                setStyle("-fx-background-color: transparent; -fx-font-size: 14;");
+
                             }
 
                         }
@@ -373,7 +374,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER;"); // Centrer le texte
+                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 14;"); // Centrer le texte
                     }
                 }
             });
@@ -394,6 +395,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 14;");
                             }
                         }
                     };
@@ -415,6 +417,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 14;");
                             }
                         }
                     };
@@ -435,6 +438,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 14;");
                             }
                         }
                     };
@@ -455,6 +459,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 14;");
                             }
                         }
                     };
