@@ -20,12 +20,12 @@
                <columns>
                   <TableColumn fx:id="ID_Medicament_tableColumn" prefWidth="40.0" text="ID " />
                   <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="128.0" text="NOM MEDICAMENT" />
-                  <TableColumn fx:id="Description_tableColumn" prefWidth="235.0" text="DESCRIPTION" />
-                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="100.0" text="DOSAGE" />
+                  <TableColumn fx:id="Description_tableColumn" prefWidth="162.0" text="DESCRIPTION" />
+                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="132.0" text="DOSAGE" />
                   <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="116.0" text="PRIX (FCFA)" />
-                  <TableColumn fx:id="DateExpiration_tableColumn" minWidth="0.0" prefWidth="115.0" text="DATE D'EXPIRATION" />
-                  <TableColumn fx:id="Quantite_tableColumn" prefWidth="84.0" text="QUANTITE EN STOCK" />
-                  <TableColumn fx:id="Action_tableColumn" prefWidth="75.0" text="Action" />
+                  <TableColumn fx:id="DateExpiration_tableColumn" minWidth="0.0" prefWidth="131.0" text="DATE D'EXPIRATION" />
+                  <TableColumn fx:id="Quantite_tableColumn" prefWidth="96.0" text="QUANTITE EN STOCK" />
+                  <TableColumn fx:id="Action_tableColumn" prefWidth="88.0" text="Action" />
                </columns>
                <cursor>
                   <Cursor fx:constant="HAND" />

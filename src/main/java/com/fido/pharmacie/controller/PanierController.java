@@ -146,6 +146,8 @@ public class PanierController implements Initializable {
 
 
 
+                    // Vérifiez si le panier est vide et désactivez le bouton en conséquence
+                    btnValider.setDisable(panier.isEmpty());
 
 
                 });
@@ -285,6 +287,15 @@ public class PanierController implements Initializable {
     private void handleValiderButton() {
         // Générer le reçu avec les informations des produits achetés
         genererRecu();
+
+        // Vider la table du panier
+        panier.clear();
+
+        // Mettre à jour la TableView après avoir vidé le panier
+        panierTable.getItems().clear();
+        panierTable.refresh();
+
+        btnValider.setDisable(true);
     }
 
     private void genererRecu() {
@@ -351,25 +362,27 @@ public class PanierController implements Initializable {
             }
 
 
-            if (stockSuffisant) {
+
+        }
+
+        if (stockSuffisant) {
 
 
-                // Insert purchase information into the "achat" table
-                insertAchatData(codeRecu);
-
-
-
-                //AFFICHER LE RECU ICI
-                Node recuNode = createRecuNode();
-                afficherRecu(recuNode);
-
-            } else {
+            // Insert purchase information into the "achat" table
+            insertAchatData(codeRecu);
 
 
 
+            //AFFICHER LE RECU ICI
+            Node recuNode = createRecuNode();
+            afficherRecu(recuNode);
+
+        } else {
 
 
-            }
+
+
+
         }
 
 
@@ -395,7 +408,7 @@ public class PanierController implements Initializable {
 
         // Partie Entête
         Label enteteLabel = new Label(
-                "Nom de l'entreprise: Pharmacie Fidokpui\n" +
+                     "Nom de l'entreprise: Pharmacie Fidokpui\n" +
                         "Adresse: Agoè-Zongo \n" +
                         "Quartier: Fidokpui\n" +
                         "Numéro de téléphone: +228 91264085\n"+
@@ -708,6 +721,14 @@ public class PanierController implements Initializable {
                 }
             }
         });
+
+
+        // Vérifiez si le panier est vide et désactivez le bouton en conséquence
+        if (panier.isEmpty()) {
+            btnValider.setDisable(true);
+        }
+
+
 
 
 
