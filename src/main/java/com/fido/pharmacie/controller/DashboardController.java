@@ -27,7 +27,7 @@ public class DashboardController implements Initializable {
     private NumberAxis yAxis;
 
     @FXML
-    private LineChart<String, Number> LineChartAchat;
+    private AreaChart<String, Number> areaChartAchat;
 
 
     ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
@@ -61,32 +61,34 @@ public class DashboardController implements Initializable {
 
 
 
-    public void populateLineChart() {
-            String selectQuery = "SELECT date_achat, total FROM achat";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
-                 ResultSet resultSet = preparedStatement.executeQuery()) {
 
-                XYChart.Series<String, Number> series = new XYChart.Series<>();
-                while (resultSet.next()) {
-                    // Convertir la date SQL en format lisible
-                    Timestamp timestamp = resultSet.getTimestamp("date_achat");
-                    String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString();
+    public void populateAreaChart() {
+        String selectQuery = "SELECT date_achat, total FROM achat";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
-                    // Ajouter les données à la série
-                    series.getData().add(new XYChart.Data<>(formattedDate, resultSet.getDouble("total")));
-                }
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            while (resultSet.next()) {
+                // Convertir la date SQL en format lisible
+                Timestamp timestamp = resultSet.getTimestamp("date_achat");
+                String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString();
 
-                LineChartAchat.getData().add(series);
-
-                // Configurer les axes
-                LineChartAchat.getXAxis().setLabel("Date d'Achat");
-                LineChartAchat.getYAxis().setLabel("Total");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
+                // Ajouter les données à la série
+                series.getData().add(new XYChart.Data<>(formattedDate, resultSet.getDouble("total")));
             }
 
+            areaChartAchat.getData().add(series);
+
+            // Configurer les axes
+            areaChartAchat.getXAxis().setLabel("Date d'Achat");
+            areaChartAchat.getYAxis().setLabel("Total");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+
 
 
 
@@ -126,8 +128,8 @@ public class DashboardController implements Initializable {
             initialiserBarChart();
 
 
-            //INITIALISER LES VALEURS DANS LineChart AU DEMARRAGE
-            populateLineChart();
+            //INITIALISER LES VALEURS DANS AreaChart AU DEMARRAGE
+            populateAreaChart();
 
         }catch (SQLException e){
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);

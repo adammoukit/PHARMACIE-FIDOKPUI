@@ -6,6 +6,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
@@ -59,6 +62,10 @@ public class MedicamentController implements Initializable{
     private TableColumn<MedicamentSearch, Void> Action_tableColumn;
 
 
+    @FXML
+    private TextField keyWordTextField;
+
+
 
 
     //
@@ -85,6 +92,104 @@ public class MedicamentController implements Initializable{
 
 
     * */
+
+
+
+
+
+
+
+    public void handleAddButtonAction() {
+        try {
+            // Charger le fichier FXML du dialogue d'ajout de produit
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/AddProductDialog.fxml"));
+            Dialog<MedicamentSearch> dialog = new Dialog<>();
+            dialog.getDialogPane().setContent(loader.load());
+
+            // Configurer les boutons du dialogue (Ajouter et Annuler)
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            // Définir le titre du dialogue modal
+            dialog.setTitle("Ajouter un Produit");
+
+            // Récupérer le contrôleur du dialogue
+            AddProductDialogController dialogController = loader.getController();
+
+            // Récupérer les résultats du dialogue lorsque l'utilisateur clique sur "Ajouter"
+            dialog.setResultConverter(new Callback<ButtonType, MedicamentSearch>() {
+                @Override
+                public MedicamentSearch call(ButtonType buttonType) {
+                    if (buttonType == ButtonType.OK) {
+                        // L'utilisateur a cliqué sur "Ajouter", récupérez les données du dialogue
+                        return dialogController.getAddProductData();
+                    }
+                    return null;
+                }
+            });
+
+
+            // Récupérer la fenêtre du dialogue et définir l'icône
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png")); // Remplacez le chemin par le chemin de votre icône
+
+
+            // Afficher le dialogue et attendre que l'utilisateur agisse
+            Optional<MedicamentSearch> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+
+                MedicamentSearch medicament = result.get();
+                if (medicament != null) {
+                    // L'utilisateur a cliqué sur "OK" et les données sont valides
+                    // Faites quelque chose avec l'objet MedicamentSearch, par exemple, l'ajouter à une liste ou à une base de données
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Produit Ajouté");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Le produit a été ajouté à la base de données avec succès.");
+                    alert.showAndWait();
+                } else {
+                    // L'utilisateur a cliqué sur "OK" mais les données ne sont pas valides (des champs sont vides)
+                    // Aucune action requise ici, l'alerte a déjà été affichée dans getAddProductData()
+                }
+
+            } else {
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les erreurs de chargement du dialogue ici
+        }
+    }
+
+
+
+
+
+    // Méthode pour vérifier si un produit est déjà dans le panier
+    private boolean isProductInCart(MedicamentSearch product) {
+        for (PanierItem item : panier) {
+            if (item.getMedicament().equals(product)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Méthode pour afficher une alerte
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
+
+
+
+
+
     ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
 
 
@@ -96,9 +201,11 @@ public class MedicamentController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ID_Medicament_tableColumn.setStyle("-fx-background-color: lightcoral;");
 
-        // Set the font for the TableView
-        TableMedicament.setStyle("-fx-font-family: 'Courier New';");
+
+        // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
+        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: lightblue;");
 
 
         Connection connectDB = DatabaseConnection.getConnection();
@@ -145,6 +252,38 @@ public class MedicamentController implements Initializable{
 
 
 
+
+            // Créez une liste filtrée liée à la liste observable des médicaments
+            FilteredList<MedicamentSearch> filteredList = new FilteredList<>(MedicamentSearchObservableList, p -> true);
+
+            // Liez le predicat du FilteredList à la propriété text du TextField
+            keyWordTextField.textProperty().addListener((observable, oldValue, newValue) ->
+                    filteredList.setPredicate(medicament -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true; // Affichez tous les éléments si le champ de texte est vide
+                        }
+
+                        // Convertissez la recherche en minuscules et vérifiez si elle correspond à certains champs du médicament
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return medicament.getNom_medicament().toLowerCase().contains(lowerCaseFilter)
+                                || medicament.getDescription().toLowerCase().contains(lowerCaseFilter)
+                                || medicament.getDosage().toLowerCase().contains(lowerCaseFilter);
+                    }));
+
+            // Créez une liste triée liée à la liste filtrée
+            SortedList<MedicamentSearch> sortedList = new SortedList<>(filteredList);
+
+            // Liez la liste triée à la TableView
+            TableMedicament.setItems(sortedList);
+
+            // Définissez le comparateur pour trier la liste
+            sortedList.comparatorProperty().bind(TableMedicament.comparatorProperty());
+
+
+
+
+
+
             // Personnalisation de l'apparence des cellules de la colonne "Quantité"
             // avec une couleur personnalisee. "ROUGE" si la quantite est <= 3
             Quantite_tableColumn.setCellFactory(column -> {
@@ -162,16 +301,16 @@ public class MedicamentController implements Initializable{
                             if (item <= 3) {
                                 // Si la quantité est inférieure ou égale à 3, définissez la couleur de fond en rouge
                                 setTextFill(Color.WHITE);
-                                setStyle("-fx-background-color: red; -fx-font-size: 14;");
+                                setStyle("-fx-background-color: red; -fx-font-size: 12;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow; -fx-font-size: 14;");
+                                setStyle("-fx-background-color: yellow; -fx-font-size: 12;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent; -fx-font-size: 14;");
+                                setStyle("-fx-background-color: transparent; -fx-font-size: 12;");
 
                             }
 
@@ -223,10 +362,7 @@ public class MedicamentController implements Initializable{
 
 
             boutonModifier.setOnAction(event -> {
-                // Récupérez l'élément sélectionné dans la TableView
-                //MedicamentSearch selectedMedicament = TableMedicament.getSelectionModel().getSelectedItem();
-
-                // Récupérez l'élément sélectionné dans TableView
+               // Récupérez l'élément sélectionné dans TableView
                 MedicamentSearch selectedItem = TableMedicament.getSelectionModel().getSelectedItem();
 
 
@@ -340,25 +476,44 @@ public class MedicamentController implements Initializable{
                                     // Code à exécuter lors du clic sur le bouton dans la cellule
                                     // Vous pouvez accéder aux données de la ligne actuelle avec getItem()
                                     MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
-                                    int quantiteChoisie = 1; // Quantité fixe à 1
 
-                                    Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
 
-                                    // Créez un objet PanierItem avec le produit sélectionné et la quantité fixe à 1
-                                    PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
+                                    // Vérifiez si le produit est déjà dans le panier
+                                    if (isProductInCart(selectedMedicament)) {
+                                        // Produit déjà dans le panier, affichez une alerte
+                                        showAlert(Alert.AlertType.WARNING, "ERREUR AJOUT AU PANIER", "Le produit est déjà dans le panier.");
+                                    } else {
 
-                                    panier.add(panierItem);
-                                    // Affichez un message de notification
-                                    String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
-                                    showAlert(Alert.AlertType.INFORMATION, "Produit ajouté :", message);
-                                    // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
-                                    // ou effectuez d'autres actions liées à l'ajout du produit au panier
+                                        // Le produit n'est pas encore dans le panier, ajoutez-le
+                                        int quantiteChoisie = 1; // Quantité fixe à 1
+
+                                        Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
+
+                                        // Créez un objet PanierItem avec le produit sélectionné et la quantité fixe à 1
+                                        PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
+
+                                        panier.add(panierItem);
+                                        // Affichez un message de notification
+                                        String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
+                                        showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
+                                        // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
+                                        // ou effectuez d'autres actions liées à l'ajout du produit au panier
+
+                                    }
                                 });
                             }
                         }
                     };
                 }
             });
+
+
+
+
+
+
+
+
 
 
 
@@ -374,7 +529,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 14;"); // Centrer le texte
+                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 13;"); // Centrer le texte
                     }
                 }
             });
@@ -395,7 +550,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14;");
+                                setStyle("-fx-font-size: 12;");
                             }
                         }
                     };
@@ -417,7 +572,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14;");
+                                setStyle("-fx-font-size: 12;");
                             }
                         }
                     };
@@ -438,7 +593,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14;");
+                                setStyle("-fx-font-size: 12;");
                             }
                         }
                     };
@@ -459,7 +614,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14;");
+                                setStyle("-fx-font-size: 12;");
                             }
                         }
                     };

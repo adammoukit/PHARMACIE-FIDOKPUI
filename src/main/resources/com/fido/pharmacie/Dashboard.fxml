@@ -2,9 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -105,14 +105,14 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="315.0" prefWidth="393.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <LineChart fx:id="LineChartAchat" layoutY="6.0" prefHeight="309.0" prefWidth="428.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="6.0">
+                              <AreaChart fx:id="areaChartAchat" prefWidth="399.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <xAxis>
-                                  <CategoryAxis fx:id="categoLineChart" side="BOTTOM" />
+                                  <CategoryAxis side="BOTTOM" />
                                 </xAxis>
                                 <yAxis>
-                                  <NumberAxis fx:id="numberLineChart" side="LEFT" />
+                                  <NumberAxis side="LEFT" />
                                 </yAxis>
-                              </LineChart>
+                              </AreaChart>
                            </children>
                         </AnchorPane>
                      </children>

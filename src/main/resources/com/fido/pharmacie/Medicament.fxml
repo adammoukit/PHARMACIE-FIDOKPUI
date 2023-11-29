@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="924.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
    <children>
-      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange; -fx-background-color: blue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TableView fx:id="TableMedicament" layoutX="13.0" layoutY="78.0" prefHeight="346.0" prefWidth="907.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="77.0">
                <columns>
@@ -37,7 +37,7 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <TextField fx:id="keyWordTextField" layoutX="16.0" layoutY="19.0" prefHeight="48.0" prefWidth="584.0" promptText="Rechercher nom du produit ici" style="-fx-background-color: white; -fx-border-radius: 10;" AnchorPane.leftAnchor="15.0">
+            <TextField fx:id="keyWordTextField" layoutX="16.0" layoutY="19.0" prefHeight="48.0" prefWidth="584.0" promptText="Rechercher nom du produit ici" style="-fx-background-color: white; -fx-border-radius: 10; -fx-border-color: black;" AnchorPane.leftAnchor="15.0">
                <font>
                   <Font size="15.0" />
                </font>
@@ -59,7 +59,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="5.0" text="Ajouter">
+                  <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="5.0" text="Ajouter">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
@@ -81,6 +81,9 @@
                               <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Delete%20User.png" />
                            </image></ImageView>
                      </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </Button>
                   <Button fx:id="boutonModifier" contentDisplay="TOP" mnemonicParsing="false" text="Modifier" HBox.hgrow="ALWAYS">
                      <graphic>
@@ -89,6 +92,9 @@
                               <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Edit%20Product.png" />
                            </image></ImageView>
                      </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </Button>
                </children>
             </HBox>

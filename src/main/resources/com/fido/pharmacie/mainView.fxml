@@ -70,13 +70,13 @@
                      <children>
                         <HBox prefHeight="90.0" prefWidth="982.0" spacing="2.0">
                            <children>
-                              <GridPane>
+                              <GridPane prefHeight="80.0" prefWidth="946.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.0" minWidth="10.0" prefWidth="257.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="194.0" minWidth="10.0" prefWidth="138.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="341.0" minWidth="10.0" prefWidth="274.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="253.0" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="10.0" prefWidth="89.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.0" minWidth="10.0" prefWidth="210.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="124.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="341.0" minWidth="10.0" prefWidth="272.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.0" minWidth="10.0" prefWidth="150.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -113,9 +113,9 @@
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </HBox>
-                                    <HBox GridPane.columnIndex="1">
+                                    <HBox prefHeight="64.0" prefWidth="216.0" GridPane.columnIndex="1">
                                        <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="64.0" prefWidth="61.0" text="Ajouter">
+                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" prefHeight="64.0" prefWidth="61.0">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -132,21 +132,6 @@
                                              <font>
                                                 <Font name="Courier New" size="11.0" />
                                              </font>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" text="Liste" wrapText="true">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Eye.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
                                           </Button>
                                           <Button contentDisplay="TOP" mnemonicParsing="false" text="Categorie">
                                              <graphic>
@@ -196,9 +181,9 @@
                                           <Insets top="5.0" />
                                        </padding>
                                     </Label>
-                                    <HBox GridPane.columnIndex="2">
+                                    <HBox prefHeight="64.0" prefWidth="142.0" GridPane.columnIndex="2">
                                        <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="Ajouter">
+                                          <Button contentDisplay="TOP" mnemonicParsing="false">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

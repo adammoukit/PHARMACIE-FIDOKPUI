@@ -148,6 +148,14 @@ public class EditProductDialogController implements Initializable {
             updateDataInDatabase(updatedMedicament);
 
 
+            // Afficher une alerte ou lever une exception, car les valeurs ne sont pas valides
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("REUSSI");
+            alert.setHeaderText(null);
+            alert.setContentText("Modification réussi ." );
+            alert.showAndWait();
+
+
 
 
 
