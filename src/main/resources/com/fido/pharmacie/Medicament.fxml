@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -10,22 +11,23 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="924.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="1324.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
    <children>
       <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="TableMedicament" layoutX="13.0" layoutY="78.0" prefHeight="346.0" prefWidth="907.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="77.0">
+            <TableView fx:id="TableMedicament" layoutX="4.0" layoutY="162.0" prefHeight="259.0" prefWidth="1314.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="161.0">
                <columns>
                   <TableColumn fx:id="ID_Medicament_tableColumn" prefWidth="40.0" text="ID " />
                   <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="128.0" text="NOM MEDICAMENT" />
-                  <TableColumn fx:id="Description_tableColumn" prefWidth="162.0" text="DESCRIPTION" />
-                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="132.0" text="DOSAGE" />
-                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="116.0" text="PRIX (FCFA)" />
+                  <TableColumn fx:id="Description_tableColumn" prefWidth="221.0" text="DESCRIPTION" />
+                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="102.0" text="DOSAGE" />
+                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="87.0" text="PRIX (FCFA)" />
                   <TableColumn fx:id="DateExpiration_tableColumn" minWidth="0.0" prefWidth="131.0" text="DATE D'EXPIRATION" />
                   <TableColumn fx:id="Quantite_tableColumn" prefWidth="96.0" text="QUANTITE EN STOCK" />
-                  <TableColumn fx:id="Action_tableColumn" prefWidth="88.0" text="Action" />
+                  <TableColumn fx:id="Action_tableColumn" prefWidth="88.0" text="ACTION" />
                </columns>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -79,7 +81,8 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Delete%20User.png" />
-                           </image></ImageView>
+                           </image>
+                        </ImageView>
                      </graphic>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -90,7 +93,8 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Edit%20Product.png" />
-                           </image></ImageView>
+                           </image>
+                        </ImageView>
                      </graphic>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -98,6 +102,20 @@
                   </Button>
                </children>
             </HBox>
+            <Pane layoutX="948.0" layoutY="28.0" prefHeight="112.0" prefWidth="358.0" style="-fx-background-color: grey; -fx-border-width: 5;" AnchorPane.leftAnchor="947.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="27.0">
+               <children>
+                  <CheckBox fx:id="checkBoxFiltrer" layoutX="7.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="192.0" text="FILTRER LES PRODUITS EN STOCK BAS (&lt;=10)" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="checkBoxFiltrerDate" layoutX="7.0" layoutY="54.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="217.0" text="FILTRER LES PRODUITS EN PEREMTION (&lt;= 1 SEMAINE)" textFill="#2d0194" wrapText="true">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </Pane>
          </children>
       </AnchorPane>
    </children>

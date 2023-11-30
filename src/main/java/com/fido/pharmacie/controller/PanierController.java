@@ -562,7 +562,7 @@ public class PanierController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // Set the font for the TableView , Application des styles CSS pout la couleur de la tableview
-        panierTable.setStyle("-fx-font-family: 'Courier New'; -fx-base: lightblue;");
+        panierTable.setStyle("-fx-font-family: 'Courier New'; -fx-base: maroon;");
 
 
         // Ajouter un gestionnaire d'événements au bouton Valider
@@ -672,7 +672,7 @@ public class PanierController implements Initializable {
                 } else {
                     // Display the price with the symbol "CFA"
                     setText(String.format("%.2f FCFA", item));
-                    setStyle("-fx-alignment: CENTER; -fx-text-fill: green;"); // Centrer le texte
+                    setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-weight: bold; -fx-font-size: 13;"); // Centrer le texte
 
 
                 }

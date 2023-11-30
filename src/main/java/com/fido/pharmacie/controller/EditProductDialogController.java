@@ -51,10 +51,15 @@ public class EditProductDialogController implements Initializable {
     private ComboBox<String> ED_fournisseurComboBox;
 
 
-
-
-
     private int medicamentID;
+    private TableView<MedicamentSearch> TableMedicament;
+
+
+    public void setTableMedicament(TableView<MedicamentSearch> tableMedicament) {
+        this.TableMedicament = tableMedicament;
+    }
+
+
 
 
 
@@ -148,16 +153,14 @@ public class EditProductDialogController implements Initializable {
             updateDataInDatabase(updatedMedicament);
 
 
+            // Rafraîchir la TableView dans le contrôleur principal (MedicamentController)
+            if (TableMedicament != null) {
+                TableMedicament.refresh();
+            }
+
+
             // Afficher une alerte ou lever une exception, car les valeurs ne sont pas valides
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("REUSSI");
-            alert.setHeaderText(null);
-            alert.setContentText("Modification réussi ." );
-            alert.showAndWait();
-
-
-
-
+            showAlert(Alert.AlertType.INFORMATION, "REUISSI", "PRODUIT MODIFIER AVEC SUCCES");
 
         } catch (NumberFormatException e) {
             // Afficher une alerte ou lever une exception, car les valeurs ne sont pas valides

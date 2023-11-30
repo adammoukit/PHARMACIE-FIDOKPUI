@@ -65,6 +65,13 @@ public class MedicamentController implements Initializable{
     @FXML
     private TextField keyWordTextField;
 
+    @FXML
+    private CheckBox checkBoxFiltrer;
+
+
+    @FXML
+    private CheckBox checkBoxFiltrerDate;
+
 
 
 
@@ -176,13 +183,8 @@ public class MedicamentController implements Initializable{
         return false;
     }
 
-    // Méthode pour afficher une alerte
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+
+
 
 
 
@@ -201,11 +203,10 @@ public class MedicamentController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ID_Medicament_tableColumn.setStyle("-fx-background-color: lightcoral;");
 
 
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
-        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: lightblue;");
+        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: maroon;");
 
 
         Connection connectDB = DatabaseConnection.getConnection();
@@ -270,6 +271,40 @@ public class MedicamentController implements Initializable{
                                 || medicament.getDosage().toLowerCase().contains(lowerCaseFilter);
                     }));
 
+
+            // ICI C'EST LE FILTRE DU CHECKBOX POUR LES PRODUITS DONT LA QUANTITE EST <= 10
+            // Ajoutez un écouteur à la propriété selected de la CheckBox
+            checkBoxFiltrer.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    // Si la CheckBox est cochée, filtrez les médicaments dont la quantité est inférieure ou égale à 10
+                    filteredList.setPredicate(medicament -> medicament.getQuantite() <= 10);
+                } else {
+                    // Si la CheckBox est décochée, affichez tous les médicaments
+                    filteredList.setPredicate(medicament -> true);
+                }
+            });
+
+
+
+            // ICI C'EST LE FILTRE DU CHECKBOX POUR AFFICHER LES PRODUITS DONT LA DATE D'EXPIRATION EST <= 7
+            checkBoxFiltrerDate.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    // Si la CheckBox est cochée, filtrez les médicaments dont la date d'expiration est inférieure à 7 jours
+                    filteredList.setPredicate(medicament -> {
+                        Date currentDate = new Date();
+                        long differenceInDays = (medicament.getDate_expiration().getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+                        return differenceInDays <= 7;
+                    });
+                } else {
+                    // Si la CheckBox est décochée, affichez tous les médicaments
+                    filteredList.setPredicate(medicament -> true);
+                }
+            });
+
+
+
+
+
             // Créez une liste triée liée à la liste filtrée
             SortedList<MedicamentSearch> sortedList = new SortedList<>(filteredList);
 
@@ -301,16 +336,16 @@ public class MedicamentController implements Initializable{
                             if (item <= 3) {
                                 // Si la quantité est inférieure ou égale à 3, définissez la couleur de fond en rouge
                                 setTextFill(Color.WHITE);
-                                setStyle("-fx-background-color: red; -fx-font-size: 12;");
+                                setStyle("-fx-background-color: red; -fx-font-size: 12; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow; -fx-font-size: 12;");
+                                setStyle("-fx-background-color: yellow; -fx-font-size: 12; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent; -fx-font-size: 12;");
+                                setStyle("-fx-background-color: transparent; -fx-font-size: 12; -fx-font-weight: bold;");
 
                             }
 
@@ -387,6 +422,12 @@ public class MedicamentController implements Initializable{
 
                     // Obtenez le contrôleur de la boîte de dialogue
                     EditProductDialogController dialogController = loader.getController();
+
+                    dialogController.setTableMedicament(TableMedicament); // Pass the reference
+
+
+
+
                     // Initialisez les champs de la boîte de dialogue avec les valeurs de l'élément sélectionné
                     dialogController.initData(selectedItem);
 
@@ -409,7 +450,7 @@ public class MedicamentController implements Initializable{
 
                         dialog.close();
 
-                        TableMedicament.refresh();
+
 
                     });
 
@@ -529,7 +570,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 13;"); // Centrer le texte
+                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 13; -fx-font-weight: bold;"); // Centrer le texte
                     }
                 }
             });
@@ -550,7 +591,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12;");
+                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -572,7 +613,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12;");
+                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -593,7 +634,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12;");
+                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -614,7 +655,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12;");
+                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                             }
                         }
                     };
