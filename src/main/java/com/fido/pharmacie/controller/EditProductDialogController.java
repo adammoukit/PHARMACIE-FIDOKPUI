@@ -1,7 +1,6 @@
 package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -10,10 +9,8 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,12 +49,9 @@ public class EditProductDialogController implements Initializable {
 
 
     private int medicamentID;
-    private TableView<MedicamentSearch> TableMedicament;
 
 
-    public void setTableMedicament(TableView<MedicamentSearch> tableMedicament) {
-        this.TableMedicament = tableMedicament;
-    }
+
 
 
 
@@ -75,13 +69,13 @@ public class EditProductDialogController implements Initializable {
         qteProduit.setText(String.valueOf(selectedItem.getQuantite()));
         // Initialisez d'autres champs de la même manière
 
-         int id_fournisseur = selectedItem.getId_fournisseur();
+         //int id_fournisseur = selectedItem.getId_produitF();
 
         // Récupérer le nom du fournisseur en fonction de l'id_fournisseur
-        String fournisseurNom = getFournisseurName(id_fournisseur);
+        //String fournisseurNom = getFournisseurName(id_fournisseur);
 
         // Remplir le ComboBox avec le nom du fournisseur récupéré
-        ED_fournisseurComboBox.setValue(fournisseurNom);
+        //ED_fournisseurComboBox.setValue(fournisseurNom);
 
 
         //RECUPPERER L'IDENTIFIANT DE L'OBJET CLIQUER SUR LE TABLEAU MEDICAMENT POUR MODIFIER
@@ -115,10 +109,10 @@ public class EditProductDialogController implements Initializable {
         return fournisseurNom;
     }
 
-    public void processUpdate() {
+    public MedicamentSearch processUpdate() {
         // Obtenez les nouvelles valeurs des champs depuis les contrôles de la boîte de dialogue
-        String updatedProductName = nomProduit.getText().trim();
-        String updatedDescription = description.getText().trim();
+        String updatedProductName = nomProduit.getText().trim().toUpperCase();
+        String updatedDescription = description.getText().trim().toUpperCase();
         String updatedDosage = dosage.getText().trim();
         String updatedPrixText = prixProduit.getText().trim();
         String updatedQuantiteText = qteProduit.getText().trim();
@@ -138,25 +132,19 @@ public class EditProductDialogController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Veuillez renseigner tous les champs.");
             alert.showAndWait();
-            return;
         }
 
         // Convertir les chaînes en nombres
+        MedicamentSearch updatedMedicament = null;
         try {
             Double updatedPrix = Double.parseDouble(updatedPrixText);
             Integer updatedQuantite = Integer.parseInt(updatedQuantiteText);
 
             // Créer et retourner l'objet MedicamentSearch
-            MedicamentSearch updatedMedicament = new MedicamentSearch(null, updatedProductName, updatedDescription, updatedDosage, updatedPrix, java.sql.Date.valueOf(updatedExpirationDate), updatedQuantite, updatedIdFournisseur);
+            updatedMedicament = new MedicamentSearch(null, updatedProductName, updatedDescription, updatedDosage, updatedPrix, java.sql.Date.valueOf(updatedExpirationDate), updatedQuantite);
 
             // Insérer les données dans la base de données
             updateDataInDatabase(updatedMedicament);
-
-
-            // Rafraîchir la TableView dans le contrôleur principal (MedicamentController)
-            if (TableMedicament != null) {
-                TableMedicament.refresh();
-            }
 
 
             // Afficher une alerte ou lever une exception, car les valeurs ne sont pas valides
@@ -170,6 +158,10 @@ public class EditProductDialogController implements Initializable {
             alert.setContentText("Les valeurs de prix ou de quantité ne sont pas valides. Erreur : " + e.getMessage());
             alert.showAndWait();
         }
+
+        //LA VALEUR DE RETOUR DE LA METHODE
+        return updatedMedicament;
+
     }
 
 
@@ -211,7 +203,7 @@ public class EditProductDialogController implements Initializable {
         // Obtenez l'identifiant stocké dans la propriété du contrôleur
         int medicamentID = getMedicamentID();
 
-        String query = "UPDATE medicament SET NOM_MEDICAMENT = ?, description = ?, dosage = ?, prix = ?, date_expiration = ?, quantite = ?, id_fournisseur = ? WHERE ID = ?";
+        String query = "UPDATE medicament SET NOM_MEDICAMENT = ?, description = ?, dosage = ?, prix = ?, date_expiration = ?, quantite = ?  WHERE ID = ?";
 
         try (
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
@@ -222,10 +214,9 @@ public class EditProductDialogController implements Initializable {
             preparedStatement.setDouble(4, updatedMedicament.getPrix());
             preparedStatement.setDate(5, updatedMedicament.getDate_expiration());
             preparedStatement.setInt(6, updatedMedicament.getQuantite());
-            preparedStatement.setInt(7, updatedMedicament.getId_fournisseur());
 
             // Utilisez l'identifiant stocké dans la propriété du contrôleur
-            preparedStatement.setInt(8, medicamentID);
+            preparedStatement.setInt(7, medicamentID);
 
 
 

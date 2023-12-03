@@ -26,12 +26,15 @@ import javafx.util.Callback;
 
 import java.net.URL;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.sql.Statement;
+
 
 import static com.fido.pharmacie.controller.DatabaseConnection.connection;
 import static com.fido.pharmacie.controller.MedicamentController.panier;
@@ -525,7 +528,7 @@ public class PanierController implements Initializable {
 
 
     //--------------------------------------------//
-    private void insertAchatData(String codeRecu) {
+   /* private void insertAchatData(String codeRecu) {
         String insertQuery = "INSERT INTO achat (date_achat, code_recu, total) VALUES (?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
@@ -550,6 +553,60 @@ public class PanierController implements Initializable {
         }
     }
 
+    */
+
+
+    private void insertAchatData(String codeRecu) {
+        String insertAchatQuery = "INSERT INTO achat (date_achat, code_recu, total) VALUES (?, ?, ?)";
+        String insertDetailVenteQuery = "INSERT INTO detailvente (IDVente, IDProduit, Quantite, PrixUnitaire) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement insertAchatStatement = connection.prepareStatement(insertAchatQuery, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement insertDetailVenteStatement = connection.prepareStatement(insertDetailVenteQuery)) {
+
+            // Set the purchase date
+            LocalDateTime now = LocalDateTime.now();
+            insertAchatStatement.setTimestamp(1, java.sql.Timestamp.valueOf(now));
+
+            // Set the receipt code
+            insertAchatStatement.setString(2, codeRecu);
+
+            // Set the total cost of the purchase
+            double totalCout = calculerCoutTotalPanier();
+            insertAchatStatement.setDouble(3, totalCout);
+
+            // Execute the insert query for achat and get generated keys
+            insertAchatStatement.executeUpdate();
+            ResultSet generatedKeys = insertAchatStatement.getGeneratedKeys();
+
+            if (generatedKeys.next()) {
+                int idAchat = generatedKeys.getInt(1);
+
+                // Iterate through panier and insert details into detailvente
+                for (PanierItem panierItem : panier) {
+                    int idProduit = panierItem.getMedicament().getID();
+                    int quantite = panierItem.getQte();
+                    double prixUnitaire = panierItem.getMedicament().getPrix();
+
+                    insertDetailVenteStatement.setInt(1, idAchat);
+                    insertDetailVenteStatement.setInt(2, idProduit);
+                    insertDetailVenteStatement.setInt(3, quantite);
+                    insertDetailVenteStatement.setDouble(4, prixUnitaire);
+
+                    // Execute the insert query for detailvente
+                    insertDetailVenteStatement.executeUpdate();
+                }
+            }
+
+            System.out.println("Purchase information inserted into the 'achat' table successfully.");
+            System.out.println("DetailVente information inserted successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle the SQL exception appropriately for your application
+        }
+    }
+
+
 
 
 
@@ -562,7 +619,7 @@ public class PanierController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // Set the font for the TableView , Application des styles CSS pout la couleur de la tableview
-        panierTable.setStyle("-fx-font-family: 'Courier New'; -fx-base: maroon;");
+        panierTable.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
 
 
         // Ajouter un gestionnaire d'événements au bouton Valider
@@ -672,7 +729,7 @@ public class PanierController implements Initializable {
                 } else {
                     // Display the price with the symbol "CFA"
                     setText(String.format("%.2f FCFA", item));
-                    setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-weight: bold; -fx-font-size: 13;"); // Centrer le texte
+                    setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-weight: bold; -fx-font-size: 15;"); // Centrer le texte
 
 
                 }
@@ -723,8 +780,8 @@ public class PanierController implements Initializable {
                     textField.setText(item.toString());
                     setGraphic(textField);
 
-                    // Set the text color to green
-                    textField.setStyle("-fx-text-fill: green;");
+                    // Set the text color to white
+                    textField.setStyle("-fx-text-fill: green; -fx-font-size: 16");
                 }
             }
         });

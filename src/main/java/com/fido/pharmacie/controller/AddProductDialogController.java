@@ -1,18 +1,26 @@
 package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
+
+
 
 import java.net.URL;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.Event;
@@ -47,23 +55,59 @@ public class AddProductDialogController implements Initializable {
     private TextField qteProduit;
 
     @FXML
-    private ComboBox<String> fournisseurComboBox;
+    private TextField fournisseurTextField;
+
+
+    private AutoCompletionBinding<String> binding;  // Declare AutoCompletionBinding as a member variable
+
+
+
+
+
+    private List<String> searchProductsInDatabase(String searchText) {
+        List<String> matchingProducts = new ArrayList<>();
+
+        String query = "SELECT p.nomProduitF, p.dosageProduitF, f.NOM " +
+                "FROM produitfournisseur p " +
+                "LEFT JOIN fournisseurs f ON p.id_fournisseur = f.id_fournisseur " +
+                "WHERE p.nomProduitF LIKE ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, "%" + searchText + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String productName = resultSet.getString("nomProduitF");
+                String dosage = resultSet.getString("dosageProduitF");
+                String supplierName = resultSet.getString("NOM");
+                String displayText = productName + "  - Dosage: " + dosage + "  (- " + supplierName + ")";
+                matchingProducts.add(displayText);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer l'exception SQL
+        }
+
+        return matchingProducts;
+    }
+
+
 
 
 
     public MedicamentSearch getAddProductData() {
-        String productName_ = nomProduit.getText().trim();
-        String description_ = description.getText().trim();
+        String productName_ = nomProduit.getText().trim().toUpperCase();
+        String description_ = description.getText().trim().toUpperCase();
         String dosage_ = dosage.getText().trim();
         String prixText_ = prixProduit.getText().trim();
         String quantiteText_ = qteProduit.getText().trim();
         LocalDate expirationDate_ = dateExpiration.getValue(); // Récupération de la date d'expiration depuis un composant DatePicker par exemple
 
         // Récupérer le nom du fournisseur sélectionné dans le ComboBox
-        String nomFournisseur = fournisseurComboBox.getValue();
+       // String nomFournisseur = fournisseurComboBox.getValue();
 
         // Utiliser le nom du fournisseur pour trouver l'id_fournisseur associé dans la base de données
-        int idFournisseur = getIdFournisseurParNom(nomFournisseur);
+        //int idFournisseur = getIdFournisseurParNom(nomFournisseur);
 
 
         // Vérifier si les champs requis sont vides
@@ -94,7 +138,7 @@ public class AddProductDialogController implements Initializable {
             Integer quantite = Integer.parseInt(quantiteText_);
 
             // Créer et retourner l'objet MedicamentSearch
-            MedicamentSearch medicament = new MedicamentSearch(null, productName_, description_, dosage_, prix, java.sql.Date.valueOf(expirationDate_), quantite, idFournisseur);
+            MedicamentSearch medicament = new MedicamentSearch(null, productName_, description_, dosage_, prix, java.sql.Date.valueOf(expirationDate_), quantite);
 
             // Insérer les données dans la base de données
             insertDataIntoDatabase(medicament);
@@ -141,10 +185,10 @@ public class AddProductDialogController implements Initializable {
 
 
     private void insertDataIntoDatabase(MedicamentSearch medicament) {
-        String query = "INSERT INTO medicament (Nom_medicament, description, dosage, prix, date_expiration, quantite, id_fournisseur) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO medicament (Nom_medicament, description, dosage, prix, date_expiration, quantite) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (
-                //J'AI COMMENTE CETTE PARTIE PARCEQUE LA VARIABLE CONNECTION EST STATIC ET APPARTIENT RIEN QU'A
+                //J'AI COMMENTé CETTE PARTIE PARCE QUE LA VARIABLE CONNECTION EST STATIC ET N'APPARTIENT RIEN QU'A
                 //  LA CLASS DatabaseConnection et qui est partage dans toute l'application , pour eviter de creer
                 // a chaque fois des connexions.
 
@@ -165,7 +209,6 @@ public class AddProductDialogController implements Initializable {
             preparedStatement.setDouble(4, medicament.getPrix());
             preparedStatement.setDate(5, medicament.getDate_expiration());
             preparedStatement.setInt(6, medicament.getQuantite());
-            preparedStatement.setInt(7, medicament.getId_fournisseur());
 
 
             preparedStatement.executeUpdate();
@@ -196,11 +239,112 @@ public class AddProductDialogController implements Initializable {
         dialogPane.setBorder(border);
 
 
+
+
+
+
+
+
         // Appelez la méthode de MainController pour obtenir les noms des fournisseurs
         List<String> fournisseurs = MainController.getFournisseurs();
 
         // Ajoutez les noms des fournisseurs au ComboBox
-        fournisseurComboBox.getItems().addAll(fournisseurs);
+        //fournisseurComboBox.getItems().addAll(fournisseurs);
+
+
+       // Add a listener to the nomProduit TextField to handle auto-completion
+        nomProduit.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Get a list of matching products from the database
+            List<String> matchingProducts = searchProductsInDatabase(newValue);
+
+            // Create a FilteredList to filter the suggestions based on user input
+            FilteredList<String> filteredList = new FilteredList<>(FXCollections.observableArrayList(matchingProducts));
+
+            // Bind the auto-completion to the TextField using the filtered suggestions
+             binding = TextFields.bindAutoCompletion(nomProduit, filteredList);
+
+            // Définir un gestionnaire pour la sélection d'un élément depuis la fenêtre contextuelle d'auto-complétion
+            binding.setOnAutoCompleted(event -> {
+                // Gérer le cas où l'utilisateur sélectionne une suggestion
+                handleAutoCompletionSelection(event.getCompletion());
+            });
+        });
+
+
+
+
+
+
+
     }
 
+
+
+
+    private void handleAutoCompletionSelection(String selectedText) {
+        // Extraire le nom du médicament à partir du texte sélectionné
+        String[] parts = selectedText.split(" - Dosage: ");
+        if (parts.length == 2) {
+            String nomMedicament = parts[0];
+
+            // Définir la valeur du TextField nomProduit avec le nom du médicament
+            nomProduit.setText(nomMedicament);
+
+            // Vous avez maintenant le nom du médicament, faites ce que vous devez avec
+            System.out.println("Médicament sélectionné : " + nomMedicament);
+            // Vous pouvez utiliser le nom du médicament dans d'autres parties de votre application
+
+
+            // Récupérer les détails du produit à partir de la base de données
+            getProductDetailsFromDatabase(nomMedicament);
+        }
+    }
+
+
+
+    private void getProductDetailsFromDatabase(String nomMedicament) {
+        String query = "SELECT `nomProduitF`, `descriptionProduitF`, `dosageProduitF`, " +
+                "`date_expirationProduitF`,  `prixProduitF`, f.`Nom` " +
+                "FROM `produitfournisseur` p " +
+                "LEFT JOIN `fournisseurs` f ON p.`id_fournisseur` = f.`ID_Fournisseur` " +
+                "WHERE p.`nomProduitF` = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, nomMedicament);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                // Récupérer les valeurs de la base de données
+                String nomProduitF = resultSet.getString("nomProduitF");
+                String descriptionProduitF = resultSet.getString("descriptionProduitF");
+                String dosageProduitF = resultSet.getString("dosageProduitF");
+                LocalDate dateExpirationProduitF = resultSet.getDate("date_expirationProduitF").toLocalDate();
+                double prixProduitF = resultSet.getDouble("prixProduitF");
+                String fournisseurNom = resultSet.getString("Nom");
+
+
+                // Adjust the price by adding 15%
+                double adjustedPrice = prixProduitF * 1.15;
+
+
+                // Mettre à jour les champs avec les valeurs récupérées
+                nomProduit.setText(nomProduitF);
+                description.setText(descriptionProduitF);
+                dosage.setText(dosageProduitF);
+                dateExpiration.setValue(dateExpirationProduitF);
+
+                // Set the adjusted price in the TextField
+                prixProduit.setText(String.valueOf(adjustedPrice));
+
+                fournisseurTextField.setText(fournisseurNom);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer les erreurs de requête ici
+        }
+    }
+
+
 }
+
+

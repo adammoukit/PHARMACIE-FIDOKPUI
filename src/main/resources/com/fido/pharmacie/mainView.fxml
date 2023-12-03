@@ -119,7 +119,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../../../Image/Add-medecine.png" />
+                                                      <Image url="@../../../Image/Medecine_manage.png" />
                                                    </image>
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />

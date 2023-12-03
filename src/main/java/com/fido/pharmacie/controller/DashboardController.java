@@ -98,7 +98,7 @@ public class DashboardController implements Initializable {
 
         Connection connectDB = DatabaseConnection.getConnection();
 
-        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE, id_fournisseur FROM medicament ";
+        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE FROM medicament ";
 
 
         try {
@@ -113,12 +113,11 @@ public class DashboardController implements Initializable {
                 Double  queryPrix = Queryoutput.getDouble("PRIX");
                 Date queryDateExpiration = Queryoutput.getDate("DATE_EXPIRATION");
                 Integer queryQuantite = Queryoutput.getInt("QUANTITE");
-                Integer queryIdFournisseur = Queryoutput.getInt("id_fournisseur");
 
 
                 //remplir la liste observable
 
-                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite, queryIdFournisseur));
+                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
 
 
 

@@ -26,6 +26,17 @@
       <artifactId>javafx-controls</artifactId>
       <version>20.0.1</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
+    <dependency>
+      <groupId>org.controlsfx</groupId>
+      <artifactId>controlsfx</artifactId>
+      <version>11.2.0</version>
+    </dependency>
+
+
+
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
@@ -71,6 +82,9 @@
     </dependency>
 
 
+
+
+
   </dependencies>
 
   <build>
@@ -104,6 +118,9 @@
           </execution>
         </executions>
       </plugin>
+
+
+
     </plugins>
   </build>
 </project>

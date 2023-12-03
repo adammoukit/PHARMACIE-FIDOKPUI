@@ -8,9 +8,9 @@ public class MedicamentSearch {
     Double prix;
     Date date_expiration;
     Integer quantite;
-    Integer id_fournisseur;
+   // Integer id_produitF;
 
-    public MedicamentSearch(Integer ID, String nom_medicament, String description, String dosage, Double prix, Date date_expiration, Integer quantite, Integer id_fournisseur) {
+    public MedicamentSearch(Integer ID, String nom_medicament, String description, String dosage, Double prix, Date date_expiration, Integer quantite) {
         this.ID = ID;
         Nom_medicament = nom_medicament;
         this.description = description;
@@ -18,7 +18,7 @@ public class MedicamentSearch {
         this.prix = prix;
         this.date_expiration = date_expiration;
         this.quantite = quantite;
-        this.id_fournisseur = id_fournisseur;
+       // this.id_produitF = id_produitF;
     }
 
     public Integer getID() {
@@ -49,9 +49,8 @@ public class MedicamentSearch {
         return quantite;
     }
 
-    public Integer getId_fournisseur() {
-        return id_fournisseur;
-    }
+
+
 
     public void setID(Integer ID) {
         this.ID = ID;
@@ -81,7 +80,6 @@ public class MedicamentSearch {
         this.quantite = quantite;
     }
 
-    public void setId_fournisseur(Integer id_fournisseur) {
-        this.id_fournisseur = id_fournisseur;
-    }
+
+
 }

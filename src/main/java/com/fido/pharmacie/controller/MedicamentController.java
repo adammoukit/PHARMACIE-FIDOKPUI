@@ -150,6 +150,16 @@ public class MedicamentController implements Initializable{
                     // L'utilisateur a cliqué sur "OK" et les données sont valides
                     // Faites quelque chose avec l'objet MedicamentSearch, par exemple, l'ajouter à une liste ou à une base de données
 
+
+                    // Update the observable list
+                    MedicamentSearchObservableList.add(medicament);
+
+                    // Refresh the TableView
+                    TableMedicament.setItems(null);
+                    TableMedicament.setItems(MedicamentSearchObservableList);
+
+
+
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Produit Ajouté");
                     alert.setHeaderText(null);
@@ -206,12 +216,12 @@ public class MedicamentController implements Initializable{
 
 
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
-        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: maroon;");
+        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
 
 
         Connection connectDB = DatabaseConnection.getConnection();
 
-        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE, id_fournisseur FROM medicament ";
+        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE FROM medicament ";
 
         //   ICI C'EST POUR INITIALISER LES BOUTONS SUPPRIMER ET MODIFIER A L'ETAT INACTIF
         btnSupprimer.setDisable(true);
@@ -229,12 +239,12 @@ public class MedicamentController implements Initializable{
                 Double  queryPrix = Queryoutput.getDouble("PRIX");
                 Date  queryDateExpiration = Queryoutput.getDate("DATE_EXPIRATION");
                 Integer queryQuantite = Queryoutput.getInt("QUANTITE");
-                Integer queryIdFournisseur = Queryoutput.getInt("id_fournisseur");
+                //Integer queryIdFournisseur = Queryoutput.getInt("id_produitF");
 
 
                 //remplir la liste observable
 
-                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite, queryIdFournisseur));
+                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
 
 
             }
@@ -336,16 +346,16 @@ public class MedicamentController implements Initializable{
                             if (item <= 3) {
                                 // Si la quantité est inférieure ou égale à 3, définissez la couleur de fond en rouge
                                 setTextFill(Color.WHITE);
-                                setStyle("-fx-background-color: red; -fx-font-size: 12; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: red; -fx-font-size: 16; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow; -fx-font-size: 12; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: yellow; -fx-font-size: 16; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent; -fx-font-size: 12; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: transparent; -fx-font-size: 16; -fx-font-weight: bold;");
 
                             }
 
@@ -423,7 +433,6 @@ public class MedicamentController implements Initializable{
                     // Obtenez le contrôleur de la boîte de dialogue
                     EditProductDialogController dialogController = loader.getController();
 
-                    dialogController.setTableMedicament(TableMedicament); // Pass the reference
 
 
 
@@ -446,7 +455,25 @@ public class MedicamentController implements Initializable{
                         // Logique pour le bouton "Ajouter" si nécessaire
                         // Par exemple, dialogController.processAdd();
                         // Appeler la méthode de mise à jour du contrôleur de boîte de dialogue
-                        dialogController.processUpdate();
+
+
+                        // Appeler la méthode de mise à jour du contrôleur de boîte de dialogue
+                        //dialogController.processUpdate();
+
+
+                        // Récupérez les données mises à jour du dialogue
+                        MedicamentSearch updatedMedicament = dialogController.processUpdate();
+
+                        // Mettez à jour l'objet sélectionné dans la liste observable
+                        int selectedIndex = MedicamentSearchObservableList.indexOf(selectedItem);
+                        if (selectedIndex != -1) {
+                            MedicamentSearchObservableList.set(selectedIndex, updatedMedicament);
+                        }
+
+                        // Rafraîchissez la TableView
+                        TableMedicament.setItems(null);
+                        TableMedicament.setItems(MedicamentSearchObservableList);
+
 
                         dialog.close();
 
@@ -570,7 +597,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 13; -fx-font-weight: bold;"); // Centrer le texte
+                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 15; -fx-font-weight: bold;"); // Centrer le texte
                     }
                 }
             });
@@ -591,7 +618,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -613,7 +640,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -633,8 +660,8 @@ public class MedicamentController implements Initializable{
                                 setStyle("");
                             } else {
                                 setText(item);
-                                setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+                                //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -654,8 +681,8 @@ public class MedicamentController implements Initializable{
                                 setStyle("");
                             } else {
                                 setText(item);
-                                setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+                                //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                setStyle("-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: green;");
                             }
                         }
                     };

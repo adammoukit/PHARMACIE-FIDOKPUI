@@ -46,7 +46,7 @@
                         <Font name="Courier New Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="dosage" prefHeight="25.0" prefWidth="255.0" promptText="Exemple :  1Kg, 2L" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="dosage" editable="false" prefHeight="25.0" prefWidth="255.0" promptText="Exemple :  1Kg, 2L" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font name="Courier New" size="13.0" />
                      </font></TextField>
@@ -74,12 +74,12 @@
                      <font>
                         <Font name="Courier New" size="14.0" />
                      </font></TextField>
-                  <DatePicker fx:id="dateExpiration" prefHeight="25.0" prefWidth="195.0" style="-fx-background-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <DatePicker fx:id="dateExpiration" editable="false" prefHeight="25.0" prefWidth="195.0" style="-fx-background-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <TextField fx:id="qteProduit" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font name="Courier New" size="14.0" />
                      </font></TextField>
-                  <TextArea fx:id="description" prefHeight="26.0" prefWidth="275.0" style="-fx-background-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextArea fx:id="description" editable="false" prefHeight="26.0" prefWidth="275.0" style="-fx-background-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font name="Courier New" size="14.0" />
                      </font></TextArea>

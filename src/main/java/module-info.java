@@ -7,6 +7,8 @@ module com.fido.pharmacie {
     requires javafx.graphics;
     requires java.sql;
 
+    requires org.controlsfx.controls;
+
 
     opens com.fido.pharmacie to javafx.fxml;
     exports com.fido.pharmacie;
@@ -14,4 +16,6 @@ module com.fido.pharmacie {
     opens com.fido.pharmacie.controller to javafx.fxml;
     exports com.fido.pharmacie.model;
     opens com.fido.pharmacie.model to javafx.fxml;
+
+
 }
