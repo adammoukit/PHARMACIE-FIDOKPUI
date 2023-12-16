@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.RapportStockController">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="285.0" text="RAPPORT DE STOCK" textFill="#15b936" AnchorPane.leftAnchor="179.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="77.0">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

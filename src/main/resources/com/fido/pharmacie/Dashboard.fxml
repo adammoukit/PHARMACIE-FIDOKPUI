@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -29,12 +28,12 @@
                               <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Add_User.png " />
                            </image>
                         </ImageView>
-                        <Label layoutX="14.0" layoutY="61.0" prefHeight="30.0" prefWidth="209.0" text="TOTAL DES CLIENTS" textFill="#325bb2" AnchorPane.leftAnchor="14.0">
+                        <Label layoutX="14.0" layoutY="61.0" prefHeight="30.0" prefWidth="278.0" text="TOTAL DES FOURNISSEURS" textFill="#325bb2" AnchorPane.leftAnchor="14.0">
                            <font>
                               <Font name="Courier New Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label layoutX="216.0" layoutY="19.0" text="250" textFill="#2bcbd7" AnchorPane.rightAnchor="14.0">
+                        <Label fx:id="nbrFournisseurs" alignment="CENTER" layoutX="255.0" layoutY="24.0" prefHeight="24.0" prefWidth="140.0" style="-fx-background-color: black;" text="250" textFill="#eef1f2" AnchorPane.rightAnchor="22.0">
                            <font>
                               <Font name="Courier New Bold" size="20.0" />
                            </font>
@@ -49,17 +48,13 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                      <children>
-                        <ImageView fitHeight="44.0" fitWidth="70.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Add-medecine.png " />
-                           </image>
-                        </ImageView>
+                        <ImageView fitHeight="44.0" fitWidth="70.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
                         <Label layoutX="14.0" layoutY="66.0" prefHeight="30.0" prefWidth="233.0" text="TOTAL DES PRODUITS" textFill="#3d2cae" AnchorPane.leftAnchor="14.0">
                            <font>
                               <Font name="Courier New Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label layoutX="247.0" layoutY="24.0" text="800" textFill="#6dc7eb" AnchorPane.rightAnchor="12.0">
+                        <Label fx:id="nbrProduit" alignment="CENTER" layoutX="247.0" layoutY="24.0" prefHeight="24.0" prefWidth="118.0" style="-fx-background-color: BLACK;" text="800" textFill="#d7e5eb" AnchorPane.rightAnchor="12.0">
                            <font>
                               <Font name="Courier New Bold" size="20.0" />
                            </font>
@@ -87,32 +82,19 @@
                      <children>
                         <AnchorPane prefHeight="212.0" prefWidth="471.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <BarChart fx:id="barChart" prefHeight="315.0" prefWidth="390.0" title="STATISTIQUE DES PRODUITS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <xAxis>
-                                    <CategoryAxis endMargin="0.0" label="PRODUIT" startMargin="0.0" tickLabelFill="#18a121" fx:id="xAxis">
-                                       <tickLabelFont>
-                                          <Font size="9.0" />
-                                       </tickLabelFont></CategoryAxis>
-                                 </xAxis>
-                                 <yAxis>
-                                    <NumberAxis fx:id="yAxis" label="QUANTITE" side="LEFT" />
-                                 </yAxis>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </BarChart>
+                              <PieChart fx:id="monPieChart" layoutX="-66.0" layoutY="-111.0" prefHeight="289.0" prefWidth="448.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane prefHeight="315.0" prefWidth="393.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <AreaChart fx:id="areaChartAchat" prefWidth="399.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <BarChart fx:id="areaChartAchat" layoutX="-130.0" layoutY="64.0" prefHeight="328.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <xAxis>
                                   <CategoryAxis side="BOTTOM" />
                                 </xAxis>
                                 <yAxis>
                                   <NumberAxis side="LEFT" />
                                 </yAxis>
-                              </AreaChart>
+                              </BarChart>
                            </children>
                         </AnchorPane>
                      </children>

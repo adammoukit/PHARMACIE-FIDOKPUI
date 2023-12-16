@@ -15,14 +15,15 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="571.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
+<AnchorPane prefHeight="571.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
    <children>
       <BorderPane layoutY="6.0" prefHeight="390.0" prefWidth="639.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <MenuBar BorderPane.alignment="CENTER">
+            <MenuBar style="-fx-background-color: green;" BorderPane.alignment="CENTER">
               <menus>
                 <Menu mnemonicParsing="false" text="Fichier">
                   <items>
@@ -32,12 +33,11 @@
                   </items>
 
                 </Menu>
-                <Menu mnemonicParsing="false" text="Inventaire">
+                <Menu fx:id="menuRapport" mnemonicParsing="false" text="Rapports">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Liste Des Medicaments" />
-                        <MenuItem mnemonicParsing="false" text="Rechercher Medicament" />
-                        <MenuItem mnemonicParsing="false" text="Ajouter Au Stock" />
-                        <MenuItem mnemonicParsing="false" text="Retirer Du Stock" />
+                    <MenuItem fx:id="menuItemStock" mnemonicParsing="false" text="Rapports sur le stock" />
+                        <MenuItem fx:id="menuItemVente" mnemonicParsing="false" text="Rapport sur les ventes" />
+                        <MenuItem mnemonicParsing="false" text="Rapports sur les bénéfices" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Clients">
@@ -336,11 +336,11 @@
                                     </Label>
                                     <HBox prefHeight="59.0" prefWidth="173.0" GridPane.columnIndex="4">
                                        <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="Ajouter">
+                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueFournisseurs" text="GESTION">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../../../Image/Fournisseurs.png" />
+                                                      <Image url="@Image/Fournisseurs.png" />
                                                    </image>
                                                    <cursor>
                                                       <Cursor fx:constant="HAND" />
@@ -350,8 +350,11 @@
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
+                                             <font>
+                                                <Font name="Courier New" size="11.0" />
+                                             </font>
                                           </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" text="Liste" wrapText="true">
+                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" text="LISTE" wrapText="true">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -365,6 +368,9 @@
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
+                                             <font>
+                                                <Font name="Courier New" size="11.0" />
+                                             </font>
                                           </Button>
                                           <Separator orientation="VERTICAL">
                                              <HBox.margin>
@@ -400,6 +406,25 @@
                               <Separator prefHeight="10.0" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
+                        <Pane layoutX="995.0" layoutY="10.0" prefHeight="78.0" prefWidth="292.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="10.0">
+                           <children>
+                              <Label layoutX="7.0" layoutY="6.0" text="UTILISATEUR :" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="7.0" layoutY="31.0" text="DATE DU JOUR :" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="7.0" layoutY="56.0" text="HEURE :" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
                      </children>
                   </AnchorPane>
                   <AnchorPane fx:id="mainContainer" layoutX="5.0" layoutY="116.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="116.0" />

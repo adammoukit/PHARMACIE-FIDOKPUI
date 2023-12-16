@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane fx:id="dialogP" prefHeight="529.0" prefWidth="447.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.PasserCommandeController">
+   <content>
+      <AnchorPane prefHeight="511.0" prefWidth="447.0">
+         <children>
+            <GridPane layoutX="29.0" layoutY="101.0" prefHeight="364.0" prefWidth="509.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.0" minWidth="10.0" prefWidth="174.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="290.0" minWidth="10.0" prefWidth="290.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="65.0" minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="67.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label prefHeight="22.0" prefWidth="116.0" text="NOM DU PRODUIT :" GridPane.halignment="CENTER">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nomProd" prefHeight="33.0" prefWidth="290.0" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="Courier New" size="13.0" />
+                     </font>
+                  </TextField>
+                  <Label prefHeight="12.0" prefWidth="96.0" text="DESCRIPTION :" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="dosa" prefHeight="25.0" prefWidth="255.0" promptText="Exemple :  1Kg, 2L" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Courier New" size="13.0" />
+                     </font>
+                  </TextField>
+                  <Label prefHeight="55.0" prefWidth="84.0" text="DOSAGE(Kg), VOLUME(L), POIDS:" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="12.0" prefWidth="102.0" text="PRIX (FCFA) :" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="47.0" prefWidth="130.0" text="DATE EXPIRATION :" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="52.0" prefWidth="56.0" text="QTE :" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="prixPro" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Courier New" size="13.0" />
+                     </font>
+                  </TextField>
+                  <DatePicker fx:id="dateExpir" prefHeight="25.0" prefWidth="195.0" style="-fx-background-color: wheat;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <TextField fx:id="qteProd" prefHeight="25.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <font>
+                        <Font name="Courier New" size="13.0" />
+                     </font>
+                  </TextField>
+                  <TextArea fx:id="descrip" prefHeight="20.0" prefWidth="257.0" style="-fx-background-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Courier New" size="13.0" />
+                     </font>
+                  </TextArea>
+                  <Label prefHeight="15.0" prefWidth="104.0" text="FOURNISSEUR  :" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+                     <font>
+                        <Font name="Courier New Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="fournisseurTextF" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+               </children>
+            </GridPane>
+            <Label layoutX="111.0" layoutY="9.0" text="NOUVELLE COMMANDE" underline="true">
+               <font>
+                  <Font name="Courier New Bold" size="22.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.5600000023841858" green="0.47973334789276123" blue="0.1679999977350235" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.30488547682762146" green="0.32323139905929565" blue="0.8552631735801697" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Pane layoutX="25.0" layoutY="54.0" prefHeight="42.0" prefWidth="401.0">
+               <children>
+                  <Label layoutY="13.0" text="FOURNISSEUR :">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="fournisseurLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="103.0" layoutY="6.0" prefHeight="26.0" prefWidth="152.0" style="-fx-background-color: grey;" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </AnchorPane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:id="okButtonType" fx:constant="OK" />
+      <ButtonType fx:constant="CANCEL" />
+   </buttonTypes>
+</DialogPane>

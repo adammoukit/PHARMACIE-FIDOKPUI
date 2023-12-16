@@ -36,6 +36,13 @@ import java.util.ResourceBundle;
 import java.sql.Statement;
 
 
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
+
+
+
 import static com.fido.pharmacie.controller.DatabaseConnection.connection;
 import static com.fido.pharmacie.controller.MedicamentController.panier;
 
@@ -73,14 +80,20 @@ public class PanierController implements Initializable {
     @FXML
     private TableColumn<PanierItem, Integer> qteColumn;
 
-    @FXML
-    private TableColumn<PanierItem, Double> total_individuelColumn;
 
     @FXML
     private Label coutTotalLabel;
 
     @FXML
     private Button btnValider;
+
+
+    @FXML
+    private TextField paiementTextfield;
+
+
+    @FXML
+    private Label remiseLabel;
 
 
 
@@ -124,7 +137,7 @@ public class PanierController implements Initializable {
         new Thread(() -> {
             try {
                 // Simulez une opération de mise à jour en cours
-                Thread.sleep(1000);
+                Thread.sleep(1500);
 
                 // Mettez à jour la table dans la file d'interface utilisateur
                 Platform.runLater(() -> {
@@ -289,6 +302,33 @@ public class PanierController implements Initializable {
 
 
     private void handleValiderButton() {
+
+
+        // Récupérer le montant entré par le client depuis le TextField
+        String montantClientText = paiementTextfield.getText();
+
+        if (!montantClientText.isEmpty()) {
+            try {
+                double montantClient = Double.parseDouble(montantClientText);
+
+                // Calculer la remise en soustrayant le montant du coût total
+                double coutTotal = calculerCoutTotalPanier();
+                double reste = montantClient - coutTotal;
+
+                // Afficher le résultat dans l'étiquette remiseLabel
+                remiseLabel.setText(String.format("Reste : %.2f FCFA", reste));
+            } catch (NumberFormatException e) {
+                // Gérer le cas où l'entrée du client n'est pas un nombre valide
+                remiseLabel.setText("Montant invalide");
+            }
+        } else {
+            // Gérer le cas où le champ est vide
+            remiseLabel.setText("Entrez le montant versé par le client");
+        }
+
+
+
+
         // Générer le reçu avec les informations des produits achetés
         genererRecu();
 
@@ -298,6 +338,7 @@ public class PanierController implements Initializable {
         // Mettre à jour la TableView après avoir vidé le panier
         panierTable.getItems().clear();
         panierTable.refresh();
+
 
         btnValider.setDisable(true);
     }
@@ -444,10 +485,37 @@ public class PanierController implements Initializable {
         // Ajoutez le total général à la fin du reçu
         Label totalLabel = new Label(
                      "---------------------------------------------\n"+
-                        "Total général: " + totalGeneral + " FCFA \n"+
+                        "Prix Total : " + totalGeneral + " FCFA \n"+
                         "---------------------------------------------\n"
         );
         recuLayout.getChildren().add(totalLabel);
+
+
+
+        // Ajouter le montant payé par le client
+        String montantClientText = paiementTextfield.getText();
+        double montantClient = 0.0;
+
+        if (!montantClientText.isEmpty()) {
+            try {
+                montantClient = Double.parseDouble(montantClientText);
+            } catch (NumberFormatException e) {
+                // Gérer le cas où l'entrée du client n'est pas un nombre valide
+                montantClient = 0.0; // Utiliser une valeur par défaut ou afficher un message d'erreur
+            }
+        }
+
+        Label montantClientLabel = new Label("Paiement client : " + String.format("%.2f FCFA", montantClient));
+        recuLayout.getChildren().add(montantClientLabel);
+
+        // Ajouter la remise
+        double coutTotal = calculerCoutTotalPanier();
+        double remise = montantClient - coutTotal;
+
+        Label remiseLabel = new Label("Remise : " + String.format("%.2f FCFA", remise));
+        recuLayout.getChildren().add(remiseLabel);
+
+
 
         // Ajoutez la date et l'heure de l'achat à droite
         LocalDateTime now = LocalDateTime.now();
@@ -497,7 +565,7 @@ public class PanierController implements Initializable {
         recuStage.setTitle("Reçu de l'achat");
         recuStage.initModality(Modality.WINDOW_MODAL);
 
-        Scene scene = new Scene(new Group(recuNode), convertMmToPixels(80), 600); // Ajustez la taille en conséquence
+        Scene scene = new Scene(new Group(recuNode)); // Ajustez la taille en conséquence
         recuStage.setScene(scene);
 
         recuStage.show();
@@ -613,10 +681,10 @@ public class PanierController implements Initializable {
 
 
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
 
         // Set the font for the TableView , Application des styles CSS pout la couleur de la tableview
         panierTable.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
@@ -628,6 +696,7 @@ public class PanierController implements Initializable {
         btnValider.setOnAction(event ->
 
                 handleValiderButton()
+
         );
 
 
@@ -643,8 +712,29 @@ public class PanierController implements Initializable {
 
          */
 
+
+
+        // Configurer le TextFormatter pour n'accepter que des chiffres
+        UnaryOperator<Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (Pattern.matches("\\d*", newText)) {
+                return change; // Accepter le changement
+            }
+            return null; // Rejeter le changement
+        };
+
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        paiementTextfield.setTextFormatter(textFormatter);
+
+
+
+
         // Appelez la méthode pour calculer le coût total du panier
         calculerCoutTotalPanier();
+
+
+
+
 
 
         nomColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMedicament().getNom_medicament()));
@@ -655,6 +745,11 @@ public class PanierController implements Initializable {
 
         // Mettez à jour la TableView avec les éléments du panier
         ObservableList<PanierItem> panierItems = FXCollections.observableArrayList(panier);
+
+
+        showLoadingIcon();
+        updateTableAfterDelay();
+
         panierTable.setItems(panierItems);
 
 
@@ -686,7 +781,8 @@ public class PanierController implements Initializable {
                             // Mettez à jour la TableView
                             panierTable.getItems().remove(objet);
 
-                            showLoadingIcon(); // Show the loading icon during the update
+                            // Afficher l'icone de chargement apres la suppression dans le panier
+                            showLoadingIcon();
 
                             updateTableAfterDelay();
                         });
@@ -758,7 +854,8 @@ public class PanierController implements Initializable {
                             double total = item.getMedicament().getPrix() * newQte;
                             item.setTotIndividuel(total);
 
-                            showLoadingIcon(); // Show the loading icon during the update
+                            // Afficher l'icone de chargement apres le changement dans le textfield
+                            showLoadingIcon();
                             updateTableAfterDelay(); // Update the table after a delay
 
                         } catch (NumberFormatException e) {

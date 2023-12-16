@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #7a6e9a;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.DetailsVenteController">
+
+
+    <Label fx:id="labelDetails" layoutX="230.0" layoutY="14.0" text="Détails de la vente" underline="true" AnchorPane.leftAnchor="230.0" AnchorPane.rightAnchor="214.0" AnchorPane.topAnchor="14.0">
+      <font>
+         <Font name="System Bold" size="18.0" />
+      </font>
+      <textFill>
+         <LinearGradient endX="0.7298578199052133" endY="0.7061611374407584" startX="0.08056872037914692" startY="0.44075829383886256">
+            <stops>
+               <Stop>
+                  <color>
+                     <Color red="0.7894737124443054" green="0.7443957328796387" blue="0.6542397737503052" />
+                  </color>
+               </Stop>
+               <Stop offset="0.06375838926174497">
+                  <color>
+                     <Color red="0.8815789222717285" green="0.8149163126945496" blue="0.6815911531448364" />
+                  </color>
+               </Stop>
+               <Stop offset="1.0">
+                  <color>
+                     <Color red="0.8026315569877625" green="0.5885964632034302" />
+                  </color>
+               </Stop>
+            </stops>
+         </LinearGradient>
+      </textFill></Label>
+
+    <!-- TableView pour les produits -->
+    <TableView fx:id="tableProduits" layoutY="68.0" prefHeight="332.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="68.0">
+        <columns>
+            <TableColumn fx:id="colProduitID" prefWidth="102.0" text="Produit ID" />
+         <TableColumn fx:id="nomProduit" prefWidth="142.0" text="Produit" />
+            <TableColumn fx:id="colQuantite" prefWidth="95.0" text="Quantité" />
+            <TableColumn fx:id="colPrixUnitaire" prefWidth="122.0" text="Prix unitaire" />
+            <TableColumn fx:id="colMontantTotal" prefWidth="154.0" text="Montant total" />
+        </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
+    </TableView>
+
+</AnchorPane>

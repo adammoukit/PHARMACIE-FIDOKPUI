@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="511.0" prefWidth="699.0" style="-fx-background-color: #7a6e9a;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.VueNouvelleCommandeController">
+   <children>
+      <Pane layoutX="14.0" layoutY="14.0" prefHeight="44.0" prefWidth="328.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="357.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <Label alignment="CENTER" layoutX="6.0" layoutY="10.0" prefHeight="25.0" prefWidth="148.0" text="FOURNISSEUR : " textFill="WHITE" underline="true">
+               <font>
+                  <Font name="Courier New Bold" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="nomFournisseur" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="148.0" textFill="#975601">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Button layoutX="21.0" layoutY="80.0" mnemonicParsing="false" onAction="#DialogPasserCommande" text="AJOUTER PRODUIT A LA LISTE" textFill="#352ce8">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

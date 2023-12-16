@@ -4,6 +4,8 @@ import com.fido.pharmacie.model.MedicamentSearch;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -56,14 +58,18 @@ public class MainController implements Initializable {
     @FXML
     private AnchorPane mainContainer;
 
-    @FXML
-    private BarChart<String, Integer> barChart;
 
     @FXML
-    private CategoryAxis xAxis;
+    private Menu menuRapport;
 
     @FXML
-    private NumberAxis yAxis;
+    private MenuItem menuItemStock;
+
+
+    @FXML
+    private MenuItem menuItemVente;
+
+
 
 
 
@@ -107,6 +113,22 @@ public class MainController implements Initializable {
     public void afficherDashboard() {
         chargerVueDansContainer("/com/fido/pharmacie/Dashboard.fxml");
     }
+
+
+    public void afficherVueRapportStock() {
+        chargerVueDansContainer("/com/fido/pharmacie/RapportStocK.fxml");
+    }
+
+
+    public void afficherVueRapportVente() {
+        chargerVueDansContainer("/com/fido/pharmacie/RapportVente.fxml");
+    }
+
+
+    public void afficherVueFournisseurs() {
+        chargerVueDansContainer("/com/fido/pharmacie/Fournisseurs.fxml");
+    }
+
 
     /*private void chargerVueDansContainer(String fichierFXML) {
         try {
@@ -252,6 +274,28 @@ public class MainController implements Initializable {
                 AnchorPane.setBottomAnchor(vue, 0.0);
                 AnchorPane.setLeftAnchor(vue, 0.0);
                 AnchorPane.setRightAnchor(vue, 0.0);
+
+
+
+                // Ajoutez un gestionnaire d'événements au menu 'menuItemStock'
+                menuItemStock.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        // Appeler la méthode pour afficher la vue de rapport de stock
+                        afficherVueRapportStock();
+                    }
+                });
+
+                // Ajoutez un gestionnaire d'événements au menu 'menuItemStock'
+                menuItemVente.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        // Appeler la méthode pour afficher la vue de rapport de stock
+                        afficherVueRapportVente();
+                    }
+                });
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

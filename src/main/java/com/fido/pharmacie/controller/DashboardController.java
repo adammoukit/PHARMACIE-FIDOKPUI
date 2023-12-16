@@ -6,82 +6,129 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.*;
+import javafx.scene.control.Label;
 
 import java.net.URL;
 import java.sql.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.fido.pharmacie.controller.DatabaseConnection.connection;
+
 
 public class DashboardController implements Initializable {
     @FXML
-    private BarChart<String, Integer> barChart;
+    private PieChart monPieChart;
 
     @FXML
-    private CategoryAxis xAxis;
+    private BarChart<String, Number> areaChartAchat;
 
     @FXML
-    private NumberAxis yAxis;
+    private Label nbrProduit;
 
     @FXML
-    private AreaChart<String, Number> areaChartAchat;
+    private Label nbrFournisseurs;
+
+
+    Connection connectDB = DatabaseConnection.getConnection();
 
 
     ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
 
 
 
-    private void initialiserBarChart() {
-        XYChart.Series<String, Integer> series = new XYChart.Series<>();
-        for (MedicamentSearch medicament : MedicamentSearchObservableList) {
-            series.getData().add(new XYChart.Data<>(medicament.getNom_medicament(), medicament.getQuantite()));
-        }
 
-        // Utilisez un NumberAxis pour l'axe Y
-        yAxis.setAutoRanging(false); // Désactivez l'ajustement automatique des valeurs de l'axe Y
-        yAxis.setLowerBound(0); // Définissez la valeur minimale de l'axe Y
-        yAxis.setUpperBound(getMaxQuantite()); // Définissez la valeur maximale de l'axe Y (vous pouvez implémenter votre propre logique pour cela)
-
-        barChart.getData().add(series);
-    }
 
     // Méthode pour obtenir la valeur maximale de quantité dans la liste
-    private double getMaxQuantite() {
-        double max = 600;
-        for (MedicamentSearch medicament : MedicamentSearchObservableList) {
-            if (medicament.getQuantite() > max) {
-                max = medicament.getQuantite();
+
+
+
+    private int getNombreTotalProduits() {
+        int nombreTotal = 0;
+        String countQuery = "SELECT COUNT(*) AS total FROM medicament";
+
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(countQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                nombreTotal = resultSet.getInt("total");
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return max;
+
+        return nombreTotal;
+    }
+
+    private int getNombreTotalFournisseurs() {
+        int nombreTotal = 0;
+        String countQuery = "SELECT COUNT(*) AS total FROM fournisseurs";
+
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(countQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                nombreTotal = resultSet.getInt("total");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return nombreTotal;
     }
 
 
 
 
+//String selectQuery = "SELECT date_achat, total FROM achat ORDER BY date_achat DESC LIMIT 20";
+    // Limite les résultats aux 20 dernières entrées, par exemple.
+
     public void populateAreaChart() {
-        String selectQuery = "SELECT date_achat, total FROM achat";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+        String selectQuery = "SELECT date_achat, SUM(total) as total_vente " +
+                "FROM achat " +
+                "GROUP BY date_achat " +
+                "ORDER BY date_achat ASC";
+
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(selectQuery);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+            // Utiliser une Map pour stocker les totaux des ventes par date
+            Map<String, Double> venteParDate = new HashMap<>();
+
             while (resultSet.next()) {
                 // Convertir la date SQL en format lisible
                 Timestamp timestamp = resultSet.getTimestamp("date_achat");
                 String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString();
 
-                // Ajouter les données à la série
-                series.getData().add(new XYChart.Data<>(formattedDate, resultSet.getDouble("total")));
+                // Récupérer la somme totale de vente pour la date actuelle
+                double totalVente = resultSet.getDouble("total_vente");
+
+                // Ajouter le total de vente à la Map
+                venteParDate.merge(formattedDate, totalVente, Double::sum);
             }
 
+            // Parcourir la Map et ajouter les données à la série
+            venteParDate.forEach((date, total) -> {
+                // Afficher la somme des ventes dans la console (peut être commenté ou retiré au besoin)
+                System.out.println("Date: " + date + ", Total Vente: " + total);
+
+                // Ajouter les données à la série
+                series.getData().add(new XYChart.Data<>(date, total));
+            });
+
+            areaChartAchat.getData().clear();
             areaChartAchat.getData().add(series);
 
             // Configurer les axes
             areaChartAchat.getXAxis().setLabel("Date d'Achat");
-            areaChartAchat.getYAxis().setLabel("Total");
+            areaChartAchat.getYAxis().setLabel("Total Vente");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,12 +138,69 @@ public class DashboardController implements Initializable {
 
 
 
+    private void populatePieChart() {
+        // Classer les médicaments en catégories
+        int stockCategorie1 = 5;
+        int stockCategorie2 = 10;
+
+        int countCategorie1 = 0;
+        int countCategorie2 = 0;
+        int countPerimes = 0;
+        int countAutres = 0;
+
+        for (MedicamentSearch medicament : MedicamentSearchObservableList) {
+            int quantite = medicament.getQuantite();
+            Date dateExpiration = medicament.getDate_expiration();
+
+            // Vérifier si le produit est périmé
+            if (dateExpiration != null && dateExpiration.before(new Date())) {
+                countPerimes++;
+            } else if (quantite <= stockCategorie1) {
+                countCategorie1++;
+            } else if (quantite <= stockCategorie2) {
+                countCategorie2++;
+            } else {
+                countAutres++;
+            }
+        }
+
+        // Créer les sections du PieChart
+        PieChart.Data categorie1 = new PieChart.Data("Stock <= " + stockCategorie1, countCategorie1);
+        PieChart.Data categorie2 = new PieChart.Data("Stock <= " + stockCategorie2, countCategorie2);
+        PieChart.Data perimes = new PieChart.Data("Produits périmés", countPerimes);
+        PieChart.Data autres = new PieChart.Data("Autres", countAutres);
+
+        // Ajouter les données au PieChart
+        monPieChart.getData().addAll(categorie1, categorie2, perimes, autres);
+
+        // Configurer le titre du PieChart
+        monPieChart.setTitle("Répartition du stock par catégorie");
+    }
+
+
+
+
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        // Obtenir le nombre total de produits
+        int nombreTotalProduits = getNombreTotalProduits();
 
-        Connection connectDB = DatabaseConnection.getConnection();
+        // Afficher le nombre total de produits dans le label
+        nbrProduit.setText( String.valueOf(nombreTotalProduits));
+
+        // Obtenir le nombre total de fournisseurs
+        int nombreTotalFournisseurs = getNombreTotalFournisseurs();
+
+        // Afficher le nombre total de fournisseurs dans le label
+        nbrFournisseurs.setText( String.valueOf(nombreTotalFournisseurs));
+
+
+
+
 
         String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE FROM medicament ";
 
@@ -123,12 +227,14 @@ public class DashboardController implements Initializable {
 
             }
 
-            //INITIALISER LES VALEURS DANS BartChart AU DEMARRAGE
-            initialiserBarChart();
 
 
             //INITIALISER LES VALEURS DANS AreaChart AU DEMARRAGE
             populateAreaChart();
+
+
+            // INITIALISER LES VALEURS DANS PieChart AU DEMARRAGE
+            populatePieChart();
 
         }catch (SQLException e){
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);

@@ -209,14 +209,19 @@ public class MedicamentController implements Initializable{
     //DECLARATION DE L'OBJET DU PANIER
     public static List<PanierItem> panier = new ArrayList<PanierItem>();
 
-
+    public TableColumn<MedicamentSearch, Double> getPrix_tableColumn() {
+        return Prix_tableColumn;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
+
+
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
         TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
+
 
 
         Connection connectDB = DatabaseConnection.getConnection();
@@ -346,16 +351,16 @@ public class MedicamentController implements Initializable{
                             if (item <= 3) {
                                 // Si la quantité est inférieure ou égale à 3, définissez la couleur de fond en rouge
                                 setTextFill(Color.WHITE);
-                                setStyle("-fx-background-color: red; -fx-font-size: 16; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: red; -fx-font-size: 14; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow; -fx-font-size: 16; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: yellow; -fx-font-size: 14; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent; -fx-font-size: 16; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-font-weight: bold;");
 
                             }
 
@@ -468,14 +473,18 @@ public class MedicamentController implements Initializable{
                         int selectedIndex = MedicamentSearchObservableList.indexOf(selectedItem);
                         if (selectedIndex != -1) {
                             MedicamentSearchObservableList.set(selectedIndex, updatedMedicament);
+
+
+                            // Rafraîchissez la TableView
+                            TableMedicament.setItems(null);
+                            TableMedicament.setItems(MedicamentSearchObservableList);
+
+
                         }
 
-                        // Rafraîchissez la TableView
-                        TableMedicament.setItems(null);
-                        TableMedicament.setItems(MedicamentSearchObservableList);
 
 
-                        dialog.close();
+                       // dialog.close();
 
 
 
@@ -597,7 +606,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 15; -fx-font-weight: bold;"); // Centrer le texte
+                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 14; -fx-font-weight: bold;"); // Centrer le texte
                     }
                 }
             });
@@ -618,7 +627,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
+                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -640,7 +649,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
+                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -661,7 +670,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 15; -fx-font-weight: bold;");
+                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -682,7 +691,7 @@ public class MedicamentController implements Initializable{
                             } else {
                                 setText(item);
                                 //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: green;");
+                                setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: green;");
                             }
                         }
                     };
