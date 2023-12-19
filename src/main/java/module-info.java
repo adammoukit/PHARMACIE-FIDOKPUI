@@ -8,6 +8,7 @@ module com.fido.pharmacie {
     requires java.sql;
 
     requires org.controlsfx.controls;
+    requires java.desktop;
 
 
     opens com.fido.pharmacie to javafx.fxml;

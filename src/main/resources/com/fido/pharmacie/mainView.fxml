@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -29,6 +30,8 @@
                   <items>
                     <MenuItem mnemonicParsing="false" text="Nouveau Medicament" />
                         <MenuItem mnemonicParsing="false" text="Nouveau Client" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleSaveAction" text="Enregistrer" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" text="Quitter" />
                   </items>
 

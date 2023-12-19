@@ -10,10 +10,9 @@ import javafx.scene.control.Label;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,12 +99,21 @@ public class DashboardController implements Initializable {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
 
             // Utiliser une Map pour stocker les totaux des ventes par date
-            Map<String, Double> venteParDate = new HashMap<>();
+            //Map<String, Double> venteParDate = new HashMap<>();
+
+            // Utiliser une TreeMap au lieu d'une HashMap pour trier les clés (dates)
+            Map<String, Double> venteParDate = new TreeMap<>();
+
 
             while (resultSet.next()) {
                 // Convertir la date SQL en format lisible
                 Timestamp timestamp = resultSet.getTimestamp("date_achat");
-                String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString();
+
+                // Utiliser DateTimeFormatter pour formater la date
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String formattedDate = timestamp.toLocalDateTime().toLocalDate().format(formatter);
+
+
 
                 // Récupérer la somme totale de vente pour la date actuelle
                 double totalVente = resultSet.getDouble("total_vente");
@@ -125,6 +133,14 @@ public class DashboardController implements Initializable {
 
             areaChartAchat.getData().clear();
             areaChartAchat.getData().add(series);
+
+
+            areaChartAchat.setCategoryGap(0); // Optionnel : pour supprimer l'espace entre les catégories
+            areaChartAchat.setAnimated(false); // Désactiver l'animation si nécessaire
+            areaChartAchat.getXAxis().setLabel("Date d'Achat");
+            areaChartAchat.getYAxis().setLabel("Total Vente");
+            //areaChartAchat.setBarGap(0); // Optionnel : pour supprimer l'espace entre les barres
+
 
             // Configurer les axes
             areaChartAchat.getXAxis().setLabel("Date d'Achat");

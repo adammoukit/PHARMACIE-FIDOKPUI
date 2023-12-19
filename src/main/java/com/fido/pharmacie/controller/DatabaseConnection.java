@@ -3,8 +3,11 @@ package com.fido.pharmacie.controller;
 import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,7 +18,12 @@ public class DatabaseConnection {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
+    private static final String DATABASE_NAME = "pharmacie";
+
     static Connection connection;
+
+    private static final String MYSQLDUMP_PATH = "C:/xampp/mysql/bin/mysqldump";
+
 
     public static Connection getConnection() {
         if (connection == null) {
@@ -64,26 +72,34 @@ public class DatabaseConnection {
 
 
 
-    public static void updateQuantiteInDatabase(int produitId, int nouvelleQuantite) {
-        String query = "UPDATE medicament SET quantite = ? WHERE ID = ?";
+    //LA METHODE CI PERMET DE SAUVEGARDER LES DONNER DE LA BASE
+    public static void backupDatabase() {
+        // Créer un FileChooser
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir l'emplacement de sauvegarde");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers SQL", "*.sql"));
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)
-        ) {
-            preparedStatement.setInt(1, nouvelleQuantite);
-            preparedStatement.setInt(2, produitId);
+        // Afficher la boîte de dialogue de sauvegarde et obtenir le fichier sélectionné
+        File selectedFile = fileChooser.showSaveDialog(new Stage());
 
-            preparedStatement.executeUpdate();
+        if (selectedFile != null) {
+            // Utiliser le chemin complet de mysqldump pour la sauvegarde
+            String MYSQLDUMP_PATH = "C:/xampp/mysql/bin/mysqldump"; // Modifiez le chemin selon votre installation
+            String dumpCommand = MYSQLDUMP_PATH + " -u " + USERNAME + " -p" + PASSWORD + " --add-drop-database -B " + DATABASE_NAME + " -r " + selectedFile.getAbsolutePath();
 
-            System.out.println("Quantité mise à jour avec succès dans la base de données.");
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder(dumpCommand.split(" "));
+                processBuilder.start();
+                System.out.println("Base de données sauvegardée avec succès à l'emplacement : " + selectedFile.getAbsolutePath());
+                showAlert(Alert.AlertType.INFORMATION, "Erreur de Sauvegarde", "Erreur lors de la sauvegarde de la base de données.");
 
-            // Affichez une alerte ou gérez l'erreur d'une autre manière en cas d'échec de la mise à jour
-            // Ajoutez ici le code pour gérer l'erreur d'une manière appropriée dans votre application
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Erreur de Sauvegarde", "Erreur lors de la sauvegarde de la base de données.");
+            }
         }
     }
+
 
 
 }

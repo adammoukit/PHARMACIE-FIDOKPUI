@@ -1,5 +1,8 @@
 package com.fido.pharmacie.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.util.Date;
 
 public class MedicamentSearch {
@@ -10,6 +13,8 @@ public class MedicamentSearch {
     Integer quantite;
    // Integer id_produitF;
 
+    private final BooleanProperty buttonDisabled = new SimpleBooleanProperty(false);
+
     public MedicamentSearch(Integer ID, String nom_medicament, String description, String dosage, Double prix, Date date_expiration, Integer quantite) {
         this.ID = ID;
         Nom_medicament = nom_medicament;
@@ -19,6 +24,7 @@ public class MedicamentSearch {
         this.date_expiration = date_expiration;
         this.quantite = quantite;
        // this.id_produitF = id_produitF;
+
     }
 
     public Integer getID() {
@@ -48,6 +54,7 @@ public class MedicamentSearch {
     public Integer getQuantite() {
         return quantite;
     }
+
 
 
 

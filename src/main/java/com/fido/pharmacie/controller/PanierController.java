@@ -30,9 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.sql.Statement;
 
 
@@ -301,46 +299,60 @@ public class PanierController implements Initializable {
     }
 
 
+    // Méthode pour afficher une boîte de dialogue d'alerte
+    private void afficherAlerte(String titre, String contenu) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titre);
+        alert.setHeaderText(null);
+        alert.setContentText(contenu);
+        alert.showAndWait();
+    }
+
+
     private void handleValiderButton() {
 
 
         // Récupérer le montant entré par le client depuis le TextField
         String montantClientText = paiementTextfield.getText();
 
-        if (!montantClientText.isEmpty()) {
+        if (montantClientText != null && !montantClientText.isEmpty()) {
             try {
                 double montantClient = Double.parseDouble(montantClientText);
 
                 // Calculer la remise en soustrayant le montant du coût total
                 double coutTotal = calculerCoutTotalPanier();
-                double reste = montantClient - coutTotal;
 
-                // Afficher le résultat dans l'étiquette remiseLabel
-                remiseLabel.setText(String.format("Reste : %.2f FCFA", reste));
+                if (montantClient < coutTotal) {
+                    // Afficher une alerte si le montant versé est inférieur au coût total
+                    afficherAlerte("Montant insuffisant", "Le montant versé est inférieur au coût total.");
+                } else {
+                    // Calculer la remise en soustrayant le montant du coût total
+                    double reste = montantClient - coutTotal;
+
+                    // Afficher le résultat dans l'étiquette remiseLabel
+                    remiseLabel.setText(String.format("Reste : %.2f FCFA", reste));
+
+
+                    // Générer le reçu avec les informations des produits achetés
+                    genererRecu();
+
+
+
+                }
             } catch (NumberFormatException e) {
                 // Gérer le cas où l'entrée du client n'est pas un nombre valide
                 remiseLabel.setText("Montant invalide");
             }
+
+
+
+
+
+
         } else {
             // Gérer le cas où le champ est vide
-            remiseLabel.setText("Entrez le montant versé par le client");
+            afficherAlerte("Champ vide", "Veuillez entrer le montant versé par le client.");
         }
-
-
-
-
-        // Générer le reçu avec les informations des produits achetés
-        genererRecu();
-
-        // Vider la table du panier
-        panier.clear();
-
-        // Mettre à jour la TableView après avoir vidé le panier
-        panierTable.getItems().clear();
-        panierTable.refresh();
-
-
-        btnValider.setDisable(true);
     }
 
     private void genererRecu() {
@@ -363,6 +375,8 @@ public class PanierController implements Initializable {
         // Vérifier si la quantité dans le panier est disponible dans le stock
         boolean stockSuffisant = true;
 
+        List<PanierItem> elementsASupprimer = new ArrayList<>();  // Liste temporaire
+
         for (PanierItem panierItem : panier) {
             // Récupérer le produit du panier
             MedicamentSearch produit = panierItem.getMedicament();
@@ -371,65 +385,69 @@ public class PanierController implements Initializable {
             int quantiteAchetee = panierItem.getQte();
 
             // Vérifier si la quantité achetée est disponible dans le stock
-            if (quantiteAchetee <= produit.getQuantite()) {
-                // Soustraire la quantité du panier de la quantité du stock
-                int nouvelleQuantiteStock = produit.getQuantite() - quantiteAchetee;
-                produit.setQuantite(nouvelleQuantiteStock);
-
-
-                if (stockSuffisant) {
-                    // Mise à jour de la quantité dans la base de données
-                    updateQuantiteInDatabase(produit.getID(), nouvelleQuantiteStock);
-                    // Autres actions à effectuer si la condition sur le produit est valide
-                } else {
-                    // Actions à effectuer si la condition sur le produit n'est pas valide
-                }
-
-
-
-
-            } else {
-
+            if (quantiteAchetee > produit.getQuantite()) {
                 stockSuffisant = false;
                 // Gérer le cas où la quantité achetée est supérieure à celle du stock (vous pouvez afficher un message d'erreur, par exemple)
-                //System.out.println("Stock insuffisant pour " + produit.getNom_medicament());
-                //System.out.println("quantite en stock " + produit.getQuantite());
-                // Vous pouvez ajouter une logique pour informer l'utilisateur du problème
-
-                // Affichez un message d'erreur indiquant que la quantité dans le panier est supérieure à celle dans le stock
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erreur ");
                 alert.setHeaderText(null);
-                alert.setContentText("STOCK INSUFFISANT POUR: "+produit.getNom_medicament()+ ", QUANTITE EN STOCK: "+produit.getQuantite());
+                alert.setContentText("STOCK INSUFFISANT POUR: " + produit.getNom_medicament() + ", QUANTITE EN STOCK: " + produit.getQuantite());
                 alert.showAndWait();
-
-
+                break;  // Sortir de la boucle dès qu'une condition n'est pas satisfaite
             }
 
+            // Soustraire la quantité du panier de la quantité du stock
+            int nouvelleQuantiteStock = produit.getQuantite() - quantiteAchetee;
+            produit.setQuantite(nouvelleQuantiteStock);
 
+            // Mise à jour de la quantité dans la base de données
+            updateQuantiteInDatabase(produit.getID(), nouvelleQuantiteStock);
+            // Autres actions à effectuer si la condition sur le produit est valide
 
+            elementsASupprimer.add(panierItem);  // Ajouter à la liste temporaire
         }
 
-        if (stockSuffisant) {
 
 
-            // Insert purchase information into the "achat" table
-            insertAchatData(codeRecu);
-
-
-
-            //AFFICHER LE RECU ICI
-            Node recuNode = createRecuNode();
-            afficherRecu(recuNode);
-
-        } else {
-
-
-
-
-
+        // Si le stock n'est pas suffisant, ne pas continuer le reste de la logique
+        if (!stockSuffisant) {
+            return;
         }
 
+
+
+        // Insert purchase information into the "achat" table
+        insertAchatData(codeRecu);
+
+
+        // Afficher l'icone de chargement apres la suppression dans le panier
+        showLoadingIcon();
+
+        updateTableAfterDelay();
+
+        //AFFICHER LE RECU ICI
+        Node recuNode = createRecuNode();
+        afficherRecu(recuNode);
+
+        // Vider la table du panier
+        // panier.clear();
+
+        // Mettre à jour la TableView après avoir vidé le panier
+        //panierTable.getItems().clear();
+        //panierTable.refresh();
+
+        // Supprimer les éléments de la liste principale après avoir terminé l'itération
+        panier.removeAll(elementsASupprimer);
+
+
+        // Mettre à jour la TableView après avoir vidé le panier
+        panierTable.getItems().clear();
+        panierTable.refresh();
+
+
+
+
+        btnValider.setDisable(true);
 
 
 
@@ -468,7 +486,7 @@ public class PanierController implements Initializable {
 
         for (PanierItem panierItem : panier) {
             Label produitLabel = new Label(
-                    "Nom du produit: " + panierItem.getMedicament().getNom_medicament() + "\n" +
+                         "Produit: " + panierItem.getMedicament().getNom_medicament() + "\n" +
                             "Prix unitaire: " + panierItem.getMedicament().getPrix() + " FCFA\n" +
                             "Quantité: " + panierItem.getQte() + "\n" +
                             "Total individuel: " + panierItem.getTotIndividuel() + " FCFA\n"+
@@ -485,7 +503,7 @@ public class PanierController implements Initializable {
         // Ajoutez le total général à la fin du reçu
         Label totalLabel = new Label(
                      "---------------------------------------------\n"+
-                        "Prix Total : " + totalGeneral + " FCFA \n"+
+                        "PRIX TOTAL : " + totalGeneral + " FCFA \n"+
                         "---------------------------------------------\n"
         );
         recuLayout.getChildren().add(totalLabel);

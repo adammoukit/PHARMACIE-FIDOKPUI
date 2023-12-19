@@ -2,21 +2,18 @@ package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
+
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.image.Image;
@@ -28,8 +25,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 
 
@@ -50,10 +46,7 @@ public class MainController implements Initializable {
     private TableColumn<MedicamentSearch, Date> DateExpiration_tableColumn;
     @FXML
     private TableColumn<MedicamentSearch, Integer> Quantite_tableColumn;
-    @FXML
-    private Button btnSupprimer;
-    @FXML
-    private Button boutonModifier;
+
 
     @FXML
     private AnchorPane mainContainer;
@@ -72,6 +65,11 @@ public class MainController implements Initializable {
 
 
 
+
+    @FXML
+    private void handleSaveAction(ActionEvent event) {
+        DatabaseConnection.backupDatabase();
+    }
 
 
 

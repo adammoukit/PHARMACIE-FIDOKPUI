@@ -32,6 +32,7 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.Toolkit;
 
 import static com.fido.pharmacie.controller.DatabaseConnection.showAlert;
 
@@ -526,8 +527,44 @@ public class MedicamentController implements Initializable{
                             actionButton.setOnAction(event -> {
                                 // Code à exécuter lors du clic sur le bouton dans la cellule
                                 // Vous pouvez accéder aux données de la ligne actuelle avec getItem()
-                                MedicamentSearch objet = getTableView().getItems().get(getIndex());
-                                // Faites quelque chose avec l'objet de données
+                                MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
+
+
+                                // Vérifiez si la quantité en stock est égale à 0
+                                if (selectedMedicament.getQuantite() == 0) {
+
+                                    // Émettre un bip sonore
+                                    Toolkit.getDefaultToolkit().beep();
+                                    showAlert(Alert.AlertType.WARNING, "Quantité Insuffisante", "Le produit est en rupture de stock.");
+
+                                } else {
+
+                                    // Vérifiez si le produit est déjà dans le panier
+                                    if (isProductInCart(selectedMedicament)) {
+
+                                        // Émettre un bip sonore
+                                        Toolkit.getDefaultToolkit().beep();
+                                        // Produit déjà dans le panier, affichez une alerte
+                                        showAlert(Alert.AlertType.WARNING, "ERREUR AJOUT AU PANIER", "Le produit est déjà dans le panier.");
+                                    } else {
+
+                                        // Le produit n'est pas encore dans le panier, ajoutez-le
+                                        int quantiteChoisie = 1; // Quantité fixe à 1
+
+                                        Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
+
+                                        // Créez un objet PanierItem avec le produit sélectionné et la quantité fixe à 1
+                                        PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
+
+                                        panier.add(panierItem);
+                                        // Affichez un message de notification
+                                        String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
+                                        showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
+                                        // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
+                                        // ou effectuez d'autres actions liées à l'ajout du produit au panier
+
+                                    }
+                                }
                             });
                         }
 
@@ -549,35 +586,17 @@ public class MedicamentController implements Initializable{
                                 // Ajoutez un style CSS pour centrer le contenu de la cellule
                                 setAlignment(Pos.CENTER);
 
-                                actionButton.setOnAction(event -> {
-                                    // Code à exécuter lors du clic sur le bouton dans la cellule
-                                    // Vous pouvez accéder aux données de la ligne actuelle avec getItem()
-                                    MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
+                                MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
 
-
-                                    // Vérifiez si le produit est déjà dans le panier
-                                    if (isProductInCart(selectedMedicament)) {
-                                        // Produit déjà dans le panier, affichez une alerte
-                                        showAlert(Alert.AlertType.WARNING, "ERREUR AJOUT AU PANIER", "Le produit est déjà dans le panier.");
-                                    } else {
-
-                                        // Le produit n'est pas encore dans le panier, ajoutez-le
-                                        int quantiteChoisie = 1; // Quantité fixe à 1
-
-                                        Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
-
-                                        // Créez un objet PanierItem avec le produit sélectionné et la quantité fixe à 1
-                                        PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
-
-                                        panier.add(panierItem);
-                                        // Affichez un message de notification
-                                        String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
-                                        showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
-                                        // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
-                                        // ou effectuez d'autres actions liées à l'ajout du produit au panier
-
-                                    }
-                                });
+                                // Mettez à jour l'état du bouton en fonction de la quantité en stock
+                                if (selectedMedicament.getQuantite() == 0) {
+                                    //actionButton.setDisable(true);
+                                    // Vous pouvez également définir un style CSS pour indiquer que le bouton est désactivé
+                                    actionButton.setStyle("-fx-opacity: 0.5;");
+                                } else {
+                                    actionButton.setDisable(false);
+                                    actionButton.setStyle(""); // Réinitialisez le style
+                                }
                             }
                         }
                     };
