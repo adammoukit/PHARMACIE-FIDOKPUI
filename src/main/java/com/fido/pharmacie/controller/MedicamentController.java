@@ -2,7 +2,6 @@ package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
 import com.fido.pharmacie.model.PanierItem;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -18,13 +17,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,6 +74,21 @@ public class MedicamentController implements Initializable{
 
     @FXML
     private CheckBox checkBoxFiltrerDate;
+
+
+    @FXML
+    private ImageView imgAjouter;
+
+
+    @FXML
+    private Button AjouterBtn;
+
+    @FXML
+    private ImageView imgModifier;
+
+    @FXML
+    private ImageView imgSupprimer;
+
 
 
 
@@ -138,7 +155,8 @@ public class MedicamentController implements Initializable{
 
             // Récupérer la fenêtre du dialogue et définir l'icône
             Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png")); // Remplacez le chemin par le chemin de votre icône
+            String absolutePath = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
+            stage.getIcons().add(new Image(absolutePath));
 
 
             // Afficher le dialogue et attendre que l'utilisateur agisse
@@ -199,6 +217,19 @@ public class MedicamentController implements Initializable{
 
 
 
+    // Méthode pour vérifier si un produit est déjà dans le panierItems
+    private boolean isProductInPanierItems(PanierItem panierItem) {
+        for (PanierItem item : panier) {
+            if (item.getMedicament().getID() == panierItem.getMedicament().getID()) {
+                return true; // Le produit est déjà dans le panierItems
+            }
+        }
+        return false; // Le produit n'est pas dans le panierItems
+    }
+
+
+
+
 
 
 
@@ -220,8 +251,45 @@ public class MedicamentController implements Initializable{
 
 
 
+
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
-        TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
+        //TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
+
+        TableMedicament.setStyle("-fx-font-family: 'Courier New';");
+
+
+
+
+        // Load the image for AjouterBtn into the existing ImageView (imgAjouter)
+        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
+        Image imageAjouter = new Image(absolutePath1);
+
+        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Remove.png").toUri().toString();
+        Image image_A_Supprimer = new Image(absolutePath2);
+
+        String absolutePath3 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Edit_Product.png").toUri().toString();
+        Image image_A_Modifier = new Image(absolutePath3);
+
+
+        // Ajustez la taille de l'ImageView ici
+        imgAjouter.setImage(imageAjouter);
+        imgAjouter.setFitWidth(20); // Réglez la largeur souhaitée
+        imgAjouter.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+        imgSupprimer.setImage(image_A_Supprimer);
+        imgSupprimer.setFitWidth(20); // Réglez la largeur souhaitée
+        imgSupprimer.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+        imgModifier.setImage(image_A_Modifier);
+        imgModifier.setFitWidth(20); // Réglez la largeur souhaitée
+        imgModifier.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+        btnSupprimer.setGraphic(imgSupprimer);
+        AjouterBtn.setGraphic(imgAjouter);
+        boutonModifier.setGraphic(imgModifier);
 
 
 
@@ -249,9 +317,10 @@ public class MedicamentController implements Initializable{
 
 
                 //remplir la liste observable
+               // MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
 
-                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
-
+                MedicamentSearch medicament = new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite);
+                MedicamentSearchObservableList.add(medicament);
 
             }
 
@@ -266,6 +335,12 @@ public class MedicamentController implements Initializable{
             TableMedicament.setItems(MedicamentSearchObservableList);
 
 
+            // Vérifiez si un produit est déjà dans le panier
+            for (MedicamentSearch medicament : MedicamentSearchObservableList) {
+                if (isProductInCart(medicament)) {
+                    showAlert(Alert.AlertType.WARNING, "Produit Déjà dans le Panier", "Le produit " + medicament.getNom_medicament() + " est déjà dans le panier.");
+                }
+            }
 
 
 
@@ -361,7 +436,7 @@ public class MedicamentController implements Initializable{
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-font-weight: bold;");
+                                setStyle("-fx-text-fill: black; -fx-background-color: white; -fx-font-size: 14; -fx-font-weight: bold;");
 
                             }
 
@@ -512,18 +587,61 @@ public class MedicamentController implements Initializable{
                 @Override
                 public TableCell<MedicamentSearch, Void> call(final TableColumn<MedicamentSearch, Void> param) {
                     return new TableCell<>() {
+                        private final HBox container = new HBox(); // Utilisez un conteneur HBox pour afficher plusieurs éléments horizontalement
                         private final Button actionButton = new Button();
-                        private final ImageView imageView = new ImageView(new Image("file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Add_Shopping_Cart.png"));
+
+
+                        // Créer un bouton pour l'icône d'alerte
+                        private final Button alertButton = new Button();
+
+                        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Add_Shopping_Cart.png").toUri().toString();
+                        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/reaprovisionnementIcon.png").toUri().toString();
+                        private final ImageView cartIcon = new ImageView(new Image(absolutePath1));
+                        private final ImageView alertIcon = new ImageView(new Image(absolutePath2)); // Remplacez "chemin_vers_votre_icone.png" par le chemin réel de votre icône
 
 
                         {
 
-                            // Ajustez la taille de l'ImageView ici
-                            imageView.setFitWidth(16); // Réglez la largeur souhaitée
-                            imageView.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+                            // Ajustez la taille des ImageView ici
+                            cartIcon.setFitWidth(16);
+                            cartIcon.setPreserveRatio(true);
+                            alertIcon.setFitWidth(16);
+                            alertIcon.setPreserveRatio(true);
+
+                            actionButton.setGraphic(cartIcon);
+
+                            // Créer une info-bulle avec un délai d'affichage court (par exemple, 200 millisecondes)
+                            Tooltip tooltip = new Tooltip("AJOUTER AU PANIER");
+                            tooltip.setShowDelay(Duration.millis(200)); // Réglez le délai d'affichage ici
+
+                            Tooltip.install(actionButton, tooltip);
+
+                            // Ajoutez de l'espace entre les icônes
+                            container.setSpacing(15); // Vous pouvez ajuster la valeur selon vos préférences
 
 
-                            actionButton.setGraphic(imageView);
+
+                            alertButton.setGraphic(alertIcon);
+
+                            // Créer une info-bulle pour le bouton d'alerte
+                            Tooltip alertTooltip = new Tooltip("REAPPROVISIONNER");
+                            alertTooltip.setShowDelay(Duration.millis(200)); // Réglez le délai d'affichage ici
+
+                            Tooltip.install(alertButton, alertTooltip);
+
+
+                            alertButton.setOnAction(event -> {
+                                // Code à exécuter lors du clic sur le bouton d'alerte
+                                // Vous pouvez mettre ici le code pour le réapprovisionnement
+
+                                System.out.println("reapprovisionnement reussi...");
+                            });
+
+                            container.getChildren().addAll(alertButton, actionButton);
+
+                            // Centrez les éléments horizontalement dans la HBox
+                            container.setAlignment(Pos.CENTER);
+
                             actionButton.setOnAction(event -> {
                                 // Code à exécuter lors du clic sur le bouton dans la cellule
                                 // Vous pouvez accéder aux données de la ligne actuelle avec getItem()
@@ -548,21 +666,24 @@ public class MedicamentController implements Initializable{
                                         showAlert(Alert.AlertType.WARNING, "ERREUR AJOUT AU PANIER", "Le produit est déjà dans le panier.");
                                     } else {
 
-                                        // Le produit n'est pas encore dans le panier, ajoutez-le
-                                        int quantiteChoisie = 1; // Quantité fixe à 1
-
+                                        int quantiteChoisie = 1;
                                         Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
-
-                                        // Créez un objet PanierItem avec le produit sélectionné et la quantité fixe à 1
                                         PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
 
-                                        panier.add(panierItem);
-                                        // Affichez un message de notification
-                                        String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
-                                        showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
-                                        // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
-                                        // ou effectuez d'autres actions liées à l'ajout du produit au panier
-
+                                        // Vérifiez si le produit est déjà dans le panierItems
+                                        if (isProductInPanierItems(panierItem)) {
+                                            // Émettre un bip sonore
+                                            Toolkit.getDefaultToolkit().beep();
+                                            // Produit déjà dans le panierItems, affichez une alerte
+                                            showAlert(Alert.AlertType.WARNING, "ERREUR AJOUT AU PANIER", "Le produit est déjà dans le panier.");
+                                        } else {
+                                            panier.add(panierItem);
+                                            // Affichez un message de notification
+                                            String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
+                                            showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
+                                            // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
+                                            // ou effectuez d'autres actions liées à l'ajout du produit au panier
+                                        }
                                     }
                                 }
                             });
@@ -580,7 +701,7 @@ public class MedicamentController implements Initializable{
 
 
 
-                                setGraphic(actionButton);
+                                setGraphic(container);
                                 // Ajoutez des marges intérieures à la cellule
                                 setPadding(new Insets(3)); // Définissez les marges intérieures souhaitées ici
                                 // Ajoutez un style CSS pour centrer le contenu de la cellule
@@ -588,15 +709,23 @@ public class MedicamentController implements Initializable{
 
                                 MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
 
-                                // Mettez à jour l'état du bouton en fonction de la quantité en stock
-                                if (selectedMedicament.getQuantite() == 0) {
-                                    //actionButton.setDisable(true);
-                                    // Vous pouvez également définir un style CSS pour indiquer que le bouton est désactivé
-                                    actionButton.setStyle("-fx-opacity: 0.5;");
+                                // Mettez à jour l'icône et l'état du bouton en fonction de la quantité en stock
+                                if (selectedMedicament.getQuantite() <= 10) {
+                                    alertButton.setVisible(true);
+
+                                    if (selectedMedicament.getQuantite() == 0) {
+                                        actionButton.setStyle("-fx-opacity: 0.5;");
+                                        actionButton.setDisable(true);
+                                    } else {
+                                        actionButton.setStyle("");
+                                        actionButton.setDisable(false);
+                                    }
                                 } else {
+                                    alertButton.setVisible(false);
+                                    actionButton.setStyle("");
                                     actionButton.setDisable(false);
-                                    actionButton.setStyle(""); // Réinitialisez le style
                                 }
+
                             }
                         }
                     };
@@ -687,7 +816,16 @@ public class MedicamentController implements Initializable{
                                 setText(null);
                                 setStyle("");
                             } else {
-                                setText(item);
+                                // Définir la limite de caractères pour passer à la ligne
+                                int limit = 30; // Vous pouvez ajuster cette valeur en fonction de vos besoins
+
+                                if (item.length() > limit) {
+                                    // Si la chaîne est trop longue, insérer des retours à la ligne
+                                    setText(item.substring(0, limit) + "\n" + item.substring(limit));
+                                } else {
+                                    setText(item);
+                                }
+
                                 //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                                 setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
                             }
@@ -695,6 +833,8 @@ public class MedicamentController implements Initializable{
                     };
                 }
             });
+
+
 
 
             nomMedicament_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentSearch, String>, TableCell<MedicamentSearch, String>>() {

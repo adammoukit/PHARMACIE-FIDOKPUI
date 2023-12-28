@@ -13,7 +13,17 @@ public class MedicamentSearch {
     Integer quantite;
    // Integer id_produitF;
 
-    private final BooleanProperty buttonDisabled = new SimpleBooleanProperty(false);
+    private boolean dansLePanier;
+
+
+    public boolean isDansLePanier() {
+        return dansLePanier;
+    }
+
+    public void setDansLePanier(boolean dansLePanier) {
+        this.dansLePanier = dansLePanier;
+    }
+
 
     public MedicamentSearch(Integer ID, String nom_medicament, String description, String dosage, Double prix, Date date_expiration, Integer quantite) {
         this.ID = ID;

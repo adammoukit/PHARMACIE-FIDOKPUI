@@ -7,20 +7,22 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("mainView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("LoginPage.fxml"));
         Scene scene = new Scene(fxmlLoader.load() );
         stage.setTitle("PHARMACIE FIDOKKPUI");
         stage.setScene(scene);
 
         // Chargez l'icône de l'application
-        stage.getIcons().add(new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png")); // Remplacez "icon.png" par le nom de votre fichier d'icône
+        String absolutePath = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
+        stage.getIcons().add(new Image(absolutePath));
 
         // Maximisez la fenêtre
-       // stage.setMaximized(true);
+       stage.setMaximized(false);
 
 
         stage.show();

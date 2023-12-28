@@ -1,16 +1,376 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.RapportStockController">
+<AnchorPane prefHeight="524.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.RapportStockController">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="285.0" text="RAPPORT DE STOCK" textFill="#15b936" AnchorPane.leftAnchor="179.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="77.0">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="123.0" layoutY="127.0" prefHeight="17.0" prefWidth="285.0" text="RAPPORT DE STOCK" textFill="#15b936" AnchorPane.leftAnchor="123.0" AnchorPane.rightAnchor="192.0" AnchorPane.topAnchor="127.0">
          <font>
             <Font size="28.0" />
          </font>
       </Label>
+      <HBox layoutX="25.0" layoutY="190.0" prefHeight="58.0" spacing="5.0">
+         <children>
+            <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherDashboard" prefHeight="39.0" prefWidth="69.0" text="DASHBOARD">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Dashboard%20Layout.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" prefHeight="53.0" prefWidth="76.0" text="MEDICAMENT" wrapText="true">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Medecine_manage.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="59.0" prefWidth="48.0" text="Nouvelle" wrapText="true">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Sell-medecine.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Button>
+            <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVuePanier" prefHeight="58.0" prefWidth="42.0" text="Panier">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Shopping%20Cart.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL">
+               <HBox.margin>
+                  <Insets left="6.0" />
+               </HBox.margin>
+            </Separator>
+            <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherDashboard" prefHeight="49.0" prefWidth="76.0" text="DASHBOARD">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Dashboard%20Layout.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="57.0" prefWidth="76.0" text="FOURNISSEURS">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Edit%20User.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </HBox>
+      <HBox layoutX="59.0" layoutY="286.0" prefHeight="58.0">
+         <children>
+            <Button contentDisplay="TOP" mnemonicParsing="false" text="GESTION">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Add_User.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL">
+               <HBox.margin>
+                  <Insets left="6.0" />
+               </HBox.margin>
+            </Separator>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </HBox>
+      <GridPane layoutX="14.0" layoutY="36.0" prefHeight="82.0" prefWidth="236.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="28.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="0.0" prefWidth="173.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <HBox alignment="CENTER" prefHeight="66.0" prefWidth="157.0" GridPane.columnIndex="1">
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+               <children>
+                  <MenuButton contentDisplay="TOP" mnemonicParsing="false" prefHeight="44.0" prefWidth="99.0" text="ENTREE/SORTIE" wrapText="true">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Entree" />
+                        <MenuItem mnemonicParsing="false" text="Sortie" />
+                     </items>
+                     <font>
+                        <Font size="9.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@controller/Image/Medecine_manage.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </MenuButton>
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+      <TabPane layoutX="263.0" layoutY="324.0" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Home">
+               <content>
+                  <HBox spacing="2.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <HBox spacing="2.0">
+                                 <children>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Separator GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                              <Label text="Label" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
+               </content>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Print.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Tab>
+            <Tab text="Medicament">
+               <content>
+                  <HBox spacing="2.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <HBox spacing="2.0">
+                                 <children>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Separator GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                              <Label text="Label" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
+               </content>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Medecine_manage.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Tab>
+            <Tab text="Vente">
+               <content>
+                  <HBox spacing="2.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <HBox spacing="2.0">
+                                 <children>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                    <Button contentDisplay="TOP" mnemonicParsing="false" text="Button">
+                                       <graphic>
+                                          <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Separator GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                              <Label text="Label" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
+               </content>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@controller/Image/Sell-medecine.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Tab>
+         </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

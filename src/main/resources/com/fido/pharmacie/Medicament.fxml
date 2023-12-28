@@ -4,10 +4,10 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -39,38 +39,29 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <TextField fx:id="keyWordTextField" layoutX="16.0" layoutY="19.0" prefHeight="48.0" prefWidth="584.0" promptText="Rechercher nom du produit ici" style="-fx-background-color: white; -fx-border-radius: 10; -fx-border-color: black;" AnchorPane.leftAnchor="15.0">
+            <TextField fx:id="keyWordTextField" layoutX="16.0" layoutY="19.0" prefHeight="48.0" prefWidth="584.0" promptText="Rechercher nom du produit ici" style="-fx-background-color: white; -fx-border-color: blue;" AnchorPane.leftAnchor="15.0">
                <font>
                   <Font size="15.0" />
                </font>
             </TextField>
-            <HBox layoutX="609.0" layoutY="14.0" prefHeight="57.0" prefWidth="256.0" AnchorPane.leftAnchor="609.0">
+            <HBox layoutX="611.0" layoutY="14.0" prefHeight="59.0" prefWidth="199.0" AnchorPane.leftAnchor="610.0">
                <children>
-                  <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="5.0" text="Actualiser">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <image>
-                              <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Update.png " />
-                           </image>
-                        </ImageView>
-                     </graphic>
+                  <Button fx:id="AjouterBtn" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="5.0" text="Ajouter" textFill="#9e9845">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
-                  </Button>
-                  <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="5.0" text="Ajouter" textFill="#9e9845">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgAjouter" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
-                           <image>
-                              <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Add-medecine.png" />
-                           </image>
+                           
                         </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="boutonModifier" contentDisplay="TOP" mnemonicParsing="false" text="Modifier" HBox.hgrow="ALWAYS">
+                     <graphic>
+                        <ImageView fx:id="imgModifier" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -78,23 +69,7 @@
                   </Button>
                   <Button fx:id="btnSupprimer" contentDisplay="TOP" mnemonicParsing="false" text="Supprimer" HBox.hgrow="ALWAYS">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Delete%20User.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
-                  <Button fx:id="boutonModifier" contentDisplay="TOP" mnemonicParsing="false" text="Modifier" HBox.hgrow="ALWAYS">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Edit%20Product.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="imgSupprimer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -116,6 +91,11 @@
                   </CheckBox>
                </children>
             </Pane>
+            <Label layoutX="107.0" layoutY="88.0" prefHeight="27.0" prefWidth="430.0" text="GESTION DES STOCKS DES MEDICAMENTS" textFill="#288012" underline="true" AnchorPane.leftAnchor="107.0" AnchorPane.topAnchor="88.0">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>

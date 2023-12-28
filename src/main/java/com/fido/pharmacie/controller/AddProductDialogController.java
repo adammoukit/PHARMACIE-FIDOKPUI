@@ -132,6 +132,18 @@ public class AddProductDialogController implements Initializable {
         }
 
 
+        // Vérifier si les champs prixProduit et qteProduit contiennent uniquement des chiffres
+        if (!isNumeric(prixText_) || !isNumeric(quantiteText_)) {
+            // Afficher une alerte ou lever une exception, car les valeurs ne sont pas valides
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Les valeurs de prix ou de quantité ne sont pas valides. Veuillez entrer des chiffres.");
+            alert.showAndWait();
+            return null; // Ou lève une exception si tu préfères
+        }
+
+
         // Convertir les chaînes en nombres
         try {
             Double prix = Double.parseDouble(prixText_);
@@ -159,6 +171,15 @@ public class AddProductDialogController implements Initializable {
             return null; // Ou lève une exception si tu préfères
         }
     }
+
+
+
+    private boolean isNumeric(String str) {
+        // Vérifier si la chaîne est numérique
+        return str.matches("\\d+");
+    }
+
+
 
 
 

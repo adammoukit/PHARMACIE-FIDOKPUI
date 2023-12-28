@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -63,42 +64,19 @@ public class DatabaseConnection {
         alert.setGraphic(imageView);
         */
 
+        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
+
+
         // Récupérer le stage de l'alerte et définir l'icône de la fenêtre
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png"));
+        stage.getIcons().add(new Image(absolutePath1));
 
         alert.showAndWait();
     }
 
 
 
-    //LA METHODE CI PERMET DE SAUVEGARDER LES DONNER DE LA BASE
-    public static void backupDatabase() {
-        // Créer un FileChooser
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir l'emplacement de sauvegarde");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers SQL", "*.sql"));
 
-        // Afficher la boîte de dialogue de sauvegarde et obtenir le fichier sélectionné
-        File selectedFile = fileChooser.showSaveDialog(new Stage());
-
-        if (selectedFile != null) {
-            // Utiliser le chemin complet de mysqldump pour la sauvegarde
-            String MYSQLDUMP_PATH = "C:/xampp/mysql/bin/mysqldump"; // Modifiez le chemin selon votre installation
-            String dumpCommand = MYSQLDUMP_PATH + " -u " + USERNAME + " -p" + PASSWORD + " --add-drop-database -B " + DATABASE_NAME + " -r " + selectedFile.getAbsolutePath();
-
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder(dumpCommand.split(" "));
-                processBuilder.start();
-                System.out.println("Base de données sauvegardée avec succès à l'emplacement : " + selectedFile.getAbsolutePath());
-                showAlert(Alert.AlertType.INFORMATION, "Erreur de Sauvegarde", "Erreur lors de la sauvegarde de la base de données.");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Erreur de Sauvegarde", "Erreur lors de la sauvegarde de la base de données.");
-            }
-        }
-    }
 
 
 

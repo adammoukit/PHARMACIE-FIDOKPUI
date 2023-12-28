@@ -9,6 +9,10 @@ module com.fido.pharmacie {
 
     requires org.controlsfx.controls;
     requires java.desktop;
+    requires kernel;
+    requires layout;
+
+
 
 
     opens com.fido.pharmacie to javafx.fxml;

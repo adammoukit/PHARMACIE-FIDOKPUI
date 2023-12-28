@@ -2,39 +2,54 @@ package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.Achat;
 import com.fido.pharmacie.model.DataPoint;
-import com.fido.pharmacie.model.DetailVente;
-import com.fido.pharmacie.model.MedicamentSearch;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.properties.TextAlignment;
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Timestamp;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
-// Importez les classes nécessaires
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import javafx.stage.FileChooser;
 
 
 
@@ -66,7 +81,73 @@ public class RapportVenteController implements Initializable {
     @FXML
     private AnchorPane vueLineChart;
 
+    @FXML
     private LineChart<String, Number> lineChart; // Change the type for Y to Number
+
+    @FXML
+    private DatePicker datePickerControll;
+
+    @FXML
+    private Button okButton;
+
+
+    @FXML
+    private Button btnIprimer;
+
+    @FXML
+    private Button btnPrecedent;
+
+    @FXML
+    private Button btnSuivant;
+
+    @FXML
+    private ImageView imgImprimer;
+
+
+
+    private int startIndex = 0;  // Indice de départ pour la fenêtre glissante
+    private int windowSize = 20; // Taille de la fenêtre glissante
+
+
+
+    @FXML
+    private void afficherDonneesSuivantes(ActionEvent event) {
+        if (startIndex + windowSize < AchatObservableList.size()) {
+            startIndex += windowSize;
+            afficherDonneesCourantes();
+        }
+    }
+
+    @FXML
+    private void afficherDonneesPrecedentes(ActionEvent event) {
+        if (startIndex - windowSize >= 0) {
+            startIndex -= windowSize;
+            afficherDonneesCourantes();
+        }
+    }
+
+    private void afficherDonneesCourantes() {
+        lineChart.getData().clear();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Flux des ventes");
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        for (int i = startIndex; i < Math.min(startIndex + windowSize, AchatObservableList.size()); i++) {
+            Achat achat = AchatObservableList.get(i);
+            LocalDateTime localDateTime = achat.getDateAchat().toLocalDateTime();
+            String formattedDate = localDateTime.format(dateFormatter);
+
+            DataPoint dataPoint = new DataPoint(achat.getId(), achat.getTotal());
+            series.getData().add(new XYChart.Data<>(formattedDate, achat.getTotal(), dataPoint));
+        }
+
+        // Ajouter la série au LineChart existant (déclaré dans le FXML)
+        lineChart.getData().add(series);
+    }
+
+
 
 
 
@@ -88,31 +169,220 @@ public class RapportVenteController implements Initializable {
     }
 
 
+    // Method to filter data in TableView and LineChart based on the selected date
+    private void filterDataByDate(LocalDate selectedDate) {
+        // Clear existing data in the LineChart
+        lineChart.getData().clear();
+
+        // Create a new series for the filtered data
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+        // Filter the data based on the selected date
+        List<Achat> filteredData = AchatObservableList.stream()
+                .filter(achat -> achat.getDateAchat().toLocalDateTime().toLocalDate().equals(selectedDate))
+                .collect(Collectors.toList());
+
+        // Update the data in the TableView
+        tableVente.setItems(FXCollections.observableArrayList(filteredData));
+
+        // Populate the series with filtered data
+        for (Achat achat : filteredData) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            String formattedDate = dateFormat.format(achat.getDateAchat());
+
+            // Create a DataPoint and add it to the series
+            DataPoint dataPoint = new DataPoint(achat.getId(), achat.getTotal());
+            series.getData().add(new XYChart.Data<>(formattedDate, achat.getTotal(), dataPoint));
+        }
+
+        // Add the series to the LineChart
+        lineChart.getData().add(series);
+    }
+
+
+
+    private void genererEtEnregistrerPDF() {
+        // Utiliser JavaFX FileChooser pour obtenir le chemin du fichier
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le fichier PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers PDF", "*.pdf"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            try (PdfWriter writer = new PdfWriter(selectedFile);
+                 PdfDocument pdf = new PdfDocument(writer);
+                 Document document = new Document(pdf)) {
+
+                // Définir les marges du document (30px à gauche et à droite, 50px en haut et en bas)
+                document.setMargins(30, 30, 50, 50);
+
+                // Ajouter le titre "RAPPORT DE VENTE" avec soulignement
+                Paragraph title = new Paragraph("RAPPORT DE VENTE").setBold();
+                title.setUnderline();
+                // Exemple d'utilisation de la propriété TextAlignment
+                title.setTextAlignment(TextAlignment.CENTER);
+                document.add(title);
+
+                // Ajouter une ligne de soulignement après le titre
+                document.add(new Paragraph().setUnderline().setMarginBottom(10));
+
+                // Calculer la largeur disponible pour la table en fonction des marges
+                float availableWidth = document.getPdfDocument().getDefaultPageSize().getWidth() - document.getLeftMargin() - document.getRightMargin();
+
+                // Créer une table pour les en-têtes et les valeurs
+                Table table = new Table(4); // 4 colonnes pour id, dateAchat, codeRecu, total
+
+                // Ajouter les en-têtes à la table avec une couleur de fond bleu clair
+                addHeaderCell(table, "ID");
+                addHeaderCell(table, "Date Achat");
+                addHeaderCell(table, "Code Recu");
+                addHeaderCell(table, "Total");
+
+                // Ajouter les valeurs de la TableView à la table
+                for (Achat achat : tableVente.getItems()) {
+                    addCell(table, String.valueOf(achat.getId()));
+                    addCell(table, achat.getDateAchat().toString());
+                    addCell(table, achat.getCodeRecu());
+                    // Ajouter " FCFA" devant chaque valeur dans la colonne "Total"
+                    addCell(table, String.valueOf(achat.getTotal()) + " FCFA");
+                }
+
+                // Ajouter une dernière ligne pour le total
+                Cell totalCell = new Cell(1, 3).add(new Paragraph("TOTAL"));
+                totalCell.setTextAlignment(TextAlignment.CENTER);  // Centrer le texte
+                table.addCell(totalCell);
+
+                // Calculer la somme des valeurs de la colonne "Total"
+                double totalSum = tableVente.getItems().stream().mapToDouble(Achat::getTotal).sum();
+                // Ajouter la somme à la colonne "Total" de la dernière ligne
+                Cell totalSumCell = new Cell().add(new Paragraph(String.valueOf(totalSum) + " FCFA"));
+                totalSumCell.setTextAlignment(TextAlignment.CENTER);  // Centrer le texte
+                totalSumCell.setBackgroundColor(ColorConstants.YELLOW);  // Définir la couleur de fond en jaune
+                table.addCell(totalSumCell);
+
+                // Ajuster la largeur de la table pour occuper l'espace disponible
+                table.setWidth(availableWidth);
+
+                // Ajouter la table au document PDF
+                document.add(table);
+
+                // Afficher un message de réussite
+                System.out.println("PDF généré avec succès.");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    // Méthode pour ajouter une cellule centrée à la table
+    private void addCell(Table table, String content) {
+        Cell cell = new Cell();
+
+        // Ajouter "FCFA" après le prix dans la colonne "Total"
+        if ("Total".equals(content)) {
+            content += " FCFA";
+        }
+
+
+        // Ajouter "FCFA" devant les valeurs de la colonne "Total"
+        if ("Total".equals(content)) {
+            cell.add(new Paragraph("FCFA " + content));
+        } else {
+            cell.add(new Paragraph(content));
+        }
+        cell.setTextAlignment(TextAlignment.CENTER); // Centrer le contenu
+        table.addCell(cell);
+    }
+
+    // Méthode pour ajouter une cellule centrée à la table avec couleur de fond bleu clair pour les en-têtes
+    private void addHeaderCell(Table table, String content) {
+        com.itextpdf.layout.element.Cell cell = new com.itextpdf.layout.element.Cell();
+
+        // Créer un paragraphe avec le contenu
+        Paragraph paragraph = new Paragraph(content);
+
+        // Centrer le texte à l'intérieur du paragraphe
+        paragraph.setTextAlignment(TextAlignment.CENTER);
+
+        // Ajouter le paragraphe à la cellule
+        cell.add(paragraph);
+
+        // Définir la couleur de fond de la cellule
+        cell.setBackgroundColor(new DeviceRgb(173, 216, 230)); // Couleur de fond bleu clair
+
+        // Ajouter la cellule à la table
+        table.addHeaderCell(cell);
+    }
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
-        tableVente.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
+        tableVente.setStyle("-fx-base: rgb(158, 152, 69);");
 
 
-        // Créer une liste observable pour stocker les valeurs
-       /* ObservableList<String> periodes = FXCollections.observableArrayList("Quotidien", "Hebdomadaire", "Mensuel");
+        // Load the image for AjouterBtn into the existing ImageView (imgAjouter)
+        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Print.png").toUri().toString();
+        Image imageAjouter = new Image(absolutePath2);
 
-        // Ajouter la liste observable à la ComboBox
-        comboBoxPeriode.setItems(periodes);
+        // Ajustez la taille de l'ImageView ici
+        imgImprimer.setImage(imageAjouter);
+        imgImprimer.setFitWidth(30); // Réglez la largeur souhaitée
+        imgImprimer.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
 
-        // Définir une valeur par défaut (si nécessaire)
-        comboBoxPeriode.setValue("Quotidien");
+        btnIprimer.setGraphic(imgImprimer);
 
-        */
 
+        // Initialize startIndex to 0
+        startIndex = 0;
+
+        // Set windowSize to the desired initial number of products to display
+        windowSize = 20;
+
+
+        // Call afficherDonneesCourantes to display the initial 20 products
+        afficherDonneesCourantes();
+
+
+        // Initialiser le DatePicker avec la date actuelle
+        datePickerControll.setValue(LocalDate.now());
+
+        // Add an event handler to the okButton
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Handle the event when the okButton is clicked
+
+                // Get the selected date from the datePicker
+                LocalDate selectedDate = datePickerControll.getValue();
+
+                // Filter the data based on the selected date
+                filterDataByDate(selectedDate);
+            }
+        });
+
+
+        // Ajoutez un gestionnaire d'événements pour le bouton btnImprimer
+        // Ajoutez un gestionnaire d'événements pour le bouton btnImprimer
+        btnIprimer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Générez le fichier PDF avec les données de la tableVente
+                // Générez le fichier PDF
+                genererEtEnregistrerPDF();
+
+            }
+        });
 
         // Initialize the lineChart
-        CategoryAxis xAxis = new CategoryAxis(); // Change this line
+       /* CategoryAxis xAxis = new CategoryAxis(); // Change this line
         NumberAxis yAxis = new NumberAxis();
         lineChart = new LineChart<>(xAxis, yAxis); // Keep this line
+
+        */
 
 
 
@@ -135,7 +405,7 @@ public class RapportVenteController implements Initializable {
             series.setName("Flux des ventes");
 
             // Create SimpleDateFormat with your desired date format
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
 
             while (queryOutput.next()) {
@@ -255,6 +525,26 @@ public class RapportVenteController implements Initializable {
             // Ajouter les propriétés de redimensionnement pour que le LineChart prenne les dimensions du parent
             lineChart.prefWidthProperty().bind(vueLineChart.widthProperty());
             lineChart.prefHeightProperty().bind(vueLineChart.heightProperty());
+
+
+
+
+
+            // Ajouter des gestionnaires d'événements pour le survol de l'AnchorPane
+            vueLineChart.setOnMouseEntered(event -> {
+                btnSuivant.setVisible(true);
+                btnPrecedent.setVisible(true);
+            });
+
+            vueLineChart.setOnMouseExited(event -> {
+                btnSuivant.setVisible(false);
+                btnPrecedent.setVisible(false);
+            });
+
+            // Ajouter des gestionnaires d'événements pour les boutons Suivant et Précédent
+            btnSuivant.setOnAction(this::afficherDonneesSuivantes);
+            btnPrecedent.setOnAction(this::afficherDonneesPrecedentes);
+
 
 
             //cette qui fais afficher l'alert qui affiche l'id et le prix de la vente au clic sur les points dans le lineChart

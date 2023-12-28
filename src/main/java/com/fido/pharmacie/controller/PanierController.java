@@ -15,6 +15,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,7 +28,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,6 +42,8 @@ import java.sql.Statement;
 
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
+
+import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -308,7 +316,7 @@ public class PanierController implements Initializable {
         alert.showAndWait();
     }
 
-
+/*
     private void handleValiderButton() {
 
 
@@ -323,6 +331,9 @@ public class PanierController implements Initializable {
                 double coutTotal = calculerCoutTotalPanier();
 
                 if (montantClient < coutTotal) {
+                    // Émettre un bip sonore
+                    Toolkit.getDefaultToolkit().beep();
+
                     // Afficher une alerte si le montant versé est inférieur au coût total
                     afficherAlerte("Montant insuffisant", "Le montant versé est inférieur au coût total.");
                 } else {
@@ -330,7 +341,7 @@ public class PanierController implements Initializable {
                     double reste = montantClient - coutTotal;
 
                     // Afficher le résultat dans l'étiquette remiseLabel
-                    remiseLabel.setText(String.format("Reste : %.2f FCFA", reste));
+                    remiseLabel.setText(String.format(" %.2f FCFA", reste));
 
 
                     // Générer le reçu avec les informations des produits achetés
@@ -350,6 +361,9 @@ public class PanierController implements Initializable {
 
 
         } else {
+            // Émettre un bip sonore
+            Toolkit.getDefaultToolkit().beep();
+
             // Gérer le cas où le champ est vide
             afficherAlerte("Champ vide", "Veuillez entrer le montant versé par le client.");
         }
@@ -361,16 +375,7 @@ public class PanierController implements Initializable {
         // ou utiliser une bibliothèque externe pour l'impression, par exemple, Apache PDFBox pour générer un PDF.
 
         // Exemple d'utilisation de PrinterJob pour l'impression
-       /*
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null) {
-            boolean success = job.printPage(createRecuNode());
-            if (success) {
-                job.endJob();
-            }
-        }
 
-        */
 
         // Vérifier si la quantité dans le panier est disponible dans le stock
         boolean stockSuffisant = true;
@@ -387,14 +392,29 @@ public class PanierController implements Initializable {
             // Vérifier si la quantité achetée est disponible dans le stock
             if (quantiteAchetee > produit.getQuantite()) {
                 stockSuffisant = false;
-                // Gérer le cas où la quantité achetée est supérieure à celle du stock (vous pouvez afficher un message d'erreur, par exemple)
+                // Gérer le cas où la quantité achetée est supérieure à celle du stock
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erreur ");
                 alert.setHeaderText(null);
                 alert.setContentText("STOCK INSUFFISANT POUR: " + produit.getNom_medicament() + ", QUANTITE EN STOCK: " + produit.getQuantite());
                 alert.showAndWait();
-                break;  // Sortir de la boucle dès qu'une condition n'est pas satisfaite
+                // Continuer avec le produit suivant sans effectuer les actions de mise à jour
+                continue;
             }
+
+            // Ajouter à la liste temporaire
+            elementsASupprimer.add(panierItem);
+        }
+
+        // Si le stock n'est pas suffisant pour au moins un produit, ne pas continuer le reste de la logique
+        if (!stockSuffisant) {
+            return;
+        }
+
+        // Actions de mise à jour en dehors de la boucle
+        for (PanierItem panierItem : elementsASupprimer) {
+            MedicamentSearch produit = panierItem.getMedicament();
+            int quantiteAchetee = panierItem.getQte();
 
             // Soustraire la quantité du panier de la quantité du stock
             int nouvelleQuantiteStock = produit.getQuantite() - quantiteAchetee;
@@ -403,59 +423,167 @@ public class PanierController implements Initializable {
             // Mise à jour de la quantité dans la base de données
             updateQuantiteInDatabase(produit.getID(), nouvelleQuantiteStock);
             // Autres actions à effectuer si la condition sur le produit est valide
-
-            elementsASupprimer.add(panierItem);  // Ajouter à la liste temporaire
         }
-
-
-
-        // Si le stock n'est pas suffisant, ne pas continuer le reste de la logique
-        if (!stockSuffisant) {
-            return;
-        }
-
-
 
         // Insert purchase information into the "achat" table
         insertAchatData(codeRecu);
 
-
-        // Afficher l'icone de chargement apres la suppression dans le panier
+        // Afficher l'icone de chargement après la suppression dans le panier
         showLoadingIcon();
 
         updateTableAfterDelay();
 
-        //AFFICHER LE RECU ICI
+        // AFFICHER LE RECU ICI
         Node recuNode = createRecuNode();
         afficherRecu(recuNode);
 
         // Vider la table du panier
-        // panier.clear();
-
-        // Mettre à jour la TableView après avoir vidé le panier
-        //panierTable.getItems().clear();
-        //panierTable.refresh();
-
-        // Supprimer les éléments de la liste principale après avoir terminé l'itération
         panier.removeAll(elementsASupprimer);
-
 
         // Mettre à jour la TableView après avoir vidé le panier
         panierTable.getItems().clear();
         panierTable.refresh();
 
+        btnValider.setDisable(true);
+    }
+    */
 
 
+    private void handleValiderButton() {
+        // Récupérer le montant entré par le client depuis le TextField
+        String montantClientText = paiementTextfield.getText();
+
+        if (montantClientText != null && !montantClientText.isEmpty()) {
+            try {
+                double montantClient = Double.parseDouble(montantClientText);
+
+                // Calculer la remise en soustrayant le montant du coût total
+                double coutTotal = calculerCoutTotalPanier();
+
+                if (montantClient < coutTotal) {
+                    // Émettre un bip sonore
+                    Toolkit.getDefaultToolkit().beep();
+
+                    // Afficher une alerte si le montant versé est inférieur au coût total
+                    afficherAlerte("Montant insuffisant", "Le montant versé est inférieur au coût total.");
+                } else {
+
+                    // Générer le reçu avec les informations des produits achetés
+                    genererRecu();
+                }
+            } catch (NumberFormatException e) {
+                // Gérer le cas où l'entrée du client n'est pas un nombre valide
+                remiseLabel.setText("Montant invalide");
+            }
+        } else {
+            // Émettre un bip sonore
+            Toolkit.getDefaultToolkit().beep();
+
+            // Gérer le cas où le champ est vide
+            afficherAlerte("Champ vide", "Veuillez entrer le montant versé par le client.");
+        }
+    }
+
+    private void genererRecu() {
+        // Logique pour générer le reçu
+        // Vous pouvez utiliser une bibliothèque d'impression, comme JavaFX PrinterJob,
+        // ou utiliser une bibliothèque externe pour l'impression, par exemple, Apache PDFBox pour générer un PDF.
+
+        // Exemple d'utilisation de PrinterJob pour l'impression
+    /*
+    PrinterJob job = PrinterJob.createPrinterJob();
+    if (job != null) {
+        boolean success = job.printPage(createRecuNode());
+        if (success) {
+            job.endJob();
+        }
+    }
+    */
+
+        // Vérifier si la quantité dans le panier est disponible dans le stock
+        boolean stockSuffisant = true;
+
+        List<PanierItem> elementsASupprimer = new ArrayList<>();  // Liste temporaire
+
+        for (PanierItem panierItem : panier) {
+            // Récupérer le produit du panier
+            MedicamentSearch produit = panierItem.getMedicament();
+
+            // Récupérer la quantité achetée
+            int quantiteAchetee = panierItem.getQte();
+
+            // Vérifier si la quantité achetée est disponible dans le stock
+            if (quantiteAchetee > produit.getQuantite()) {
+
+                // Émettre un bip sonore
+                Toolkit.getDefaultToolkit().beep();
+
+                stockSuffisant = false;
+                // Gérer le cas où la quantité achetée est supérieure à celle du stock
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur ");
+                alert.setHeaderText(null);
+                alert.setContentText("STOCK INSUFFISANT POUR: " + produit.getNom_medicament() + ", QUANTITE EN STOCK: " + produit.getQuantite());
+                alert.showAndWait();
+                // Continuer avec le produit suivant sans effectuer les actions de mise à jour
+                continue;
+            }
+
+            // Ajouter à la liste temporaire
+            elementsASupprimer.add(panierItem);
+        }
+
+        // Si le stock n'est pas suffisant pour au moins un produit, ne pas continuer le reste de la logique
+        if (!stockSuffisant) {
+
+            return;
+        }
+
+        // Calculer la remise en soustrayant le montant du coût total
+        double montantClient = Double.parseDouble(paiementTextfield.getText());
+        double coutTotal = calculerCoutTotalPanier();
+        double reste = montantClient - coutTotal;
+
+        // Afficher le résultat dans l'étiquette remiseLabel si la remise est valide
+        remiseLabel.setText(String.format(" %.2f FCFA", reste));
+
+        // Actions de mise à jour en dehors de la boucle
+        for (PanierItem panierItem : elementsASupprimer) {
+            MedicamentSearch produit = panierItem.getMedicament();
+            int quantiteAchetee = panierItem.getQte();
+
+            // Soustraire la quantité du panier de la quantité du stock
+            int nouvelleQuantiteStock = produit.getQuantite() - quantiteAchetee;
+            produit.setQuantite(nouvelleQuantiteStock);
+
+            // Mise à jour de la quantité dans la base de données
+            updateQuantiteInDatabase(produit.getID(), nouvelleQuantiteStock);
+            // Autres actions à effectuer si la condition sur le produit est valide
+        }
+
+        // Insert purchase information into the "achat" table
+        insertAchatData(codeRecu);
+
+        // Afficher l'icone de chargement après la suppression dans le panier
+        showLoadingIcon();
+
+        updateTableAfterDelay();
+
+        // AFFICHER LE RECU ICI
+        Node recuNode = createRecuNode();
+        afficherRecu(recuNode);
+
+        // Vider la table du panier
+        panier.removeAll(elementsASupprimer);
+
+        // Mettre à jour la TableView après avoir vidé le panier
+        panierTable.getItems().clear();
+        panierTable.refresh();
 
         btnValider.setDisable(true);
-
-
-
-
-
-
-
     }
+
+
 
     /*
     private double getTotalCoutPanier() {
@@ -562,11 +690,16 @@ public class PanierController implements Initializable {
         // Centrez le contenu de la VBox
         recuLayout.setAlignment(Pos.CENTER);
 
-        // Créez une scène avec une largeur fixe de 80 mm
-        Scene scene = new Scene(recuLayout, convertMmToPixels(80), 600); // La hauteur est arbitraire, vous pouvez ajuster au besoin
+        // Créez une scène avec une largeur fixe de 80 mm (ajustez la hauteur en conséquence)
+        Scene tempScene = new Scene(recuLayout, convertMmToPixels(80), 600);
 
-
-        // Ajoutez d'autres informations pertinentes, telles que la date, etc.
+        // Si la hauteur du contenu dépasse une certaine limite, ajoutez une ScrollPane
+        if (recuLayout.getBoundsInParent().getHeight() > tempScene.getHeight()) {
+            ScrollPane scrollPane = new ScrollPane(recuLayout);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            return scrollPane;
+        }
 
         return recuLayout;
     }
@@ -583,11 +716,17 @@ public class PanierController implements Initializable {
         recuStage.setTitle("Reçu de l'achat");
         recuStage.initModality(Modality.WINDOW_MODAL);
 
-        Scene scene = new Scene(new Group(recuNode)); // Ajustez la taille en conséquence
+        // Créez une ScrollPane pour envelopper le contenu du reçu
+        ScrollPane scrollPane = new ScrollPane(recuNode);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+
+        Scene scene = new Scene(new Group(scrollPane), convertMmToPixels(80), 600); // Ajustez la taille en conséquence
         recuStage.setScene(scene);
 
         recuStage.show();
     }
+
 
 
     public static void updateQuantiteInDatabase(int produitId, int nouvelleQuantite) {
@@ -699,6 +838,10 @@ public class PanierController implements Initializable {
 
 
 
+
+
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -713,7 +856,7 @@ public class PanierController implements Initializable {
 
         btnValider.setOnAction(event ->
 
-                handleValiderButton()
+            handleValiderButton()
 
         );
 
@@ -779,7 +922,10 @@ public class PanierController implements Initializable {
             public TableCell<PanierItem, Void> call(final TableColumn<PanierItem, Void> param) {
                 return new TableCell<>() {
                     private final Button actionButton = new Button();
-                    private final ImageView imageView = new ImageView(new Image("file:/C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Delete.png"));
+
+                    String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Delete.png").toUri().toString();
+
+                    private final ImageView imageView = new ImageView(new Image(absolutePath1));
 
 
                     {

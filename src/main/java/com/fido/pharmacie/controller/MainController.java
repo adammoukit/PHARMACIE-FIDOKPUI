@@ -1,6 +1,9 @@
 package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 
 import javafx.collections.ObservableList;
@@ -17,12 +20,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 
@@ -30,22 +38,7 @@ import java.util.Date;
 
 
 public class MainController implements Initializable {
-    @FXML
-    private TableView<MedicamentSearch> TableMedicament;
-    @FXML
-    private TableColumn<MedicamentSearch, Integer> ID_Medicament_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, String> nomMedicament_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, String> Description_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, String> Dosage_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, Double> Prix_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, Date> DateExpiration_tableColumn;
-    @FXML
-    private TableColumn<MedicamentSearch, Integer> Quantite_tableColumn;
+
 
 
     @FXML
@@ -62,14 +55,43 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem menuItemVente;
 
+    @FXML
+    private Label Heure;
+
+    @FXML
+    private Label dateDuJour;
+
+    @FXML
+    private Label nomUtilsateur;
+
 
 
 
 
     @FXML
     private void handleSaveAction(ActionEvent event) {
-        DatabaseConnection.backupDatabase();
+        //DatabaseConnection.backupDatabase();
     }
+
+
+
+    public void updateUserInfo(String username) {
+        // Mettre à jour le label du nom d'utilisateur
+        nomUtilsateur.setText(username);
+
+        // Mettre à jour le label de la date du jour
+        dateDuJour.setText("" + LocalDate.now());
+
+        // Mettre à jour le label de l'heure au format HH:mm:ss
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            Heure.setText(currentTime.format(formatter));
+        }), new KeyFrame(Duration.seconds(1)));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+    }
+
 
 
 

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,9 +21,9 @@
 
 <AnchorPane prefHeight="559.0" prefWidth="994.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.RapportVenteController">
    <children>
-      <AnchorPane layoutX="-3.0" layoutY="86.0" prefHeight="473.0" prefWidth="994.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
+      <AnchorPane layoutX="-3.0" layoutY="136.0" prefHeight="423.0" prefWidth="994.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="136.0">
          <children>
-            <GridPane layoutX="130.0" layoutY="71.0" prefHeight="444.0" prefWidth="994.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane layoutX="130.0" layoutY="18.0" prefHeight="423.0" prefWidth="994.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -42,7 +46,7 @@
                   </TableView>
                   <AnchorPane fx:id="vueLineChart" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                      <children>
-                        <LineChart fx:id="lineChart" layoutX="-1.0" layoutY="14.0" prefHeight="444.0" prefWidth="497.0" title="FLUX DES VENTES" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <LineChart fx:id="lineChart" layoutX="-1.0" layoutY="28.0" prefHeight="473.0" prefWidth="497.0" title="FLUX DES VENTES" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <xAxis>
                             <CategoryAxis label="DATE D'ACHAT" side="BOTTOM" />
                           </xAxis>
@@ -50,7 +54,12 @@
                             <NumberAxis label="TOTAL" side="LEFT" />
                           </yAxis>
                         </LineChart>
+                         <Button fx:id="btnSuivant" layoutX="431.0" layoutY="187.0" mnemonicParsing="false" text="Suivant" visible="false" AnchorPane.bottomAnchor="211.0" AnchorPane.leftAnchor="431.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="187.0" />
+                         <Button fx:id="btnPrecedent" layoutX="66.0" layoutY="187.0" mnemonicParsing="false" text="Précedant" visible="false" AnchorPane.bottomAnchor="211.0" AnchorPane.leftAnchor="66.0" AnchorPane.topAnchor="187.0" />
                      </children>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </AnchorPane>
                </children>
             </GridPane>
@@ -77,5 +86,24 @@
             </LinearGradient>
          </textFill>
       </Label>
+      <AnchorPane layoutX="613.0" layoutY="48.0" prefHeight="79.0" prefWidth="342.0" style="-fx-background-color: GREY;" AnchorPane.bottomAnchor="432.0" AnchorPane.rightAnchor="39.0" AnchorPane.topAnchor="48.0">
+         <children>
+            <DatePicker fx:id="datePickerControll" layoutX="8.0" layoutY="36.0" prefHeight="25.0" prefWidth="256.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="36.0" />
+            <Label layoutX="8.0" layoutY="14.0" text="Choisir la date" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Button fx:id="okButton" layoutX="284.0" layoutY="53.0" mnemonicParsing="false" text="OK" AnchorPane.bottomAnchor="6.0" AnchorPane.rightAnchor="6.0" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="btnIprimer" layoutX="23.0" layoutY="63.0" mnemonicParsing="false" text="Imprimer">
+         <graphic>
+            <ImageView fx:id="imgImprimer" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" />
+         </graphic>
+         <font>
+            <Font name="Gill Sans MT" size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

@@ -13,18 +13,15 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="571.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
+<AnchorPane prefHeight="549.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
    <children>
       <BorderPane layoutY="6.0" prefHeight="390.0" prefWidth="639.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <MenuBar style="-fx-background-color: green;" BorderPane.alignment="CENTER">
+            <MenuBar BorderPane.alignment="CENTER">
               <menus>
                 <Menu mnemonicParsing="false" text="Fichier">
                   <items>
@@ -69,368 +66,172 @@
          <center>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <AnchorPane prefHeight="116.0" prefWidth="794.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="6.0">
+                  <AnchorPane prefHeight="95.0" prefWidth="1294.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="6.0">
                      <children>
-                        <HBox prefHeight="90.0" prefWidth="982.0" spacing="2.0">
+                        <Pane layoutX="1024.0" layoutY="9.0" prefHeight="78.0" prefWidth="249.0" style="-fx-background-color: blue sky;" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="9.0">
                            <children>
-                              <GridPane prefHeight="80.0" prefWidth="946.0">
-                                <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="96.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.0" minWidth="10.0" prefWidth="232.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="148.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="341.0" minWidth="10.0" prefWidth="279.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.0" minWidth="10.0" prefWidth="150.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <HBox GridPane.halignment="CENTER">
-                                       <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherDashboard" prefHeight="57.0" prefWidth="82.0" text="Dashboard">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Dashboard%20Layout.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="12.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator orientation="VERTICAL" prefHeight="57.0" prefWidth="4.0">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Separator>
-                                       </children>
-                                       <GridPane.margin>
-                                          <Insets left="5.0" />
-                                       </GridPane.margin>
-                                    </HBox>
-                                    <HBox prefHeight="64.0" prefWidth="216.0" GridPane.columnIndex="1">
-                                       <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" prefHeight="64.0" prefWidth="61.0" text="GESTION">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Medecine_manage.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="CATEGORIE">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Category.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="RECHERCHER">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Search.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                       </children>
-                                       <GridPane.margin>
-                                          <Insets left="5.0" />
-                                       </GridPane.margin>
-                                       <padding>
-                                          <Insets bottom="5.0" />
-                                       </padding>
-                                    </HBox>
-                                    <Separator orientation="VERTICAL" GridPane.columnIndex="2" />
-                                    <Separator GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                                    <Label prefHeight="26.0" prefWidth="133.0" text="MEDICAMENTS" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font name="Courier New Bold" size="19.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="5.0" />
-                                       </padding>
-                                    </Label>
-                                    <HBox prefHeight="64.0" prefWidth="142.0" GridPane.columnIndex="2">
-                                       <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="GESTION">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Add_User.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="MODIFIER">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Edit%20User.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator orientation="VERTICAL">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Separator>
-                                       </children>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       <GridPane.margin>
-                                          <Insets left="5.0" />
-                                       </GridPane.margin>
-                                       <padding>
-                                          <Insets bottom="5.0" />
-                                       </padding>
-                                    </HBox>
-                                    <Separator prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                                    <Label text="CLIENTS" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font name="Courier New Bold" size="19.0" />
-                                       </font>
-                                       <GridPane.margin>
-                                          <Insets top="5.0" />
-                                       </GridPane.margin>
-                                    </Label>
-                                    <HBox GridPane.columnIndex="3">
-                                       <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="Nouvelle" wrapText="true">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Sell-medecine.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="Historique">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/sell-History.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" text="Statistique">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Statistics%20Report.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVuePanier" text="Panier">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Shopping%20Cart.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Button>
-                                          <Separator orientation="VERTICAL">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Separator>
-                                       </children>
-                                       <GridPane.margin>
-                                          <Insets left="5.0" />
-                                       </GridPane.margin>
-                                       <padding>
-                                          <Insets bottom="5.0" />
-                                       </padding>
-                                    </HBox>
-                                    <Separator prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                                    <Label text="VENTES" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font name="Courier New Bold" size="19.0" />
-                                       </font>
-                                       <GridPane.margin>
-                                          <Insets top="5.0" />
-                                       </GridPane.margin>
-                                    </Label>
-                                    <HBox prefHeight="59.0" prefWidth="173.0" GridPane.columnIndex="4">
-                                       <children>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueFournisseurs" text="GESTION">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@Image/Fournisseurs.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" text="LISTE" wrapText="true">
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../../Image/Eye.png" />
-                                                   </image>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </ImageView>
-                                             </graphic>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font name="Courier New" size="11.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator orientation="VERTICAL">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Separator>
-                                       </children>
-                                       <GridPane.margin>
-                                          <Insets left="5.0" />
-                                       </GridPane.margin>
-                                       <padding>
-                                          <Insets bottom="5.0" />
-                                       </padding>
-                                    </HBox>
-                                    <Separator prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                                    <Label text="FOURNISSEURS" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font name="Courier New Bold" size="19.0" />
-                                       </font>
-                                       <GridPane.margin>
-                                          <Insets top="5.0" />
-                                       </GridPane.margin>
-                                    </Label>
-                                 </children>
-                              </GridPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" layoutX="4.0" layoutY="106.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="3.0">
-                           <children>
-                              <Separator prefHeight="10.0" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                        <Pane layoutX="995.0" layoutY="10.0" prefHeight="78.0" prefWidth="292.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="10.0">
-                           <children>
-                              <Label layoutX="7.0" layoutY="6.0" text="UTILISATEUR :" underline="true">
+                              <Label layoutX="7.0" layoutY="6.0" text="UTILISATEUR :" textFill="#dddddd" underline="true">
                                  <font>
                                     <Font name="System Bold" size="11.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="7.0" layoutY="31.0" text="DATE DU JOUR :" underline="true">
+                              <Label layoutX="7.0" layoutY="31.0" text="DATE DU JOUR :" textFill="#dddddd" underline="true">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="7.0" layoutY="56.0" text="HEURE :" underline="true">
+                              <Label layoutX="7.0" layoutY="56.0" text="HEURE :" textFill="#dddddd" underline="true">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="nomUtilsateur" layoutX="99.0" layoutY="-6.0" prefHeight="37.0" prefWidth="180.0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="dateDuJour" layoutX="112.0" layoutY="31.0" prefHeight="17.0" prefWidth="166.0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="Heure" layoutX="67.0" layoutY="56.0" prefHeight="17.0" prefWidth="216.0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
                            </children>
                         </Pane>
+                        <HBox prefHeight="77.0" prefWidth="502.0" spacing="5.0" AnchorPane.leftAnchor="6.0" AnchorPane.topAnchor="10.0">
+                           <children>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherDashboard" prefHeight="67.0" prefWidth="69.0" text="DASHBOARD">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Dashboard%20Layout.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVuePanier" prefHeight="67.0" prefWidth="72.0" text="NOUVELLE VENTE" textAlignment="CENTER" wrapText="true">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Plus.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Button>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueMedicaments" prefHeight="67.0" prefWidth="76.0" text="GESTION DES MEDICAMENTS" textAlignment="CENTER" wrapText="true">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Medecine_manage.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVuePanier" prefHeight="67.0" prefWidth="72.0" text="PANIER">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Shopping%20Cart.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Button>
+                              <Separator orientation="VERTICAL">
+                                 <HBox.margin>
+                                    <Insets left="6.0" />
+                                 </HBox.margin>
+                              </Separator>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="67.0" prefWidth="76.0" text="FOURNISSEURS">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Supplier.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Button>
+                              <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="67.0" prefWidth="99.0" text="GESTION DES ENTREES/SORTIES" textAlignment="CENTER" wrapText="true">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@MainViewImage/Entree_Sortie.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
+                        </HBox>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="mainContainer" layoutX="5.0" layoutY="116.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="116.0" />
+                  <AnchorPane fx:id="mainContainer" layoutX="5.0" layoutY="114.0" prefHeight="587.0" prefWidth="1289.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="114.0">
+                     <children>
+                        <BorderPane layoutX="157.0" layoutY="80.0" />
+                     </children>
+                  </AnchorPane>
+                  <Separator layoutX="-27.0" layoutY="172.0" prefHeight="10.0" />
+                  <HBox alignment="CENTER" layoutX="-1.0" layoutY="196.0" prefHeight="14.0" prefWidth="1300.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" />
+                  <Separator layoutX="14.0" layoutY="95.0" prefHeight="14.0" prefWidth="1300.0" style="-fx-border-width: 10;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
          </center>
