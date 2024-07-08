@@ -1,5 +1,9 @@
 package com.fido.pharmacie.controller;
 
+import com.fido.pharmacie.HelloApplication;
+import com.fido.pharmacie.controller.Journal.Journal;
+import com.fido.pharmacie.model.Role;
+import com.fido.pharmacie.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,13 +41,20 @@ public class LoginPageController  implements Initializable {
     private TextField nomUtilisateur;
 
 
+    private HelloApplication mainApp;
+
+    public void setMainApp(HelloApplication mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    private static User currentUser;
 
 
 
 
 
     @FXML
-    private void handleLoginButtonAction(ActionEvent event) {
+    private void handleLoginButtonAction(ActionEvent event) throws IOException {
         String username = nomUtilisateur.getText();
         String password = mdpTextfield.getText();
 
@@ -54,11 +65,20 @@ public class LoginPageController  implements Initializable {
         }
 
         // Authentification de l'utilisateur
-        if (authenticateUser(username, password)) {
+        User authenticatedUser = authenticate(username, password);
+        if (authenticatedUser != null) {
+
+            showAlert(Alert.AlertType.INFORMATION, "REUSSI", "CONNEXON REUSSI.");
+            // Authentification réussie, afficher le rôle de l'utilisateur dans la console
+            String role = authenticatedUser.getRole().getName();
+            System.out.println("Rôle de l'utilisateur : " +role );
+
+            // Enregistrer les données de connexion dans le journal
+            Journal.log(username,  role, "Connexion réussie");
 
             // Authentification réussie, fermer la fenêtre de connexion et afficher la nouvelle vue
             closeLoginWindow();
-            showMainView(username);
+            mainApp.showMainView();
         } else {
             showAlert(Alert.AlertType.ERROR, "Échec de l'authentification", "Nom d'utilisateur ou mot de passe incorrect.");
         }
@@ -68,29 +88,48 @@ public class LoginPageController  implements Initializable {
 
 
 
+    public static User getCurrentUser() {
+        return currentUser;
+    }
 
 
-    private boolean authenticateUser(String username, String password) {
+
+    public static User authenticate(String username, String password) {
         try {
             Connection connection = DatabaseConnection.getConnection();
-            String query = "SELECT * FROM utilisateurs WHERE username = ? AND mot_de_passe = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            String sql = "SELECT u.id, u.username, u.password, r.id as role_id, r.name as role_name FROM utilisateur u JOIN roles r ON u.role_id = r.id WHERE u.username = ? AND u.password = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, username);
                 preparedStatement.setString(2, password);
 
-                ResultSet resultSet = preparedStatement.executeQuery();
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
 
-                // Si l'utilisateur existe dans la base de données, l'authentification est réussie
-                return resultSet.next();
+                        User user = new User();
+                        user.setId(rs.getInt("id"));
+                        user.setUsername(rs.getString("username"));
+                        user.setPassword(rs.getString("password"));
+                        Role role = new Role();
+                        role.setId(rs.getInt("role_id"));
+                        role.setName(rs.getString("role_name"));
+                        user.setRole(role);
+                        currentUser = user; // Stocker l'utilisateur actuellement connecté
+                        return user;
+
+                    }
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Erreur de base de données", "Erreur lors de l'authentification.");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur de base de données", "Erreur lors de l'authentification.");
         }
-        return false;
+        return null;
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
+    private static void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -118,7 +157,7 @@ public class LoginPageController  implements Initializable {
 
             // Appeler une méthode du contrôleur pour mettre à jour les informations utilisateur
             mainController.updateUserInfo(username);
-
+            //mainController.setPrimaryStage(primaryStage);
             // Créer une nouvelle scène
             Scene scene = new Scene(root);
 

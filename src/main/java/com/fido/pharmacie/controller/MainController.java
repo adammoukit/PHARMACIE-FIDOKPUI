@@ -1,6 +1,7 @@
 package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
+import com.fido.pharmacie.HelloApplication;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,10 +14,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
 
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.image.Image;
@@ -26,14 +32,13 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.*;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Date;
-
 
 
 
@@ -41,12 +46,15 @@ public class MainController implements Initializable {
 
 
 
+
+    private Stage primaryStage;
+
     @FXML
     private AnchorPane mainContainer;
 
-
-    @FXML
-    private Menu menuRapport;
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
 
     @FXML
     private MenuItem menuItemStock;
@@ -64,6 +72,26 @@ public class MainController implements Initializable {
     @FXML
     private Label nomUtilsateur;
 
+    @FXML
+    private Button btnLog_out;
+
+    private HelloApplication mainApp;
+
+    @FXML
+    private Menu notificationMenu;
+
+    private Label badgeLabel;
+
+    private DashboardController dashboardControllerInstance;
+
+    DashboardController dashboardCont = new DashboardController();
+
+
+
+    public void setMainApp(HelloApplication mainApp) {
+        this.mainApp = mainApp;
+    }
+
 
 
 
@@ -74,6 +102,19 @@ public class MainController implements Initializable {
     }
 
 
+    @FXML
+    private void handleLogOut() throws IOException {
+        Stage stage = (Stage) btnLog_out.getScene().getWindow();
+        stage.close();
+
+
+        // Recharger l'écran de connexion
+        if (mainApp != null) {
+            mainApp.showLoginView();
+        }
+
+
+    }
 
     public void updateUserInfo(String username) {
         // Mettre à jour le label du nom d'utilisateur
@@ -125,6 +166,8 @@ public class MainController implements Initializable {
 
 
 
+
+
     public void afficherVuePanier() {
         chargerVueDansContainer("/com/fido/pharmacie/Panier.fxml");
     }
@@ -136,7 +179,7 @@ public class MainController implements Initializable {
 
 
     public void afficherVueRapportStock() {
-        chargerVueDansContainer("/com/fido/pharmacie/RapportStocK.fxml");
+        chargerVueDansContainer("/com/fido/pharmacie/RapportStock.fxml");
     }
 
 
@@ -161,7 +204,7 @@ public class MainController implements Initializable {
     } */
 
     //   ICI LA METHODE LORSQU'ON CLIC SUR UN BOUTON CA CHANGE DE VUE
-    private void chargerVueDansContainer(String fichierFXML) {
+    /*private void chargerVueDansContainer(String fichierFXML) {
         try {
             InputStream fxmlStream = getClass().getResourceAsStream(fichierFXML);
             if (fxmlStream == null) {
@@ -173,8 +216,79 @@ public class MainController implements Initializable {
             mainContainer.getChildren().clear();
             mainContainer.getChildren().add(vue);
 
+            // Passer la référence du Stage principal au contrôleur de la vue chargée
+            Object controller = loader.getController();
+            if (controller instanceof MedicamentController) {
+                ((MedicamentController) controller).setPrimaryStage(primaryStage);
+            }
+
             // Optionnel : pour que le contenu s'agrandisse avec mainContainer
-            // ICI C'EST POUR QUE LE CONTENU S'AGRANDISSE AVEC LE CONTENEUR mainContainer
+            AnchorPane.setTopAnchor(vue, 0.0);
+            AnchorPane.setBottomAnchor(vue, 0.0);
+            AnchorPane.setLeftAnchor(vue, 0.0);
+            AnchorPane.setRightAnchor(vue, 0.0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } */
+
+    private void chargerVueDansContainer(String fichierFXML) {
+        try {
+            InputStream fxmlStream = getClass().getResourceAsStream(fichierFXML);
+            if (fxmlStream == null) {
+                throw new IOException("Fichier FXML non trouvé: " + fichierFXML);
+            }
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setControllerFactory(c -> {
+                if (c == MedicamentController.class) {
+                    return new MedicamentController(LoginPageController.getCurrentUser());
+                } else if (c == DashboardController.class) {
+                    //return new DashboardController(); // ou autre instance de contrôleur
+
+                    dashboardControllerInstance = new DashboardController();
+                    return dashboardControllerInstance;
+                } else if (c == PanierController.class) {
+
+                   // return new PanierController(); // ou autre instance de contrôleur
+
+                    /*PanierController panierController = new PanierController();
+                    panierController.setDashboardController(dashboardControllerInstance); // Inject the dashboard controller
+                    return panierController;*/
+
+                    return new PanierController(dashboardCont);
+
+                } else if (c == RapportVenteController.class) {
+                    return new RapportVenteController(); // ou autre instance de contrôleur
+                } else if (c == LoginPageController.class) {
+                    return new LoginPageController(); // ou autre instance de contrôleur
+                } else if (c == FournisseursController.class) {
+                    return new FournisseursController();
+                } else {
+                    throw new IllegalArgumentException("Contrôleur inconnu : " + c.getName());
+                }
+            });
+            AnchorPane vue = loader.load(fxmlStream);
+            mainContainer.getChildren().clear();
+            mainContainer.getChildren().add(vue);
+
+           /* // Passer la référence du Stage principal au contrôleur de la vue chargée
+            Object controller = loader.getController();
+            if (controller instanceof MedicamentController) {
+                ((MedicamentController) controller).setPrimaryStage(primaryStage);
+            }*/
+
+           /* Object controller = loader.getController();
+            if (controller instanceof DashboardController) {
+                DashboardController dashboardControllerInstance = (DashboardController) controller;
+                // Si vous chargez PanierController, passez-lui une référence de DashboardController
+                if (controller instanceof PanierController) {
+                    ((PanierController) controller).setDashboardController(dashboardControllerInstance);
+                }
+            }*/
+
+
+            // Optionnel : pour que le contenu s'agrandisse avec mainContainer
             AnchorPane.setTopAnchor(vue, 0.0);
             AnchorPane.setBottomAnchor(vue, 0.0);
             AnchorPane.setLeftAnchor(vue, 0.0);
@@ -183,6 +297,7 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
+
 
 
     // LA METHODE POUR RECUPERER LES FOURNISSEURS ET LES METTRE DANS LE COMBOBOX DE LA BOITE DE DIALOG
@@ -204,69 +319,15 @@ public class MainController implements Initializable {
         return fournisseurs;
     }
 
-    //
-    //    ICI LA METHODE POUR APPELER DE DIALOG DE SAISIE D'INFORMATION
-    //
-    public void handleAddButtonAction() {
-        try {
-            // Charger le fichier FXML du dialogue d'ajout de produit
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/AddProductDialog.fxml"));
-            Dialog<MedicamentSearch> dialog = new Dialog<>();
-            dialog.getDialogPane().setContent(loader.load());
-
-            // Configurer les boutons du dialogue (Ajouter et Annuler)
-            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-            // Définir le titre du dialogue modal
-            dialog.setTitle("Ajouter un Produit");
-
-            // Récupérer le contrôleur du dialogue
-            AddProductDialogController dialogController = loader.getController();
-
-            // Récupérer les résultats du dialogue lorsque l'utilisateur clique sur "Ajouter"
-            dialog.setResultConverter(new Callback<ButtonType, MedicamentSearch>() {
-                @Override
-                public MedicamentSearch call(ButtonType buttonType) {
-                    if (buttonType == ButtonType.OK) {
-                        // L'utilisateur a cliqué sur "Ajouter", récupérez les données du dialogue
-                        return dialogController.getAddProductData();
-                    }
-                    return null;
-                }
-            });
 
 
-            // Récupérer la fenêtre du dialogue et définir l'icône
-            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png")); // Remplacez le chemin par le chemin de votre icône
 
-
-            // Afficher le dialogue et attendre que l'utilisateur agisse
-            Optional<MedicamentSearch> result = dialog.showAndWait();
-
-            if (result.isPresent()) {
-
-                MedicamentSearch medicament = result.get();
-                if (medicament != null) {
-                    // L'utilisateur a cliqué sur "OK" et les données sont valides
-                    // Faites quelque chose avec l'objet MedicamentSearch, par exemple, l'ajouter à une liste ou à une base de données
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Produit Ajouté");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Le produit a été ajouté à la base de données avec succès.");
-                    alert.showAndWait();
-                } else {
-                    // L'utilisateur a cliqué sur "OK" mais les données ne sont pas valides (des champs sont vides)
-                    // Aucune action requise ici, l'alerte a déjà été affichée dans getAddProductData()
-                }
-
-            }else  {
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Gérer les erreurs de chargement du dialogue ici
+    public void updateBadge(int count) {
+        if (count > 0) {
+            badgeLabel.setText(String.valueOf(count));
+            badgeLabel.setVisible(true);
+        } else {
+            badgeLabel.setVisible(false);
         }
     }
 
@@ -276,7 +337,9 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Connection connectDB = DatabaseConnection.getConnection();
+
+
+
 
 
             try {
@@ -322,7 +385,14 @@ public class MainController implements Initializable {
 
 
 
+        badgeLabel = new Label();
+        badgeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        badgeLabel.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-padding: 2px 6px; -fx-background-radius: 10;");
+        updateBadge(5); // initial count
 
+        StackPane stack = new StackPane();
+        stack.getChildren().addAll(badgeLabel);
+        notificationMenu.setGraphic(stack);
 
 
     }

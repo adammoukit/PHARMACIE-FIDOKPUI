@@ -17,9 +17,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="549.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
+<AnchorPane prefHeight="598.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MainController">
    <children>
-      <BorderPane layoutY="6.0" prefHeight="390.0" prefWidth="639.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane layoutY="6.0" prefHeight="840.0" prefWidth="1300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
             <MenuBar BorderPane.alignment="CENTER">
               <menus>
@@ -40,19 +40,18 @@
                         <MenuItem mnemonicParsing="false" text="Rapports sur les bénéfices" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Clients">
+                <Menu mnemonicParsing="false" text="Achats">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Liste Des Clients " />
-                        <MenuItem mnemonicParsing="false" text="Rechercher Client" />
+                    <MenuItem mnemonicParsing="false" text="Commande Fournisseur" />
+                        <MenuItem mnemonicParsing="false" text="Reception des marchandises" />
                         <MenuItem mnemonicParsing="false" text="Historique Des Achats" />
-                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Ventes">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Nouvelle Vente" />
                       <MenuItem mnemonicParsing="false" text="Historique Des Ventes" />
-                        <MenuItem mnemonicParsing="false" text="Rapport Des Ventes" />
+                        <MenuItem mnemonicParsing="false" text="Gestion des retours" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Parametre">
@@ -60,15 +59,25 @@
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                     </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Journal">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Journal des actions" />
+                     </items>
+                  </Menu>
+                  <Menu fx:id="notificationMenu" mnemonicParsing="false" text="Notification">
+                     <items>
+                        <MenuItem mnemonicParsing="false" />
+                     </items>
+                  </Menu>
               </menus>
             </MenuBar>
          </top>
          <center>
-            <AnchorPane BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="683.0" prefWidth="1300.0" BorderPane.alignment="CENTER">
                <children>
-                  <AnchorPane prefHeight="95.0" prefWidth="1294.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="6.0">
+                  <AnchorPane fx:id="mainBoardPane" prefHeight="95.0" prefWidth="1294.0" style="-fx-border-color: grey; -fx-background-color: #DDF7E3;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="6.0">
                      <children>
-                        <Pane layoutX="1024.0" layoutY="9.0" prefHeight="78.0" prefWidth="249.0" style="-fx-background-color: blue sky;" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="9.0">
+                        <Pane layoutX="842.0" layoutY="4.0" prefHeight="78.0" prefWidth="249.0" style="-fx-background-color: blue sky;" AnchorPane.rightAnchor="203.0" AnchorPane.topAnchor="4.0">
                            <children>
                               <Label layoutX="7.0" layoutY="6.0" text="UTILISATEUR :" textFill="#dddddd" underline="true">
                                  <font>
@@ -181,7 +190,7 @@
                                     <Insets left="6.0" />
                                  </HBox.margin>
                               </Separator>
-                              <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="67.0" prefWidth="76.0" text="FOURNISSEURS">
+                              <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVueFournisseurs" prefHeight="67.0" prefWidth="76.0" text="FOURNISSEURS">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -222,16 +231,34 @@
                               <Insets bottom="5.0" />
                            </padding>
                         </HBox>
+                        <Button fx:id="btnLog_out" contentDisplay="TOP" layoutX="1164.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleLogOut" prefHeight="67.0" prefWidth="99.0" text="DECONNEXION" textAlignment="CENTER" textFill="#f80d0d" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="13.0">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@MainViewImage/Logout.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Button>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="mainContainer" layoutX="5.0" layoutY="114.0" prefHeight="587.0" prefWidth="1289.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="114.0">
+                  <AnchorPane fx:id="mainContainer" layoutX="5.0" layoutY="111.0" prefHeight="704.0" prefWidth="1300.0" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="111.0">
                      <children>
                         <BorderPane layoutX="157.0" layoutY="80.0" />
                      </children>
                   </AnchorPane>
                   <Separator layoutX="-27.0" layoutY="172.0" prefHeight="10.0" />
                   <HBox alignment="CENTER" layoutX="-1.0" layoutY="196.0" prefHeight="14.0" prefWidth="1300.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" />
-                  <Separator layoutX="14.0" layoutY="95.0" prefHeight="14.0" prefWidth="1300.0" style="-fx-border-width: 10;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Separator layoutX="14.0" layoutY="95.0" prefHeight="20.0" prefWidth="1300.0" style="-fx-border-width: 10;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
          </center>

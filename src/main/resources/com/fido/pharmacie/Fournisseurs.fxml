@@ -6,47 +6,44 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="502.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.FournisseursController">
+<AnchorPane prefHeight="598.0" prefWidth="818.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.FournisseursController">
    <children>
       <TabPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
             <Tab text="Nouvelle Commande">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <AnchorPane fx:id="mainContainer" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-border-color: orange; -fx-background-color: #DDF7E3;">
                      <children>
-                        <TableView fx:id="tableFournisseur" layoutY="79.0" prefHeight="394.0" prefWidth="763.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="79.0">
+                        <TableView fx:id="tableProduitUbipharm" layoutY="81.0" prefHeight="569.0" prefWidth="818.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                            <columns>
-                              <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
-                              <TableColumn fx:id="nomColumn" prefWidth="133.0" text="FOURNISSEUR" />
-                              <TableColumn fx:id="adresseColumn" prefWidth="198.0" text="ADRESSE" />
-                              <TableColumn fx:id="telephoneColumn" prefWidth="156.0" text="TELEPHONE" />
-                              <TableColumn fx:id="emailColumn" prefWidth="200.0" text="EMAIL" />
-                              <TableColumn fx:id="actionBtn" prefWidth="75.0" text="ACTION" />
+                              <TableColumn fx:id="codeBarreColumn" prefWidth="144.0" text="CODE BARRES" />
+                              <TableColumn fx:id="libelleColumn" prefWidth="268.0" text="LIBELLE" />
+                              <TableColumn fx:id="prixCessionColumn" prefWidth="182.0" text="PRIX CESSION" />
+                              <TableColumn fx:id="prixPublicColumn" prefWidth="190.0" text="PRIX PUBLIC" />
                            </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Label layoutX="14.0" layoutY="31.0" text="CLIQUER SUR COMMANDER POUR PROCEDER A UNE COMMANDE AVEC LE FOURNISSEUR" textFill="#d00202">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Label>
                      </children>
                   </AnchorPane>
               </content>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
             </Tab>
             <Tab text="Liste Des Commandes">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: blue;">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView layoutX="29.0" layoutY="174.0" prefHeight="410.0" prefWidth="735.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="53.0">
+                        <TableView layoutX="29.0" layoutY="390.0" prefHeight="569.0" prefWidth="818.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columns>
                             <TableColumn prefWidth="104.0" text="ID_COMMANDE" />
                             <TableColumn prefWidth="130.0" text="DATE_COMMADE" />
@@ -63,7 +60,8 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                     </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
               </content>
             </Tab>
             <Tab text="Informations du fournisseur">

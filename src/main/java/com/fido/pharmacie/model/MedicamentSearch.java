@@ -1,102 +1,105 @@
 package com.fido.pharmacie.model;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
-import java.util.Date;
 
 public class MedicamentSearch {
-    Integer ID;
-    String Nom_medicament, description, dosage;
+
+    String code_barre, nomProduit, description, fournisseur, dosage,
+            instructions_utilisation, categorie_produit;
     Double prix;
-    Date date_expiration;
-    Integer quantite;
-   // Integer id_produitF;
-
-    private boolean dansLePanier;
 
 
-    public boolean isDansLePanier() {
-        return dansLePanier;
-    }
-
-    public void setDansLePanier(boolean dansLePanier) {
-        this.dansLePanier = dansLePanier;
-    }
-
-
-    public MedicamentSearch(Integer ID, String nom_medicament, String description, String dosage, Double prix, Date date_expiration, Integer quantite) {
-        this.ID = ID;
-        Nom_medicament = nom_medicament;
+    public MedicamentSearch(String code_barre, String nomProduit, String description, String fournisseur, String dosage, String instructions_utilisation, String categorie_produit, Double prix) {
+        this.code_barre = code_barre;
+        this.nomProduit = nomProduit;
         this.description = description;
+        this.fournisseur = fournisseur;
         this.dosage = dosage;
+        this.instructions_utilisation = instructions_utilisation;
+        this.categorie_produit = categorie_produit;
         this.prix = prix;
-        this.date_expiration = date_expiration;
-        this.quantite = quantite;
-       // this.id_produitF = id_produitF;
-
     }
 
-    public Integer getID() {
-        return ID;
+    public MedicamentSearch(String code_barre, String nomProduit, String description, String dosage, String categorie_produit, Double prix) {
+        this.code_barre = code_barre;
+        this.nomProduit = nomProduit;
+        this.description = description;
+
+        this.dosage = dosage;
+        this.instructions_utilisation = instructions_utilisation;
+        this.categorie_produit = categorie_produit;
+        this.prix = prix;
     }
 
-    public String getNom_medicament() {
-        return Nom_medicament;
+    public MedicamentSearch() {
+    }
+
+
+    public String getCode_barre() {
+        return code_barre;
+    }
+
+    public String getNomProduit() {
+        return nomProduit;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getDosage() {
-        return dosage;
+    public String getFournisseur() {
+        return fournisseur;
     }
+
+    public String getInstructions_utilisation() {
+        return instructions_utilisation;
+    }
+
+    public String getCategorie_produit() {
+        return categorie_produit;
+    }
+
+
 
     public Double getPrix() {
         return prix;
     }
 
-    public java.sql.Date getDate_expiration() {
-        return (java.sql.Date) date_expiration;
-    }
-
-    public Integer getQuantite() {
-        return quantite;
+    public String getDosage() {
+        return dosage;
     }
 
 
 
-
-
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setCode_barre(String code_barre) {
+        this.code_barre = code_barre;
     }
 
-    public void setNom_medicament(String nom_medicament) {
-        Nom_medicament = nom_medicament;
+    public void setNomProduit(String nomProduit) {
+        this.nomProduit = nomProduit;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setDosage(String dosage) {
-        this.dosage = dosage;
+    public void setFournisseur(String fabriquant) {
+        this.fournisseur = fabriquant;
     }
+
+    public void setInstructions_utilisation(String instructions_utilisation) {
+        this.instructions_utilisation = instructions_utilisation;
+    }
+
+    public void setCategorie_produit(String categorie_produit) {
+        this.categorie_produit = categorie_produit;
+    }
+
 
     public void setPrix(Double prix) {
         this.prix = prix;
     }
 
-    public void setDate_expiration(Date date_expiration) {
-        this.date_expiration = date_expiration;
+    public void setDosage(String dosage) {
+        this.dosage = dosage;
     }
-
-    public void setQuantite(Integer quantite) {
-        this.quantite = quantite;
-    }
-
-
-
 }

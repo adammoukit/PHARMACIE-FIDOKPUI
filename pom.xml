@@ -134,6 +134,41 @@
       <version>4.7.0-9.1.2</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.jfoenix</groupId>
+      <artifactId>jfoenix</artifactId>
+      <version>9.0.10</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>5.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>5.0.0</version>
+    </dependency>
+
+    <!-- Apache Commons Compress for handling compressed files -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.21</version>
+    </dependency>
+
+
+
+    <dependency>
+      <groupId>net.sf.barcode4j</groupId>
+      <artifactId>barcode4j</artifactId>
+      <version>2.1</version>
+    </dependency>
+
+
+
 
 
 
@@ -161,7 +196,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.fido.pharmacie/com.fido.pharmacie.HelloApplication</mainClass>
+              <mainClass>com.fido.pharmacie/com.fido.pharmacie.Main</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
@@ -181,7 +216,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.fido.pharmacie.HelloApplication</mainClass>
+              <mainClass>com.fido.pharmacie.Main</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="458.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.VoirStockViewController">
+   <children>
+      <TableView cache="true" cacheHint="QUALITY" centerShape="false" focusTraversable="false" layoutX="175.0" layoutY="14.0" prefHeight="458.0" prefWidth="896.0" scaleShape="false" style="-fx-background-color: #F1EFCA;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+          <TableColumn prefWidth="171.0" text="CODE_BARRES" />
+          <TableColumn prefWidth="139.0" text="DATE RECEPTION" />
+            <TableColumn prefWidth="163.0" text="DATE EXPIRATION" />
+            <TableColumn minWidth="0.0" prefWidth="186.0" text="QUANTITE" />
+            <TableColumn prefWidth="100.0" resizable="false" text="ACTION" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

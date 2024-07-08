@@ -4,7 +4,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -14,20 +14,21 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="1324.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
+<AnchorPane fx:id="mainBack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="1353.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
    <children>
-      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange; -fx-background-color: #65DD86;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="TableMedicament" layoutX="6.0" layoutY="131.0" prefHeight="288.0" prefWidth="1310.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="130.0">
+            <TableView fx:id="TableMedicament" layoutX="10.0" layoutY="88.0" prefHeight="409.0" prefWidth="1306.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="88.0">
                <columns>
-                  <TableColumn fx:id="ID_Medicament_tableColumn" prefWidth="40.0" text="ID " />
-                  <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="128.0" text="NOM MEDICAMENT" />
-                  <TableColumn fx:id="Description_tableColumn" prefWidth="221.0" text="DESCRIPTION" />
-                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="102.0" text="DOSAGE" />
-                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="87.0" text="PRIX (FCFA)" />
-                  <TableColumn fx:id="DateExpiration_tableColumn" minWidth="0.0" prefWidth="131.0" text="DATE D'EXPIRATION" />
-                  <TableColumn fx:id="Quantite_tableColumn" prefWidth="96.0" text="QUANTITE EN STOCK" />
-                  <TableColumn fx:id="Action_tableColumn" prefWidth="88.0" text="ACTION" />
+                  <TableColumn fx:id="code_barre_tableColumn" prefWidth="104.0" text="CODE BARRES" />
+                  <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="94.0" text="PRODUIT" />
+                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="101.0" text="DOSAGE" />
+                  <TableColumn fx:id="description_column" prefWidth="137.0" text="DESCRIPTION" />
+                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="102.0" text="PRIX  (FCFA)" />
+                  <TableColumn fx:id="categorieProduit" prefWidth="133.0" text="CATEGORIE" />
+                  <TableColumn fx:id="instructionColumn" maxWidth="248.0" prefWidth="150.0" text="INSTRUCTIONS D'UTILISATION" />
+                  <TableColumn fx:id="Quantite_tableColumn" minWidth="71.0" prefWidth="97.0" text="QTE EN STOCK" />
+                  <TableColumn fx:id="Action_tableColumn" prefWidth="113.0" text="ACTION" />
                </columns>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -39,63 +40,70 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <TextField fx:id="keyWordTextField" layoutX="16.0" layoutY="19.0" prefHeight="48.0" prefWidth="584.0" promptText="Rechercher nom du produit ici" style="-fx-background-color: white; -fx-border-color: blue;" AnchorPane.leftAnchor="15.0">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </TextField>
-            <HBox layoutX="611.0" layoutY="14.0" prefHeight="59.0" prefWidth="199.0" AnchorPane.leftAnchor="610.0">
+            <HBox alignment="CENTER" layoutX="21.0" layoutY="11.0" spacing="5.0" style="-fx-border-color: silver;" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                <children>
-                  <Button fx:id="AjouterBtn" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="5.0" text="Ajouter" textFill="#9e9845">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <graphic>
-                        <ImageView fx:id="imgAjouter" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <HBox alignment="CENTER" prefHeight="37.0" prefWidth="302.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="AjouterBtn" alignment="CENTER" mnemonicParsing="false" onAction="#handleCreateButtonAction2" prefHeight="5.0" text="Ajouter">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
-                           
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="boutonModifier" contentDisplay="TOP" mnemonicParsing="false" text="Modifier" HBox.hgrow="ALWAYS">
-                     <graphic>
-                        <ImageView fx:id="imgModifier" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
-                  <Button fx:id="btnSupprimer" contentDisplay="TOP" mnemonicParsing="false" text="Supprimer" HBox.hgrow="ALWAYS">
-                     <graphic>
-                        <ImageView fx:id="imgSupprimer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
+                           <graphic>
+                              <ImageView fx:id="imgAjouter" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="boutonModifier" mnemonicParsing="false" onAction="#handleEditButtonAction" text="Modifier" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <ImageView fx:id="imgModifier" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <Button fx:id="btnSupprimer" mnemonicParsing="false" text="Supprimer" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <ImageView fx:id="imgSupprimer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </HBox>
+                  <Separator orientation="VERTICAL" prefHeight="13.0" prefWidth="5.0" />
+                  <TextField fx:id="keyWordTextField" prefHeight="37.0" prefWidth="423.0" promptText="Rechercher par nom du produit ici" style="-fx-background-color: white; -fx-border-color: blue;">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </TextField>
+                  <Separator orientation="VERTICAL" prefHeight="22.0" prefWidth="4.0" />
+                  <Pane fx:id="FilteredPane" prefHeight="46.0" prefWidth="437.0" style="-fx-background-color: grey; -fx-border-width: 5;">
+                     <children>
+                        <CheckBox fx:id="checkBoxFiltrer" layoutX="7.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="192.0" text="FILTRER LES PRODUITS EN STOCK BAS (&lt;=10)" textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="Courier New Bold" size="12.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBoxFiltrerDate" layoutX="227.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="217.0" text="FILTRER LES PRODUITS EN PEREMTION (&lt;= 1 SEMAINE)" textFill="#2d0194" wrapText="true">
+                           <font>
+                              <Font name="Courier New Bold" size="12.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </Pane>
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </HBox>
-            <Pane layoutX="953.0" layoutY="11.0" prefHeight="112.0" prefWidth="358.0" style="-fx-background-color: grey; -fx-border-width: 5;" AnchorPane.leftAnchor="953.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="11.0">
-               <children>
-                  <CheckBox fx:id="checkBoxFiltrer" layoutX="7.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="192.0" text="FILTRER LES PRODUITS EN STOCK BAS (&lt;=10)" textFill="WHITE" wrapText="true">
-                     <font>
-                        <Font name="Courier New Bold" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="checkBoxFiltrerDate" layoutX="7.0" layoutY="54.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="217.0" text="FILTRER LES PRODUITS EN PEREMTION (&lt;= 1 SEMAINE)" textFill="#2d0194" wrapText="true">
-                     <font>
-                        <Font name="Courier New Bold" size="12.0" />
-                     </font>
-                  </CheckBox>
-               </children>
-            </Pane>
-            <Label layoutX="107.0" layoutY="88.0" prefHeight="27.0" prefWidth="430.0" text="GESTION DES STOCKS DES MEDICAMENTS" textFill="#288012" underline="true" AnchorPane.leftAnchor="107.0" AnchorPane.topAnchor="88.0">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Label>
          </children>
       </AnchorPane>
    </children>

@@ -36,9 +36,6 @@
                </font>
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Dashboard%20Layout.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -54,9 +51,6 @@
                </font>
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Medecine_manage.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -66,9 +60,6 @@
             <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="59.0" prefWidth="48.0" text="Nouvelle" wrapText="true">
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Sell-medecine.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -84,9 +75,6 @@
             <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#afficherVuePanier" prefHeight="58.0" prefWidth="42.0" text="Panier">
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Shopping%20Cart.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -113,9 +101,6 @@
                </font>
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Dashboard%20Layout.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -125,9 +110,6 @@
             <Button contentDisplay="TOP" mnemonicParsing="false" prefHeight="57.0" prefWidth="76.0" text="FOURNISSEURS">
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Edit%20User.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -150,9 +132,6 @@
             <Button contentDisplay="TOP" mnemonicParsing="false" text="GESTION">
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@controller/Image/Add_User.png" />
-                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -202,9 +181,6 @@
                      </font>
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@controller/Image/Medecine_manage.png" />
-                           </image>
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

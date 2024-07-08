@@ -1,7 +1,11 @@
 package com.fido.pharmacie.controller;
 
+import com.fido.pharmacie.controller.Authorization.Authorization;
+import com.fido.pharmacie.controller.Permission.Permission;
 import com.fido.pharmacie.model.MedicamentSearch;
+import com.fido.pharmacie.model.MedicamentStock;
 import com.fido.pharmacie.model.PanierItem;
+import com.fido.pharmacie.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,12 +17,17 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -27,42 +36,50 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Toolkit;
 
+import static com.fido.pharmacie.controller.DatabaseConnection.connection;
 import static com.fido.pharmacie.controller.DatabaseConnection.showAlert;
+
 
 public class MedicamentController implements Initializable{
 
     @FXML
-    private TableView<MedicamentSearch> TableMedicament;
+    private TableView<MedicamentStock> TableMedicament;
     @FXML
-    private TableColumn<MedicamentSearch, Integer> ID_Medicament_tableColumn;
+    private TableColumn<MedicamentStock, String> code_barre_tableColumn;
     @FXML
-    private TableColumn<MedicamentSearch, String> nomMedicament_tableColumn;
+    private TableColumn<MedicamentStock, String> nomMedicament_tableColumn;
     @FXML
-    private TableColumn<MedicamentSearch, String> Description_tableColumn;
+    private TableColumn<MedicamentStock, String> description_column;
     @FXML
-    private TableColumn<MedicamentSearch, String> Dosage_tableColumn;
+    private TableColumn<MedicamentStock, String> Dosage_tableColumn;
     @FXML
-    private TableColumn<MedicamentSearch, Double> Prix_tableColumn;
+    private TableColumn<MedicamentStock, Double> Prix_tableColumn;
     @FXML
-    private TableColumn<MedicamentSearch, Date> DateExpiration_tableColumn;
+    private TableColumn<MedicamentStock, Date> DateExpiration_tableColumn;
     @FXML
-    private TableColumn<MedicamentSearch, Integer> Quantite_tableColumn;
+    private TableColumn<MedicamentStock, Integer> Quantite_tableColumn;
+
+    @FXML
+    private TableColumn<MedicamentStock, String> categorieProduit;
+
+
+    @FXML
+    private TableColumn<MedicamentStock, String> numeroLot;
+
     @FXML
     private Button btnSupprimer;
     @FXML
     private Button boutonModifier;
 
     @FXML
-    private TableColumn<MedicamentSearch, Void> Action_tableColumn;
+    private TableColumn<MedicamentStock, Void> Action_tableColumn;
 
 
     @FXML
@@ -88,6 +105,22 @@ public class MedicamentController implements Initializable{
 
     @FXML
     private ImageView imgSupprimer;
+
+    @FXML
+    private TableColumn<MedicamentController, String> instructionColumn;
+
+
+    @FXML
+    private TableColumn<MedicamentStock, Date> DateReception_tableColumn;
+
+
+
+
+    private User currentUser;
+
+    public MedicamentController(User user) {
+        this.currentUser = user;
+    }
 
 
 
@@ -119,91 +152,155 @@ public class MedicamentController implements Initializable{
     * */
 
 
-
-
-
-
-
-    public void handleAddButtonAction() {
+    @FXML
+    private void handleCreateButtonAction2() {
+        if (!Authorization.hasPermission(currentUser, Permission.ADD_MEDICINE)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur d'autorisation");
+            alert.setHeaderText("Vous n'avez pas l'autorisation d'ajouter un médicament.");
+            alert.setContentText("Veuillez contacter l'administrateur pour obtenir les autorisations nécessaires.");
+            alert.showAndWait();
+            return;
+        }
         try {
-            // Charger le fichier FXML du dialogue d'ajout de produit
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/AddProductDialog.fxml"));
-            Dialog<MedicamentSearch> dialog = new Dialog<>();
-            dialog.getDialogPane().setContent(loader.load());
+            // Charger le fichier FXML de la boîte de dialogue
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/AddProductDialog2.fxml"));
+            Parent root = loader.load();
 
-            // Configurer les boutons du dialogue (Ajouter et Annuler)
-            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            // Obtenir le contrôleur de la boîte de dialogue
+            AddProductDialog2Controller dialogController = loader.getController();
+            // Passer une référence du MedicamentController au AddProductDialog2Controller
+            dialogController.setMedicamentController(this);
 
-            // Définir le titre du dialogue modal
-            dialog.setTitle("Ajouter un Produit");
-
-            // Récupérer le contrôleur du dialogue
-            AddProductDialogController dialogController = loader.getController();
-
-            // Récupérer les résultats du dialogue lorsque l'utilisateur clique sur "Ajouter"
-            dialog.setResultConverter(new Callback<ButtonType, MedicamentSearch>() {
-                @Override
-                public MedicamentSearch call(ButtonType buttonType) {
-                    if (buttonType == ButtonType.OK) {
-                        // L'utilisateur a cliqué sur "Ajouter", récupérez les données du dialogue
-                        return dialogController.getAddProductData();
-                    }
-                    return null;
-                }
-            });
-
-
-            // Récupérer la fenêtre du dialogue et définir l'icône
-            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            // Créer une nouvelle scène et une nouvelle stage pour la boîte de dialogue
+            Stage stage = new Stage();
+            stage.setTitle("AJOUTER UN PRODUIT");
             String absolutePath = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
             stage.getIcons().add(new Image(absolutePath));
 
 
-            // Afficher le dialogue et attendre que l'utilisateur agisse
-            Optional<MedicamentSearch> result = dialog.showAndWait();
-
-            if (result.isPresent()) {
-
-                MedicamentSearch medicament = result.get();
-                if (medicament != null) {
-                    // L'utilisateur a cliqué sur "OK" et les données sont valides
-                    // Faites quelque chose avec l'objet MedicamentSearch, par exemple, l'ajouter à une liste ou à une base de données
+            // Désactiver la redimension et la maximisation de la fenêtre
+            stage.setResizable(false);
 
 
-                    // Update the observable list
-                    MedicamentSearchObservableList.add(medicament);
+            // Récupérer la fenêtre principale
+            Stage primaryStage = (Stage) TableMedicament.getScene().getWindow();
 
-                    // Refresh the TableView
-                    TableMedicament.setItems(null);
-                    TableMedicament.setItems(MedicamentSearchObservableList);
+            // Appliquer un effet de flou à la scène principale
+            GaussianBlur blur = new GaussianBlur(3);
+            primaryStage.getScene().getRoot().setEffect(blur);
 
 
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Produit Ajouté");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Le produit a été ajouté à la base de données avec succès.");
-                    alert.showAndWait();
-                } else {
-                    // L'utilisateur a cliqué sur "OK" mais les données ne sont pas valides (des champs sont vides)
-                    // Aucune action requise ici, l'alerte a déjà été affichée dans getAddProductData()
-                }
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(primaryStage);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            // Supprimer l'effet de flou lorsque la boîte de dialogue est fermée
+            primaryStage.getScene().getRoot().setEffect(null);
 
-            } else {
 
-            }
-        } catch (IOException e) {
+
+
+        } catch (Exception e) {
             e.printStackTrace();
-            // Gérer les erreurs de chargement du dialogue ici
         }
+    }
+
+
+    public List<MedicamentStock> getAllProductsFromDatabase() {
+        List<MedicamentStock> produits = new ArrayList<>();
+        String query = "SELECT p.code_barres, p.nom_produit, p.dosage, p.description, p.prix, p.categorie_produit, p.fournisseur, p.instructions_utilisation, " +
+                "s.numero_lot, s.date_expiration, s.date_reception, SUM(s.quantite) AS quantite_totale " +
+                "FROM Produits p " +
+                "JOIN Stocks s ON p.code_barres = s.code_barres " +
+                "GROUP BY p.code_barres";
+
+        try (
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                String codeBarre = resultSet.getString("code_barres");
+                String nomProduit = resultSet.getString("nom_produit");
+                String dosage = resultSet.getString("dosage");
+                String description = resultSet.getString("description");
+                String fournisseur = resultSet.getString("fournisseur");
+                double prixUnitaire = resultSet.getDouble("prix");
+                String categorie = resultSet.getString("categorie_produit");
+
+                String instructions = resultSet.getString("instructions_utilisation");
+                int quantite = resultSet.getInt("quantite_totale");
+
+                MedicamentStock produit = new MedicamentStock(codeBarre, nomProduit, dosage, description, prixUnitaire, categorie, quantite, fournisseur, instructions);
+                produits.add(produit);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer l'erreur de récupération des données de la base de données
+        }
+
+        return produits;
     }
 
 
 
 
 
+    void actualiserTableView() {
+        // Récupérer une nouvelle liste de produits depuis la base de données
+        List<MedicamentStock> produits = getAllProductsFromDatabase();
+
+        // Mettre à jour la liste observable et le TableView
+        MedicamentStockObservableList.setAll(produits);
+
+        // Rafraîchir le TableView
+        TableMedicament.setItems(MedicamentStockObservableList);
+
+
+        // Sélectionner le produit ajouté récemment (le dernier élément de la liste)
+        if (!MedicamentStockObservableList.isEmpty()) {
+            TableMedicament.getSelectionModel().select(MedicamentStockObservableList.size() - 1);
+
+            // Scroll to the newly added item
+            TableMedicament.scrollTo(TableMedicament.getSelectionModel().getSelectedIndex());
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Produit Ajouté");
+        alert.setHeaderText(null);
+        alert.setContentText("Le produit a été ajouté à la base de données avec succès.");
+        alert.showAndWait();
+    }
+
+    //cette methode d'actualiation de la tableview lorsque le produit a ete modifier pour eviter que cela
+    //scroll jusqu'au dernier index
+    void actualiserTableViewModification() {
+        // Récupérer une nouvelle liste de produits depuis la base de données
+        List<MedicamentStock> produits = getAllProductsFromDatabase();
+
+        // Mettre à jour la liste observable et le TableView
+        MedicamentStockObservableList.setAll(produits);
+
+        // Rafraîchir le TableView
+        TableMedicament.setItems(MedicamentStockObservableList);
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
     // Méthode pour vérifier si un produit est déjà dans le panier
-    private boolean isProductInCart(MedicamentSearch product) {
+    static boolean isProductInCart(MedicamentStock product) {
         for (PanierItem item : panier) {
             if (item.getMedicament().equals(product)) {
                 return true;
@@ -218,9 +315,9 @@ public class MedicamentController implements Initializable{
 
 
     // Méthode pour vérifier si un produit est déjà dans le panierItems
-    private boolean isProductInPanierItems(PanierItem panierItem) {
+    static boolean isProductInPanierItems(PanierItem panierItem) {
         for (PanierItem item : panier) {
-            if (item.getMedicament().getID() == panierItem.getMedicament().getID()) {
+            if (item.getMedicament().getCodeBarre() == panierItem.getMedicament().getCodeBarre()) {
                 return true; // Le produit est déjà dans le panierItems
             }
         }
@@ -234,16 +331,176 @@ public class MedicamentController implements Initializable{
 
 
 
-    ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
+     ObservableList<MedicamentStock> MedicamentStockObservableList = FXCollections.observableArrayList();
 
 
 
     //DECLARATION DE L'OBJET DU PANIER
     public static List<PanierItem> panier = new ArrayList<PanierItem>();
 
-    public TableColumn<MedicamentSearch, Double> getPrix_tableColumn() {
-        return Prix_tableColumn;
+
+
+
+
+    @FXML
+    private void handleEditButtonAction() {
+        // Récupérer le produit sélectionné dans la TableView
+        MedicamentStock selectedProduct = TableMedicament.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct != null) {
+            if (!Authorization.hasPermission(currentUser, Permission.ADD_MEDICINE)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur d'autorisation");
+                alert.setHeaderText("Vous n'avez pas l'autorisation de modifier un Produit.");
+                alert.setContentText("Veuillez contacter l'administrateur pour obtenir les autorisations nécessaires.");
+                alert.showAndWait();
+                return;
+            }
+            try {
+                // Charger le fichier FXML de la boîte de dialogue de modification
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/EditProductDialog.fxml"));
+                Parent root = loader.load();
+
+                // Obtenir le contrôleur de la boîte de dialogue
+                EditProductDialogController dialogController = loader.getController();
+
+                // Passer une référence du MedicamentController et le produit sélectionné au contrôleur de la boîte de dialogue
+                dialogController.setMedicamentController(this);
+                dialogController.initData(selectedProduct);
+
+                // Créer une nouvelle scène et une nouvelle stage pour la boîte de dialogue
+                Stage stage = new Stage();
+                stage.setTitle("MODIFIER LE PRODUIT");
+                String absolutePath = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Edit.png").toUri().toString();
+                stage.getIcons().add(new Image(absolutePath));
+                stage.setResizable(false);
+
+                // Récupérer la fenêtre principale
+                Stage primaryStage = (Stage) TableMedicament.getScene().getWindow();
+
+                // Appliquer un effet de flou à la scène principale
+                GaussianBlur blur = new GaussianBlur(5);
+                primaryStage.getScene().getRoot().setEffect(blur);
+
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(primaryStage);
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+
+                // Supprimer l'effet de flou lorsque la boîte de dialogue est fermée
+                primaryStage.getScene().getRoot().setEffect(null);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Afficher un message si aucun produit n'est sélectionné
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Aucune sélection");
+            alert.setHeaderText(null);
+            alert.setContentText("Veuillez sélectionner un produit à modifier.");
+            alert.showAndWait();
+        }
     }
+
+    Connection connectDB = DatabaseConnection.getConnection();
+
+    /*public void loadMedicamentStockData() {
+        String medicamentViewQuery = "SELECT p.code_barres, p.nom_produit, p.dosage, p.description, p.prix, p.categorie_produit, p.fournisseur, p.instructions_utilisation, " +
+                "s.numero_lot, s.date_expiration, s.date_reception, SUM(s.quantite) AS quantite_totale " +
+                "FROM Produits p " +
+                "JOIN Stocks s ON p.code_barres = s.code_barres " +
+                "GROUP BY p.code_barres";
+
+        try {
+            Statement statement = connectDB.createStatement();
+            ResultSet queryOutput = statement.executeQuery(medicamentViewQuery);
+
+            while (queryOutput.next()) {
+                String codeBarre = queryOutput.getString("code_barres");
+                String nomProduit = queryOutput.getString("nom_produit");
+                String dosage = queryOutput.getString("dosage");
+                String description = queryOutput.getString("description");
+                String fournisseur = queryOutput.getString("fournisseur");
+                double prixUnitaire = queryOutput.getDouble("prix");
+                String categorie = queryOutput.getString("categorie_produit");
+                String instructions = queryOutput.getString("instructions_utilisation");
+                int quantiteTotale = queryOutput.getInt("quantite_totale");
+
+                // Création de l'objet MedicamentStock avec toutes les informations nécessaires
+                MedicamentStock produit = new MedicamentStock(codeBarre, nomProduit, dosage, description, prixUnitaire, categorie, quantiteTotale, fournisseur, instructions);
+                MedicamentStockObservableList.add(produit);
+            }
+
+            // Configuration des colonnes de la table
+            code_barre_tableColumn.setCellValueFactory(new PropertyValueFactory<>("codeBarre"));
+            nomMedicament_tableColumn.setCellValueFactory(new PropertyValueFactory<>("nomProduit"));
+            description_column.setCellValueFactory(new PropertyValueFactory<>("description"));
+            Prix_tableColumn.setCellValueFactory(new PropertyValueFactory<>("prixUnitaire"));
+            categorieProduit.setCellValueFactory(new PropertyValueFactory<>("categorie"));
+            Quantite_tableColumn.setCellValueFactory(new PropertyValueFactory<>("quantite"));
+            Dosage_tableColumn.setCellValueFactory(new PropertyValueFactory<>("dosage"));
+            instructionColumn.setCellValueFactory(new PropertyValueFactory<>("instructions"));
+
+            // Assignation des données à la table
+            TableMedicament.setItems(MedicamentStockObservableList);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer l'erreur de récupération des données de la base de données
+        }
+    }*/
+
+    public void loadMedicamentStockData() {
+        // Requête SQL pour obtenir tous les produits et leur quantité totale en stock
+        String medicamentViewQuery =
+                "SELECT p.code_barres, p.nom_produit, p.dosage, p.description, p.prix, p.categorie_produit, p.fournisseur, p.instructions_utilisation, " +
+                        "COALESCE(SUM(s.quantite), 0) AS quantite_totale " +
+                        "FROM Produits p " +
+                        "LEFT JOIN Stocks s ON p.code_barres = s.code_barres " +
+                        "GROUP BY p.code_barres, p.nom_produit, p.dosage, p.description, p.prix, p.categorie_produit, p.fournisseur, p.instructions_utilisation";
+
+        try {
+            Statement statement = connectDB.createStatement();
+            ResultSet queryOutput = statement.executeQuery(medicamentViewQuery);
+
+            MedicamentStockObservableList.clear(); // Assurer que la liste est vide avant de la remplir
+
+            while (queryOutput.next()) {
+                String codeBarre = queryOutput.getString("code_barres");
+                String nomProduit = queryOutput.getString("nom_produit");
+                String dosage = queryOutput.getString("dosage");
+                String description = queryOutput.getString("description");
+                String fournisseur = queryOutput.getString("fournisseur");
+                double prixUnitaire = queryOutput.getDouble("prix");
+                String categorie = queryOutput.getString("categorie_produit");
+                String instructions = queryOutput.getString("instructions_utilisation");
+                int quantite = queryOutput.getInt("quantite_totale");
+
+                MedicamentStock produit = new MedicamentStock(codeBarre, nomProduit, dosage, description, prixUnitaire, categorie, quantite, fournisseur, instructions);
+                MedicamentStockObservableList.add(produit);
+            }
+
+            code_barre_tableColumn.setCellValueFactory(new PropertyValueFactory<>("codeBarre"));
+            nomMedicament_tableColumn.setCellValueFactory(new PropertyValueFactory<>("nomProduit"));
+            description_column.setCellValueFactory(new PropertyValueFactory<>("description"));
+            Prix_tableColumn.setCellValueFactory(new PropertyValueFactory<>("prixUnitaire"));
+            categorieProduit.setCellValueFactory(new PropertyValueFactory<>("categorie"));
+            Quantite_tableColumn.setCellValueFactory(new PropertyValueFactory<>("quantite"));
+            Dosage_tableColumn.setCellValueFactory(new PropertyValueFactory<>("dosage"));
+            instructionColumn.setCellValueFactory(new PropertyValueFactory<>("instructions"));
+
+            TableMedicament.setItems(MedicamentStockObservableList);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérer l'erreur de récupération des données de la base de données
+        }
+    }
+
+
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -251,11 +508,20 @@ public class MedicamentController implements Initializable{
 
 
 
+        // Définissez la couleur de fond pour toutes les entêtes de colonne
+        //String headerColorStyle = "-fx-background-color: #C9F4AA;";
+        //for (TableColumn<MedicamentSearch, ?> column : TableMedicament.getColumns()) {
+           // column.setStyle(headerColorStyle);
+        //}
 
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
         //TableMedicament.setStyle("-fx-font-family: 'Courier New'; -fx-base: rgb(158, 152, 69);");
 
-        TableMedicament.setStyle("-fx-font-family: 'Courier New';");
+
+
+
+
+
 
 
 
@@ -292,53 +558,20 @@ public class MedicamentController implements Initializable{
         boutonModifier.setGraphic(imgModifier);
 
 
-
-        Connection connectDB = DatabaseConnection.getConnection();
-
-        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE FROM medicament ";
-
         //   ICI C'EST POUR INITIALISER LES BOUTONS SUPPRIMER ET MODIFIER A L'ETAT INACTIF
         btnSupprimer.setDisable(true);
         boutonModifier.setDisable(true);
 
-        try {
-            Statement statement = connectDB.createStatement();
-            ResultSet Queryoutput = statement.executeQuery(medicamenViewQuery);
 
-            while (Queryoutput.next()){
-                Integer queryIdMedicament = Queryoutput.getInt("ID");
-                String  queryNomMedicament = Queryoutput.getString("NOM_MEDICAMENT");
-                String  queryDescription = Queryoutput.getString("DESCRIPTION");
-                String  queryDosage = Queryoutput.getString("DOSAGE");
-                Double  queryPrix = Queryoutput.getDouble("PRIX");
-                Date  queryDateExpiration = Queryoutput.getDate("DATE_EXPIRATION");
-                Integer queryQuantite = Queryoutput.getInt("QUANTITE");
-                //Integer queryIdFournisseur = Queryoutput.getInt("id_produitF");
+        loadMedicamentStockData();
 
 
-                //remplir la liste observable
-               // MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
-
-                MedicamentSearch medicament = new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite);
-                MedicamentSearchObservableList.add(medicament);
-
-            }
-
-            ID_Medicament_tableColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
-            nomMedicament_tableColumn.setCellValueFactory(new PropertyValueFactory<>("Nom_medicament"));
-            Description_tableColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-            Dosage_tableColumn.setCellValueFactory(new PropertyValueFactory<>("dosage"));
-            Prix_tableColumn.setCellValueFactory(new PropertyValueFactory<>("prix"));
-            DateExpiration_tableColumn.setCellValueFactory(new PropertyValueFactory<>("date_expiration"));
-            Quantite_tableColumn.setCellValueFactory(new PropertyValueFactory<>("quantite"));
-
-            TableMedicament.setItems(MedicamentSearchObservableList);
 
 
             // Vérifiez si un produit est déjà dans le panier
-            for (MedicamentSearch medicament : MedicamentSearchObservableList) {
+            for (MedicamentStock medicament : MedicamentStockObservableList) {
                 if (isProductInCart(medicament)) {
-                    showAlert(Alert.AlertType.WARNING, "Produit Déjà dans le Panier", "Le produit " + medicament.getNom_medicament() + " est déjà dans le panier.");
+                    showAlert(Alert.AlertType.WARNING, "Produit Déjà dans le Panier", "Le produit " + medicament.getNomProduit() + " est déjà dans le panier.");
                 }
             }
 
@@ -346,7 +579,7 @@ public class MedicamentController implements Initializable{
 
 
             // Créez une liste filtrée liée à la liste observable des médicaments
-            FilteredList<MedicamentSearch> filteredList = new FilteredList<>(MedicamentSearchObservableList, p -> true);
+            FilteredList<MedicamentStock> filteredList = new FilteredList<>(MedicamentStockObservableList, p -> true);
 
             // Liez le predicat du FilteredList à la propriété text du TextField
             keyWordTextField.textProperty().addListener((observable, oldValue, newValue) ->
@@ -357,8 +590,8 @@ public class MedicamentController implements Initializable{
 
                         // Convertissez la recherche en minuscules et vérifiez si elle correspond à certains champs du médicament
                         String lowerCaseFilter = newValue.toLowerCase();
-                        return medicament.getNom_medicament().toLowerCase().contains(lowerCaseFilter)
-                                || medicament.getDescription().toLowerCase().contains(lowerCaseFilter)
+                        return medicament.getNomProduit().toLowerCase().contains(lowerCaseFilter)
+                                //|| medicament.getDescription().toLowerCase().contains(lowerCaseFilter)
                                 || medicament.getDosage().toLowerCase().contains(lowerCaseFilter);
                     }));
 
@@ -383,7 +616,7 @@ public class MedicamentController implements Initializable{
                     // Si la CheckBox est cochée, filtrez les médicaments dont la date d'expiration est inférieure à 7 jours
                     filteredList.setPredicate(medicament -> {
                         Date currentDate = new Date();
-                        long differenceInDays = (medicament.getDate_expiration().getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+                        long differenceInDays = (medicament.getDateExpiration().getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
                         return differenceInDays <= 7;
                     });
                 } else {
@@ -397,7 +630,7 @@ public class MedicamentController implements Initializable{
 
 
             // Créez une liste triée liée à la liste filtrée
-            SortedList<MedicamentSearch> sortedList = new SortedList<>(filteredList);
+            SortedList<MedicamentStock> sortedList = new SortedList<>(filteredList);
 
             // Liez la liste triée à la TableView
             TableMedicament.setItems(sortedList);
@@ -413,7 +646,7 @@ public class MedicamentController implements Initializable{
             // Personnalisation de l'apparence des cellules de la colonne "Quantité"
             // avec une couleur personnalisee. "ROUGE" si la quantite est <= 3
             Quantite_tableColumn.setCellFactory(column -> {
-                return new TableCell<MedicamentSearch, Integer>() {
+                return new TableCell<MedicamentStock, Integer>() {
                     @Override
                     protected void updateItem(Integer item, boolean empty) {
                         super.updateItem(item, empty);
@@ -432,11 +665,11 @@ public class MedicamentController implements Initializable{
                             } else if (item <= 10) {
                                 // Si la quantité est inférieure ou égale à 10, définissez la couleur de fond en jaune
                                 setTextFill(Color.BLACK); // Changez la couleur du texte en noir par exemple
-                                setStyle("-fx-background-color: yellow; -fx-font-size: 14; -fx-font-weight: bold;");
+                                setStyle("-fx-background-color: rgb(236, 196, 109);; -fx-font-size: 14; -fx-font-weight: bold;");
                                 setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                             } else {
                                 // Sinon, la couleur de fond est transparente
-                                setStyle("-fx-text-fill: black; -fx-background-color: white; -fx-font-size: 14; -fx-font-weight: bold;");
+                                setStyle("-fx-text-fill: black;  -fx-font-size: 14; -fx-font-weight: bold;");
 
                             }
 
@@ -460,7 +693,7 @@ public class MedicamentController implements Initializable{
 
             /*
              *
-             *       ICI JE VAIS FAIRE UNE METHODE QUI VA ACTIVE OU DESACTION LES BOUTTON SUPPRIMER ET MODIFIER
+             *       ICI JE VAIS FAIRE UNE METHODE QUI VA ACTIVE OU DESACTIVE LES BOUTTON SUPPRIMER ET MODIFIER
              *             LORSQUE L'ON CLIQUE SUR LE TABLEAU
              *
              *  */
@@ -468,7 +701,7 @@ public class MedicamentController implements Initializable{
 
 
             // Écouteur pour surveiller les changements dans la sélection de la tableView
-            TableMedicament.getSelectionModel().getSelectedItems().addListener((ListChangeListener<MedicamentSearch>) c -> {
+            TableMedicament.getSelectionModel().getSelectedItems().addListener((ListChangeListener<MedicamentStock>) c -> {
                 if (c.getList().isEmpty()) {
                     // Aucun élément sélectionné, désactiver les boutons
                     btnSupprimer.setDisable(true);
@@ -487,105 +720,13 @@ public class MedicamentController implements Initializable{
 
 
 
-            boutonModifier.setOnAction(event -> {
-               // Récupérez l'élément sélectionné dans TableView
-                MedicamentSearch selectedItem = TableMedicament.getSelectionModel().getSelectedItem();
-
-
-                if (selectedItem != null) {
-
-
-                    // Créez une nouvelle boîte de dialogue avec les boutons "Ajouter" et "Annuler"
-                    Dialog<ButtonType> dialog = new Dialog<>();
-                    dialog.initModality(Modality.WINDOW_MODAL);
-                    dialog.initOwner(boutonModifier.getScene().getWindow());
-                    dialog.setTitle("Modifier un Produit");
-
-                    // Chargez le fichier FXML de la boîte de dialogue de modification
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fido/pharmacie/EditProductDialog.fxml"));
-                    Parent root;
-                    try {
-                        root = loader.load();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    // Obtenez le contrôleur de la boîte de dialogue
-                    EditProductDialogController dialogController = loader.getController();
-
-
-
-
-
-                    // Initialisez les champs de la boîte de dialogue avec les valeurs de l'élément sélectionné
-                    dialogController.initData(selectedItem);
-
-                    // Définissez le contenu de la boîte de dialogue
-                    dialog.getDialogPane().setContent(root);
-
-                    // Ajoutez les boutons "Ajouter" et "Annuler" à la boîte de dialogue
-                    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-                    // Obtenez les boutons "Ajouter" et "Annuler" pour y appliquer des actions si nécessaire
-                    Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-                    Button cancelButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-
-                     // Ajoutez des écouteurs d'événements aux boutons si nécessaire
-                    okButton.setOnAction(evt -> {
-                        // Logique pour le bouton "Ajouter" si nécessaire
-                        // Par exemple, dialogController.processAdd();
-                        // Appeler la méthode de mise à jour du contrôleur de boîte de dialogue
-
-
-                        // Appeler la méthode de mise à jour du contrôleur de boîte de dialogue
-                        //dialogController.processUpdate();
-
-
-                        // Récupérez les données mises à jour du dialogue
-                        MedicamentSearch updatedMedicament = dialogController.processUpdate();
-
-                        // Mettez à jour l'objet sélectionné dans la liste observable
-                        int selectedIndex = MedicamentSearchObservableList.indexOf(selectedItem);
-                        if (selectedIndex != -1) {
-                            MedicamentSearchObservableList.set(selectedIndex, updatedMedicament);
-
-
-                            // Rafraîchissez la TableView
-                            TableMedicament.setItems(null);
-                            TableMedicament.setItems(MedicamentSearchObservableList);
-
-
-                        }
-
-
-
-                       // dialog.close();
-
-
-
-                    });
-
-                    cancelButton.setOnAction(evt -> {
-                        // Logique pour le bouton "Annuler" si nécessaire
-                        // Par exemple, dialogController.cancelAdd();
-                        dialog.close();
-                    });
-
-                    // Affichez la fenêtre de dialogue et attendez jusqu'à ce qu'elle soit fermée
-                    Optional<ButtonType> result = dialog.showAndWait();
-
-
-                }
-            });
-
 
 
             // Créez une cellFactory pour la colonne "Action"
-            TableColumn<MedicamentSearch, Void> actionColumn = Action_tableColumn;
+            TableColumn<MedicamentStock, Void> actionColumn = Action_tableColumn;
             actionColumn.setCellFactory(new Callback<>() {
                 @Override
-                public TableCell<MedicamentSearch, Void> call(final TableColumn<MedicamentSearch, Void> param) {
+                public TableCell<MedicamentStock, Void> call(final TableColumn<MedicamentStock, Void> param) {
                     return new TableCell<>() {
                         private final HBox container = new HBox(); // Utilisez un conteneur HBox pour afficher plusieurs éléments horizontalement
                         private final Button actionButton = new Button();
@@ -645,7 +786,7 @@ public class MedicamentController implements Initializable{
                             actionButton.setOnAction(event -> {
                                 // Code à exécuter lors du clic sur le bouton dans la cellule
                                 // Vous pouvez accéder aux données de la ligne actuelle avec getItem()
-                                MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
+                                MedicamentStock selectedMedicament = getTableView().getItems().get(getIndex());
 
 
                                 // Vérifiez si la quantité en stock est égale à 0
@@ -667,7 +808,7 @@ public class MedicamentController implements Initializable{
                                     } else {
 
                                         int quantiteChoisie = 1;
-                                        Double totIndividuel = selectedMedicament.getPrix() * quantiteChoisie;
+                                        Double totIndividuel = selectedMedicament.getPrixUnitaire() * quantiteChoisie;
                                         PanierItem panierItem = new PanierItem(selectedMedicament, quantiteChoisie, totIndividuel);
 
                                         // Vérifiez si le produit est déjà dans le panierItems
@@ -679,7 +820,7 @@ public class MedicamentController implements Initializable{
                                         } else {
                                             panier.add(panierItem);
                                             // Affichez un message de notification
-                                            String message = "Produit ajouté au panier : " + selectedMedicament.getNom_medicament();
+                                            String message = "Produit ajouté au panier : " + selectedMedicament.getNomProduit();
                                             showAlert(Alert.AlertType.INFORMATION, "PRODUIT AJOUTE :", message);
                                             // Faites quelque chose avec l'objet de données, par exemple, mettez à jour l'interface utilisateur
                                             // ou effectuez d'autres actions liées à l'ajout du produit au panier
@@ -707,14 +848,14 @@ public class MedicamentController implements Initializable{
                                 // Ajoutez un style CSS pour centrer le contenu de la cellule
                                 setAlignment(Pos.CENTER);
 
-                                MedicamentSearch selectedMedicament = getTableView().getItems().get(getIndex());
+                                MedicamentStock selectedMedicament = getTableView().getItems().get(getIndex());
 
                                 // Mettez à jour l'icône et l'état du bouton en fonction de la quantité en stock
                                 if (selectedMedicament.getQuantite() <= 10) {
                                     alertButton.setVisible(true);
 
                                     if (selectedMedicament.getQuantite() == 0) {
-                                        actionButton.setStyle("-fx-opacity: 0.5;");
+                                        actionButton.setStyle("-fx-opacity: 0.3;");
                                         actionButton.setDisable(true);
                                     } else {
                                         actionButton.setStyle("");
@@ -744,7 +885,7 @@ public class MedicamentController implements Initializable{
 
 
             // voici la methode pour ajouter CFA a la fin du prix dans la colonne prixColumn
-            Prix_tableColumn.setCellFactory(col -> new TableCell<MedicamentSearch, Double>() {
+            Prix_tableColumn.setCellFactory(col -> new TableCell<MedicamentStock, Double>() {
                 @Override
                 protected void updateItem(Double item, boolean empty) {
                     super.updateItem(item, empty);
@@ -754,7 +895,7 @@ public class MedicamentController implements Initializable{
                     } else {
                         // Display the price with the symbol "FCFA"
                         setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 14; -fx-font-weight: bold;"); // Centrer le texte
+                        //setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 14; -fx-font-weight: bold;"); // Centrer le texte
                     }
                 }
             });
@@ -762,32 +903,14 @@ public class MedicamentController implements Initializable{
 
 
 
-            DateExpiration_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentSearch, Date>, TableCell<MedicamentSearch, Date>>() {
+
+
+
+
+            Dosage_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentStock, String>, TableCell<MedicamentStock, String>>() {
                 @Override
-                public TableCell<MedicamentSearch, Date> call(TableColumn<MedicamentSearch, Date> param) {
-                    return new TableCell<MedicamentSearch, Date>() {
-                        @Override
-                        protected void updateItem(Date item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item == null || empty) {
-                                setText(null);
-                                setStyle("");
-                            } else {
-                                setText(item.toString()); // Assurez-vous d'avoir une représentation lisible de la date ici
-                                setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
-                            }
-                        }
-                    };
-                }
-            });
-
-
-
-            Dosage_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentSearch, String>, TableCell<MedicamentSearch, String>>() {
-                @Override
-                public TableCell<MedicamentSearch, String> call(TableColumn<MedicamentSearch, String> param) {
-                    return new TableCell<MedicamentSearch, String>() {
+                public TableCell<MedicamentStock, String> call(TableColumn<MedicamentStock, String> param) {
+                    return new TableCell<MedicamentStock, String>() {
                         @Override
                         protected void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
@@ -796,8 +919,8 @@ public class MedicamentController implements Initializable{
                                 setStyle("");
                             } else {
                                 setText(item);
-                                setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+                               // setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+                                //setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -805,10 +928,14 @@ public class MedicamentController implements Initializable{
             });
 
 
-            Description_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentSearch, String>, TableCell<MedicamentSearch, String>>() {
+
+
+
+
+            nomMedicament_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentStock, String>, TableCell<MedicamentStock, String>>() {
                 @Override
-                public TableCell<MedicamentSearch, String> call(TableColumn<MedicamentSearch, String> param) {
-                    return new TableCell<MedicamentSearch, String>() {
+                public TableCell<MedicamentStock, String> call(TableColumn<MedicamentStock, String> param) {
+                    return new TableCell<MedicamentStock, String>() {
                         @Override
                         protected void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
@@ -817,7 +944,7 @@ public class MedicamentController implements Initializable{
                                 setStyle("");
                             } else {
                                 // Définir la limite de caractères pour passer à la ligne
-                                int limit = 30; // Vous pouvez ajuster cette valeur en fonction de vos besoins
+                                int limit = 15; // Vous pouvez ajuster cette valeur en fonction de vos besoins
 
                                 if (item.length() > limit) {
                                     // Si la chaîne est trop longue, insérer des retours à la ligne
@@ -825,22 +952,18 @@ public class MedicamentController implements Initializable{
                                 } else {
                                     setText(item);
                                 }
-
                                 //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+                               // setStyle("-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: black;");
                             }
                         }
                     };
                 }
             });
 
-
-
-
-            nomMedicament_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentSearch, String>, TableCell<MedicamentSearch, String>>() {
+            categorieProduit.setCellFactory(new Callback<TableColumn<MedicamentStock, String>, TableCell<MedicamentStock, String>>() {
                 @Override
-                public TableCell<MedicamentSearch, String> call(TableColumn<MedicamentSearch, String> param) {
-                    return new TableCell<MedicamentSearch, String>() {
+                public TableCell<MedicamentStock, String> call(TableColumn<MedicamentStock, String> param) {
+                    return new TableCell<MedicamentStock, String>() {
                         @Override
                         protected void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
@@ -848,9 +971,41 @@ public class MedicamentController implements Initializable{
                                 setText(null);
                                 setStyle("");
                             } else {
+
+
+                               // setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
                                 setText(item);
+
                                 //setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
-                                setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: green;");
+                                //setStyle("-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: black;");
+                            }
+                        }
+                    };
+                }
+            });
+
+
+
+            // Définissez une cell factory pour la colonne ID_Medicament_tableColumn
+            code_barre_tableColumn.setCellFactory(new Callback<TableColumn<MedicamentStock, String>, TableCell<MedicamentStock, String>>() {
+                @Override
+                public TableCell<MedicamentStock, String> call(TableColumn<MedicamentStock, String> param) {
+                    return new TableCell<MedicamentStock, String>() {
+                        @Override
+                        protected void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            // Assurez-vous que la cellule n'est pas vide
+                            if (item == null || empty) {
+                                setText(null);
+                                setStyle(""); // Réinitialisez le style de la cellule
+                            } else {
+                                setText(String.valueOf(item));
+
+                                setAlignment(javafx.geometry.Pos.CENTER); // Centrer le texte dans la cellule
+
+                                // Définissez la couleur de fond de la cellule
+                               // setStyle("-fx-background-color: #7C96AB; -fx-font-size: 16; -fx-font-weight: bold;");
                             }
                         }
                     };
@@ -861,10 +1016,8 @@ public class MedicamentController implements Initializable{
 
 
 
-        }catch (SQLException e){
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);
-            e.printStackTrace();
-        }
+
+
 
     }
 }

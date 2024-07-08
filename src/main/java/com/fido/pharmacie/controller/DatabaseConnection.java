@@ -1,6 +1,8 @@
 package com.fido.pharmacie.controller;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -15,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
+   // private static final String JDBC_URL = "jdbc:mysql://localhost:3306/pharmacie?autoReconnect=true";
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/pharmacie?autoReconnect=true";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
@@ -49,30 +52,22 @@ public class DatabaseConnection {
     // ICI ON VA AJOUTER LA METHODE showAlert()
     //    POUR AFFICHER UN DIALOGUE DES MESSAGE D'ERREUR AU CAS OU IL N'YA PAS DE CONNEXION
 
-    static void showAlert(Alert.AlertType alertType, String title, String content) {
+    public static void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
 
-
-        // Charger l'icône personnalisée
-       /* Image icon = new Image("C:/Users/DELL/IdeaProjects/Pharmacie/src/main/resources/Image/Plus.png");
-        ImageView imageView = new ImageView(icon);
-        imageView.setFitWidth(48); // Largeur de l'icône
-        imageView.setFitHeight(48); // Hauteur de l'icône
+// Chargement de l'icône depuis le chemin spécifié
+        Image image = new Image("file:src/main/java/com/fido/pharmacie/controller/Image/Plus.png");
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(50); // Taille de l'icône, ajustez selon vos besoins
+        imageView.setFitHeight(50);
         alert.setGraphic(imageView);
-        */
-
-        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
-
-
-        // Récupérer le stage de l'alerte et définir l'icône de la fenêtre
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(absolutePath1));
 
         alert.showAndWait();
     }
+
 
 
 

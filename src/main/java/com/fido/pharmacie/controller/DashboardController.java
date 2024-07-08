@@ -1,20 +1,31 @@
 package com.fido.pharmacie.controller;
 
 import com.fido.pharmacie.model.MedicamentSearch;
+import com.fido.pharmacie.model.MedicamentStock;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 
@@ -32,22 +43,58 @@ public class DashboardController implements Initializable {
     private Label nbrFournisseurs;
 
 
+    @FXML
+    private TextField valeurTotalStock;
+
+    @FXML
+    private TextField caissePrice1;
+
+    @FXML
+    private ImageView arrowDown;
+
+    @FXML
+    private ImageView arrowDown1;
+
+    @FXML
+    private ImageView arrowUp;
+
+    @FXML
+    private ImageView arrowUp1;
+
+    @FXML
+    private TextField arrowDownTextField;
+
+    @FXML
+    private TextField arrowDownTextField1;
+
+    @FXML
+    private TextField arrowUpTextField;
+
+
+    @FXML
+    private TextField arrowUpTextField1;
+
+
+
+
+
+
     Connection connectDB = DatabaseConnection.getConnection();
 
 
-    ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
+    ObservableList<MedicamentStock> MedicamentStockObservableList = FXCollections.observableArrayList();
 
 
 
 
 
-    // Méthode pour obtenir la valeur maximale de quantité dans la liste
+
 
 
 
     private int getNombreTotalProduits() {
         int nombreTotal = 0;
-        String countQuery = "SELECT COUNT(*) AS total FROM medicament";
+        String countQuery = "SELECT COUNT(*) AS total FROM produits";
 
         try (PreparedStatement preparedStatement = connectDB.prepareStatement(countQuery);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -84,12 +131,50 @@ public class DashboardController implements Initializable {
 
 
 
-//String selectQuery = "SELECT date_achat, total FROM achat ORDER BY date_achat DESC LIMIT 20";
-    // Limite les résultats aux 20 dernières entrées, par exemple.
+    private double calculerValeurTotaleStock() {
+        String query = "SELECT  p.prix, s.quantite " +
+                "FROM produits p " +
+                "JOIN stock s ON p.code_barres = s.code_barres " ;
+
+        double totalPrice = 0.0;
+
+        try (
+                PreparedStatement stmt = connectDB.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                double prix = rs.getDouble("prix");
+                int quantite = rs.getInt("quantite");
+                totalPrice += prix * quantite;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Gérez l'exception comme vous le souhaitez (par exemple, afficher un message d'erreur)
+        }
+
+        return totalPrice;
+    }
+
+
+
+
+    private String formatCurrency(double amount) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.FRANCE);
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat formatter = new DecimalFormat("#,##0", symbols);
+        return formatter.format(amount);
+    }
+
+
+
+
+
+
+
 
     public void populateAreaChart() {
         String selectQuery = "SELECT date_achat, SUM(total) as total_vente " +
-                "FROM achat " +
+                "FROM vente " +
                 "GROUP BY date_achat " +
                 "ORDER BY date_achat ASC";
 
@@ -98,22 +183,16 @@ public class DashboardController implements Initializable {
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-            // Utiliser une Map pour stocker les totaux des ventes par date
-            //Map<String, Double> venteParDate = new HashMap<>();
-
-            // Utiliser une TreeMap au lieu d'une HashMap pour trier les clés (dates)
+            // Utiliser une TreeMap pour stocker les totaux des ventes par date
             Map<String, Double> venteParDate = new TreeMap<>();
-
 
             while (resultSet.next()) {
                 // Convertir la date SQL en format lisible
                 Timestamp timestamp = resultSet.getTimestamp("date_achat");
 
                 // Utiliser DateTimeFormatter pour formater la date
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                 String formattedDate = timestamp.toLocalDateTime().toLocalDate().format(formatter);
-
-
 
                 // Récupérer la somme totale de vente pour la date actuelle
                 double totalVente = resultSet.getDouble("total_vente");
@@ -122,10 +201,19 @@ public class DashboardController implements Initializable {
                 venteParDate.merge(formattedDate, totalVente, Double::sum);
             }
 
-            // Parcourir la Map et ajouter les données à la série
-            venteParDate.forEach((date, total) -> {
+            // Obtenir les 10 dernières entrées
+            List<Map.Entry<String, Double>> last10Entries = venteParDate.entrySet()
+                    .stream()
+                    .skip(Math.max(0, venteParDate.size() - 13))
+                    .collect(Collectors.toList());
+
+            // Parcourir les 10 dernières entrées et ajouter les données à la série
+            last10Entries.forEach(entry -> {
+                String date = entry.getKey();
+                Double total = entry.getValue();
+
                 // Afficher la somme des ventes dans la console (peut être commenté ou retiré au besoin)
-                System.out.println("Date: " + date + ", Total Vente: " + total);
+              //  System.out.println("Date: " + date + ", Total Vente: " + total);
 
                 // Ajouter les données à la série
                 series.getData().add(new XYChart.Data<>(date, total));
@@ -135,22 +223,32 @@ public class DashboardController implements Initializable {
             areaChartAchat.getData().add(series);
 
 
-            areaChartAchat.setCategoryGap(0); // Optionnel : pour supprimer l'espace entre les catégories
-            areaChartAchat.setAnimated(false); // Désactiver l'animation si nécessaire
+            // Ajouter un ChangeListener pour appliquer le style une fois que le nœud est créé
+            series.nodeProperty().addListener((obs, oldNode, newNode) -> {
+                if (newNode != null) {
+                    newNode.setStyle("-fx-stroke: green; -fx-fill: rgba(0, 255, 0, 0.5);");
+                }
+            });
+
+            areaChartAchat.setCategoryGap(2); // Optionnel : pour supprimer l'espace entre les catégories
+            areaChartAchat.setAnimated(true); // Désactiver l'animation si nécessaire
             areaChartAchat.getXAxis().setLabel("Date d'Achat");
             areaChartAchat.getYAxis().setLabel("Total Vente");
-            //areaChartAchat.setBarGap(0); // Optionnel : pour supprimer l'espace entre les barres
 
 
-            // Configurer les axes
-            areaChartAchat.getXAxis().setLabel("Date d'Achat");
-            areaChartAchat.getYAxis().setLabel("Total Vente");
+            // Appliquer la rotation aux étiquettes de l'axe des abscisses
+            rotateXAxisLabels((CategoryAxis) areaChartAchat.getXAxis());
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+
+    private void rotateXAxisLabels(CategoryAxis xAxis) {
+        xAxis.setTickLabelRotation(50); // Rotation des étiquettes de 45 degrés
+    }
 
 
 
@@ -164,9 +262,9 @@ public class DashboardController implements Initializable {
         int countPerimes = 0;
         int countAutres = 0;
 
-        for (MedicamentSearch medicament : MedicamentSearchObservableList) {
+        for (MedicamentStock medicament : MedicamentStockObservableList) {
             int quantite = medicament.getQuantite();
-            Date dateExpiration = medicament.getDate_expiration();
+            Date dateExpiration = medicament.getDateExpiration();
 
             // Vérifier si le produit est périmé
             if (dateExpiration != null && dateExpiration.before(new Date())) {
@@ -195,6 +293,45 @@ public class DashboardController implements Initializable {
 
 
 
+    private void initializeArrowDownIcon(){
+        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/arrowUp.png").toUri().toString();
+        Image imgUp = new Image(absolutePath1);
+
+        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/arrowDown.png").toUri().toString();
+        Image imgDown = new Image(absolutePath2);
+
+
+
+
+
+        arrowDownTextField.setStyle("-fx-text-fill: red;");
+        arrowUpTextField.setStyle("-fx-text-fill: green;");
+
+        arrowDownTextField1.setStyle("-fx-text-fill: red;");
+        arrowUpTextField1.setStyle("-fx-text-fill: green;");
+
+
+        arrowUp.setImage(imgUp);
+        arrowUp.setFitWidth(20); // Réglez la largeur souhaitée
+        arrowUp.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+        arrowUp1.setImage(imgUp);
+        arrowUp1.setFitWidth(20); // Réglez la largeur souhaitée
+        arrowUp1.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+        arrowDown1.setImage(imgDown);
+        arrowDown1.setFitWidth(20); // Réglez la largeur souhaitée
+        arrowDown1.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+        arrowDown.setImage(imgDown);
+        arrowDown.setFitWidth(20); // Réglez la largeur souhaitée
+        arrowDown.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
+
+
+    }
+
 
 
 
@@ -215,10 +352,17 @@ public class DashboardController implements Initializable {
         nbrFournisseurs.setText( String.valueOf(nombreTotalFournisseurs));
 
 
+        caissePrice1.setStyle("-fx-text-fill: green;");
+
+        initializeArrowDownIcon();
 
 
 
-        String medicamenViewQuery = "SELECT ID, NOM_MEDICAMENT, DESCRIPTION, DOSAGE, PRIX, DATE_EXPIRATION, QUANTITE FROM medicament ";
+
+        String medicamenViewQuery = "SELECT p.code_barres, p.nom_produit, p.dosage, p.description, p.prix, p.categorie_produit, p.fournisseur,  p.instructions_utilisation" +
+                ", s.numero_lot, s.date_expiration, s.date_reception, s.quantite  " +
+                "FROM Produits p " +
+                "JOIN Stocks s ON p.code_barres = s.code_barres";
 
 
         try {
@@ -226,19 +370,19 @@ public class DashboardController implements Initializable {
             ResultSet Queryoutput = statement.executeQuery(medicamenViewQuery);
 
             while (Queryoutput.next()){
-                Integer queryIdMedicament = Queryoutput.getInt("ID");
-                String  queryNomMedicament = Queryoutput.getString("NOM_MEDICAMENT");
-                String  queryDescription = Queryoutput.getString("DESCRIPTION");
-                String  queryDosage = Queryoutput.getString("DOSAGE");
-                Double  queryPrix = Queryoutput.getDouble("PRIX");
-                Date queryDateExpiration = Queryoutput.getDate("DATE_EXPIRATION");
-                Integer queryQuantite = Queryoutput.getInt("QUANTITE");
+                String codeBarre = Queryoutput.getString("code_barres");
+                String nomProduit = Queryoutput.getString("nom_produit");
+                String dosage = Queryoutput.getString("dosage");
+                String description = Queryoutput.getString("description");
+                String fournisseur = Queryoutput.getString("fournisseur");
+                double prixUnitaire = Queryoutput.getDouble("prix");
+                String categorie = Queryoutput.getString("categorie_produit");
 
+                String instructions = Queryoutput.getString("instructions_utilisation");
+                int quantite = Queryoutput.getInt("quantite");
 
-                //remplir la liste observable
-
-                MedicamentSearchObservableList.add(new MedicamentSearch(queryIdMedicament, queryNomMedicament, queryDescription, queryDosage, queryPrix, queryDateExpiration, queryQuantite));
-
+                MedicamentStock produit = new MedicamentStock(codeBarre, nomProduit, dosage, description, prixUnitaire, categorie, quantite, fournisseur, instructions);
+                MedicamentStockObservableList.add(produit);
 
 
             }
@@ -251,6 +395,11 @@ public class DashboardController implements Initializable {
 
             // INITIALISER LES VALEURS DANS PieChart AU DEMARRAGE
             populatePieChart();
+
+
+
+            System.out.println("MedicamentStockObservableList size: " + MedicamentStockObservableList.size());
+
 
         }catch (SQLException e){
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);

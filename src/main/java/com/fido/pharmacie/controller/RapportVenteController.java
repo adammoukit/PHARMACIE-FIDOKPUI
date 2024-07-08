@@ -8,7 +8,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.properties.TextAlignment;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,7 +30,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -44,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.Document;
@@ -51,111 +50,45 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import javafx.stage.FileChooser;
 
-
-
-
 public class RapportVenteController implements Initializable {
 
     @FXML
     private TableColumn<Achat, Hyperlink> actionColumn;
-
-
     @FXML
     private ComboBox<String> comboBoxPeriode;
     @FXML
     private TableColumn<Achat, Integer> id_venteColumn;
-
     @FXML
     private TableColumn<Achat, Timestamp> dateAchatColumn;
-
     @FXML
     private TableColumn<Achat, String> codeRecuColumn;
-
     @FXML
     private TableColumn<Achat, Double> totalColumn;
-
     @FXML
     private TableView<Achat> tableVente;
-
-
     @FXML
     private AnchorPane vueLineChart;
-
     @FXML
-    private LineChart<String, Number> lineChart; // Change the type for Y to Number
-
-    @FXML
-    private DatePicker datePickerControll;
-
-    @FXML
-    private Button okButton;
-
-
+    private LineChart<String, Number> lineChart;
     @FXML
     private Button btnIprimer;
-
     @FXML
-    private Button btnPrecedent;
-
+    private DatePicker Date_Debut;
     @FXML
-    private Button btnSuivant;
-
+    private DatePicker Date_Fin;
+    @FXML
+    private Button btn_Valider;
     @FXML
     private ImageView imgImprimer;
-
-
+    @FXML
+    private Label totalTransactionsLabel;
 
     private int startIndex = 0;  // Indice de départ pour la fenêtre glissante
     private int windowSize = 20; // Taille de la fenêtre glissante
 
-
-
-    @FXML
-    private void afficherDonneesSuivantes(ActionEvent event) {
-        if (startIndex + windowSize < AchatObservableList.size()) {
-            startIndex += windowSize;
-            afficherDonneesCourantes();
-        }
-    }
-
-    @FXML
-    private void afficherDonneesPrecedentes(ActionEvent event) {
-        if (startIndex - windowSize >= 0) {
-            startIndex -= windowSize;
-            afficherDonneesCourantes();
-        }
-    }
-
-    private void afficherDonneesCourantes() {
-        lineChart.getData().clear();
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Flux des ventes");
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
-        for (int i = startIndex; i < Math.min(startIndex + windowSize, AchatObservableList.size()); i++) {
-            Achat achat = AchatObservableList.get(i);
-            LocalDateTime localDateTime = achat.getDateAchat().toLocalDateTime();
-            String formattedDate = localDateTime.format(dateFormatter);
-
-            DataPoint dataPoint = new DataPoint(achat.getId(), achat.getTotal());
-            series.getData().add(new XYChart.Data<>(formattedDate, achat.getTotal(), dataPoint));
-        }
-
-        // Ajouter la série au LineChart existant (déclaré dans le FXML)
-        lineChart.getData().add(series);
-    }
-
-
-
-
-
-
     ObservableList<Achat> AchatObservableList = FXCollections.observableArrayList();
 
     Connection connectDB = DatabaseConnection.getConnection();
-
 
     private void afficherPrixVente(int venteId, double prix) {
         // Créer une boîte de dialogue d'information
@@ -168,38 +101,11 @@ public class RapportVenteController implements Initializable {
         alert.showAndWait();
     }
 
-
-    // Method to filter data in TableView and LineChart based on the selected date
-    private void filterDataByDate(LocalDate selectedDate) {
-        // Clear existing data in the LineChart
-        lineChart.getData().clear();
-
-        // Create a new series for the filtered data
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-
-        // Filter the data based on the selected date
-        List<Achat> filteredData = AchatObservableList.stream()
-                .filter(achat -> achat.getDateAchat().toLocalDateTime().toLocalDate().equals(selectedDate))
-                .collect(Collectors.toList());
-
-        // Update the data in the TableView
-        tableVente.setItems(FXCollections.observableArrayList(filteredData));
-
-        // Populate the series with filtered data
-        for (Achat achat : filteredData) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-            String formattedDate = dateFormat.format(achat.getDateAchat());
-
-            // Create a DataPoint and add it to the series
-            DataPoint dataPoint = new DataPoint(achat.getId(), achat.getTotal());
-            series.getData().add(new XYChart.Data<>(formattedDate, achat.getTotal(), dataPoint));
-        }
-
-        // Add the series to the LineChart
-        lineChart.getData().add(series);
+    // Méthode pour calculer le nombre total de transactions
+    private void updateTotalTransactions() {
+        int totalTransactions = AchatObservableList.size();
+        totalTransactionsLabel.setText("" + totalTransactions);
     }
-
-
 
     private void genererEtEnregistrerPDF() {
         // Utiliser JavaFX FileChooser pour obtenir le chemin du fichier
@@ -274,6 +180,7 @@ public class RapportVenteController implements Initializable {
             }
         }
     }
+
     // Méthode pour ajouter une cellule centrée à la table
     private void addCell(Table table, String content) {
         Cell cell = new Cell();
@@ -282,7 +189,6 @@ public class RapportVenteController implements Initializable {
         if ("Total".equals(content)) {
             content += " FCFA";
         }
-
 
         // Ajouter "FCFA" devant les valeurs de la colonne "Total"
         if ("Total".equals(content)) {
@@ -314,18 +220,13 @@ public class RapportVenteController implements Initializable {
         table.addHeaderCell(cell);
     }
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
         // Set the font for the TableView, Application des styles CSS pout la couleur de la tableview
         tableVente.setStyle("-fx-base: rgb(158, 152, 69);");
 
-
         // Load the image for AjouterBtn into the existing ImageView (imgAjouter)
-        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Print.png").toUri().toString();
+        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/PDF.png").toUri().toString();
         Image imageAjouter = new Image(absolutePath2);
 
         // Ajustez la taille de l'ImageView ici
@@ -335,118 +236,60 @@ public class RapportVenteController implements Initializable {
 
         btnIprimer.setGraphic(imgImprimer);
 
-
         // Initialize startIndex to 0
         startIndex = 0;
 
         // Set windowSize to the desired initial number of products to display
         windowSize = 20;
 
+        // Initialisation du tableau sans données
+        tableVente.setItems(FXCollections.observableArrayList());
 
-        // Call afficherDonneesCourantes to display the initial 20 products
-        afficherDonneesCourantes();
-
-
-        // Initialiser le DatePicker avec la date actuelle
-        datePickerControll.setValue(LocalDate.now());
-
-        // Add an event handler to the okButton
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // Handle the event when the okButton is clicked
-
-                // Get the selected date from the datePicker
-                LocalDate selectedDate = datePickerControll.getValue();
-
-                // Filter the data based on the selected date
-                filterDataByDate(selectedDate);
-            }
-        });
-
-
-        // Ajoutez un gestionnaire d'événements pour le bouton btnImprimer
         // Ajoutez un gestionnaire d'événements pour le bouton btnImprimer
         btnIprimer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // Générez le fichier PDF avec les données de la tableVente
-                // Générez le fichier PDF
                 genererEtEnregistrerPDF();
-
             }
         });
 
-        // Initialize the lineChart
-       /* CategoryAxis xAxis = new CategoryAxis(); // Change this line
-        NumberAxis yAxis = new NumberAxis();
-        lineChart = new LineChart<>(xAxis, yAxis); // Keep this line
-
-        */
-
-
-
-
-
-        String combinedQuery = "SELECT ID, DATE_ACHAT, CODE_RECU, TOTAL FROM achat ORDER BY DATE_ACHAT";
-
-        try {
-            Statement statement = connectDB.createStatement();
-
-
-            ResultSet queryOutput = statement.executeQuery(combinedQuery);
-
-            // Clear existing data in the LineChart
-            lineChart.getData().clear();
-
-            XYChart.Series<String, Number> series = new XYChart.Series<>(); // Change the type for Y to Number
-
-
-            series.setName("Flux des ventes");
-
-            // Create SimpleDateFormat with your desired date format
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
-
-            while (queryOutput.next()) {
-                Integer queryIdVente = queryOutput.getInt("ID");
-                java.sql.Timestamp queryDateAchat = queryOutput.getTimestamp("DATE_ACHAT");
-                String queryCodeRecu = queryOutput.getString("CODE_RECU");
-                Double queryTotal = queryOutput.getDouble("TOTAL");
-
-                // Ajouter les données d'achat à la liste observable
-                AchatObservableList.add(new Achat(queryIdVente, queryDateAchat, queryCodeRecu, queryTotal));
-
-
-                // Ajouter les données au LineChart
-                // Use the SimpleDateFormat to format the date
-                String formattedDate = dateFormat.format(queryDateAchat);
-
-                // Create a DataPoint and add it to the series
-                DataPoint dataPoint = new DataPoint(queryIdVente, queryTotal);
-                series.getData().add(new XYChart.Data<>(formattedDate, queryTotal, dataPoint));
-
+        // Add an event handler to the btn_Valider
+        btn_Valider.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                LocalDate startDate = Date_Debut.getValue();
+                LocalDate endDate = Date_Fin.getValue();
+                if (startDate != null && endDate != null) {
+                    filterDataByDateRange(startDate, endDate);
+                } else {
+                    // Display an error message if dates are not selected
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur de sélection de date");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Veuillez sélectionner une date de début et une date de fin.");
+                    alert.showAndWait();
+                }
             }
+        });
 
+        // Setup TableColumns
+        id_venteColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        dateAchatColumn.setCellValueFactory(new PropertyValueFactory<>("dateAchat"));
+        codeRecuColumn.setCellValueFactory(new PropertyValueFactory<>("codeRecu"));
+        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
 
+        // Ajouter une colonne "Action" avec des liens "Voir Plus"
+        actionColumn.setCellFactory(new Callback<TableColumn<Achat, Hyperlink>, TableCell<Achat, Hyperlink>>() {
+            @Override
+            public TableCell<Achat, Hyperlink> call(TableColumn<Achat, Hyperlink> param) {
+                return new TableCell<Achat, Hyperlink>() {
+                    final Hyperlink voirPlusLink = new Hyperlink("Voir Details");
 
-            id_venteColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-            dateAchatColumn.setCellValueFactory(new PropertyValueFactory<>("dateAchat"));
-            codeRecuColumn.setCellValueFactory(new PropertyValueFactory<>("codeRecu"));
-            totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-
-
-            // Ajouter une colonne "Action" avec des liens "Voir Plus"
-            // Dans votre méthode initialize
-            actionColumn.setCellFactory(new Callback<TableColumn<Achat, Hyperlink>, TableCell<Achat, Hyperlink>>() {
-                @Override
-                public TableCell<Achat, Hyperlink> call(TableColumn<Achat, Hyperlink> param) {
-                    return new TableCell<Achat, Hyperlink>() {
-                        final Hyperlink voirPlusLink = new Hyperlink("Voir Details");
-
-                        {
-                            voirPlusLink.setOnAction(event -> {
-                                Achat achat = getTableView().getItems().get(getIndex());
+                    {
+                        voirPlusLink.setOnAction(event -> {
+                            int index = getIndex();
+                            if (index >= 0 && index < getTableView().getItems().size()) {
+                                Achat achat = getTableView().getItems().get(index);
                                 System.out.println("Voir Plus pour l'achat ID : " + achat.getId());
                                 // Ajoutez ici la logique pour afficher plus d'informations sur l'achat
 
@@ -470,109 +313,112 @@ public class RapportVenteController implements Initializable {
                                 Stage stage = new Stage();
                                 stage.setScene(new Scene(root));
                                 stage.show();
-
-
-                            });
-                        }
-
-                        @Override
-                        protected void updateItem(Hyperlink item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (empty) {
-                                setGraphic(null);
-                            } else {
-                                setGraphic(voirPlusLink);
                             }
-                        }
-                    };
-                }
-            });
+                        });
+                    }
 
+                    @Override
+                    protected void updateItem(Hyperlink item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(voirPlusLink);
+                        }
+                    }
+                };
+            }
+        });
+
+        // Ajouter la liste observable à la TableView
+        tableVente.setItems(AchatObservableList);
+
+        // Update the total transactions label
+        updateTotalTransactions();
+
+        totalColumn.setCellFactory(col -> new TableCell<Achat, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    // Display the price with the symbol "FCFA"
+                    setText(String.format("%.2f", item) + " FCFA");
+                    setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 15; -fx-font-weight: bold;"); // Centrer le texte
+                }
+            }
+        });
+
+        // Nettoyer les enfants du AnchorPane avant d'ajouter le LineChart
+        vueLineChart.getChildren().clear();
+
+        lineChart.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
+        lineChart.setLegendVisible(true);
+        lineChart.setCreateSymbols(true);
+        lineChart.setHorizontalGridLinesVisible(true);
+        lineChart.setVerticalGridLinesVisible(true);
+        lineChart.setAnimated(true);
+        lineChart.setHorizontalZeroLineVisible(true);
+        lineChart.setCreateSymbols(true);
+
+        // Ajouter les propriétés de redimensionnement pour que le LineChart prenne les dimensions du parent
+        lineChart.prefWidthProperty().bind(vueLineChart.widthProperty());
+        lineChart.prefHeightProperty().bind(vueLineChart.heightProperty());
+
+        // Ajouter le LineChart à l'AnchorPane
+        vueLineChart.getChildren().add(lineChart);
+    }
+
+    // Méthode pour charger les données en fonction des dates de début et de fin sélectionnées
+    private void filterDataByDateRange(LocalDate startDate, LocalDate endDate) {
+        String query = "SELECT ID, DATE_ACHAT, CODE_RECU, TOTAL FROM vente WHERE DATE_ACHAT BETWEEN ? AND ? ORDER BY DATE_ACHAT";
+
+        try {
+            PreparedStatement preparedStatement = connectDB.prepareStatement(query);
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(startDate.atStartOfDay()));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(endDate.atTime(23, 59, 59)));
+
+            ResultSet queryOutput = preparedStatement.executeQuery();
+
+            AchatObservableList.clear();
+
+            // Clear existing data in the LineChart
+            lineChart.getData().clear();
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Flux des ventes");
+
+            // Create SimpleDateFormat with your desired date format
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+            while (queryOutput.next()) {
+                Integer queryIdVente = queryOutput.getInt("ID");
+                java.sql.Timestamp queryDateAchat = queryOutput.getTimestamp("DATE_ACHAT");
+                String queryCodeRecu = queryOutput.getString("CODE_RECU");
+                Double queryTotal = queryOutput.getDouble("TOTAL");
+
+                // Ajouter les données d'achat à la liste observable
+                AchatObservableList.add(new Achat(queryIdVente, queryDateAchat, queryCodeRecu, queryTotal));
+
+                // Ajouter les données au LineChart
+                String formattedDate = dateFormat.format(queryDateAchat);
+                DataPoint dataPoint = new DataPoint(queryIdVente, queryTotal);
+                series.getData().add(new XYChart.Data<>(formattedDate, queryTotal, dataPoint));
+            }
 
             // Ajouter la liste observable à la TableView
             tableVente.setItems(AchatObservableList);
 
-            totalColumn.setCellFactory(col -> new TableCell<Achat, Double>() {
-                @Override
-                protected void updateItem(Double item, boolean empty) {
-                    super.updateItem(item, empty);
+            // Update the total transactions label
+            updateTotalTransactions();
 
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        // Display the price with the symbol "FCFA"
-                        setText(String.format("%.2f", item) + " FCFA");
-                        setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-size: 15; -fx-font-weight: bold;"); // Centrer le texte
-                    }
-                }
-            });
-
-
-
-            // Nettoyer les enfants du AnchorPane avant d'ajouter le LineChart
-            vueLineChart.getChildren().clear();
-
+            // Ajouter la série de données au LineChart
             lineChart.getData().add(series);
-            lineChart.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
-            lineChart.setLegendVisible(true);
-            lineChart.setCreateSymbols(true);
-            lineChart.setHorizontalGridLinesVisible(true);
-            lineChart.setVerticalGridLinesVisible(true);
-            lineChart.setAnimated(true);
-            lineChart.setHorizontalZeroLineVisible(true);
-            lineChart.setCreateSymbols(true);
-
-            // Ajouter les propriétés de redimensionnement pour que le LineChart prenne les dimensions du parent
-            lineChart.prefWidthProperty().bind(vueLineChart.widthProperty());
-            lineChart.prefHeightProperty().bind(vueLineChart.heightProperty());
-
-
-
-
-
-            // Ajouter des gestionnaires d'événements pour le survol de l'AnchorPane
-            vueLineChart.setOnMouseEntered(event -> {
-                btnSuivant.setVisible(true);
-                btnPrecedent.setVisible(true);
-            });
-
-            vueLineChart.setOnMouseExited(event -> {
-                btnSuivant.setVisible(false);
-                btnPrecedent.setVisible(false);
-            });
-
-            // Ajouter des gestionnaires d'événements pour les boutons Suivant et Précédent
-            btnSuivant.setOnAction(this::afficherDonneesSuivantes);
-            btnPrecedent.setOnAction(this::afficherDonneesPrecedentes);
-
-
-
-            //cette qui fais afficher l'alert qui affiche l'id et le prix de la vente au clic sur les points dans le lineChart
-            lineChart.getData().stream().forEach(venteSeries -> {
-                for (XYChart.Data<String, Number> data : venteSeries.getData()) {
-                    Node node = data.getNode();
-                    node.setOnMouseClicked(event -> {
-                        DataPoint dataPoint = (DataPoint) data.getExtraValue();
-                        afficherPrixVente(dataPoint.getVenteId(), dataPoint.getPrix());
-                    });
-                }
-            });
-
-
-
-
-            vueLineChart.getChildren().add(lineChart);
-
-
-
-
-
-
-
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 }

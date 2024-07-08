@@ -4,18 +4,18 @@ import java.util.Date;
 
 public class PanierItem {
 
-     MedicamentSearch medicament;
+     MedicamentStock medicament;
      int qte;
      Double totIndividuel;
 
 
-    public PanierItem(MedicamentSearch medicament, int qte, Double totIndividuel) {
+    public PanierItem(MedicamentStock medicament, int qte, Double totIndividuel) {
         this.medicament = medicament;
         this.qte = qte;
         this.totIndividuel = totIndividuel;
     }
 
-    public MedicamentSearch getMedicament() {
+    public MedicamentStock getMedicament() {
         return medicament;
     }
 
@@ -27,7 +27,7 @@ public class PanierItem {
         return totIndividuel;
     }
 
-    public void setMedicament(MedicamentSearch medicament) {
+    public void setMedicament(MedicamentStock medicament) {
         this.medicament = medicament;
     }
 

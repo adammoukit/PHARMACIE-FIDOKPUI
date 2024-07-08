@@ -28,7 +28,7 @@ public class DetailsVenteController implements Initializable {
     private TableView<Produit> tableProduits;
 
     @FXML
-    private TableColumn<Produit, Integer> colProduitID;
+    private TableColumn<Produit, String> colProduitID;
 
     @FXML
     private TableColumn<Produit, String> nomProduit;
@@ -50,7 +50,7 @@ public class DetailsVenteController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialisez les colonnes de la TableView
-        colProduitID.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getProduitID()).asObject());
+        colProduitID.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduitID()));
         nomProduit.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNomProduit()));
         colQuantite.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getQuantite()).asObject());
         colPrixUnitaire.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrixUnitaire()).asObject());
@@ -62,9 +62,9 @@ public class DetailsVenteController implements Initializable {
 
         // Récupérer les données de la base de données en fonction de l'ID de vente
         try  {
-            String query = "SELECT m.ID, m.NOM_MEDICAMENT, dv.Quantite, dv.PrixUnitaire, (dv.Quantite * dv.PrixUnitaire) AS MontantTotal " +
+            String query = "SELECT p.code_barres, p.nom_produit, dv.Quantite, dv.PrixUnitaire, (dv.Quantite * dv.PrixUnitaire) AS MontantTotal " +
                     "FROM detailvente dv " +
-                    "JOIN medicament m ON dv.IDProduit = m.ID " +
+                    "JOIN produits p ON dv.code_barres = p.code_barres " +
                     "WHERE dv.IDVente = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, venteId);
@@ -72,8 +72,8 @@ public class DetailsVenteController implements Initializable {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         Produit produit = new Produit(
-                                resultSet.getInt("ID"),
-                                resultSet.getString("NOM_MEDICAMENT"),
+                                resultSet.getString("code_barres"),
+                                resultSet.getString("nom_produit"),
                                 resultSet.getInt("Quantite"),
                                 resultSet.getDouble("PrixUnitaire"),
                                 resultSet.getDouble("MontantTotal")

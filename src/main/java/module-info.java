@@ -11,8 +11,10 @@ module com.fido.pharmacie {
     requires java.desktop;
     requires kernel;
     requires layout;
-
-
+    requires barcode4j;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
+    requires org.apache.commons.compress;
 
 
     opens com.fido.pharmacie to javafx.fxml;

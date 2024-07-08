@@ -1,0 +1,7 @@
+.chart-series-line {
+    -fx-stroke: green; /* Couleur de la ligne */
+}
+
+.chart-series-area-fill {
+    -fx-fill: rgba(0, 255, 0, 0.5); /* Couleur de la zone remplie */
+}

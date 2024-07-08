@@ -1,13 +1,13 @@
 package com.fido.pharmacie.model;
 
 public class Produit {
-    private int produitID;
+    private String produitID;
     private String nomProduit;
     private int quantite;
     private double prixUnitaire;
     private double montantTotal;
 
-    public Produit(int produitID, String nomProduit, int quantite, double prixUnitaire, double montantTotal) {
+    public Produit(String produitID, String nomProduit, int quantite, double prixUnitaire, double montantTotal) {
         this.produitID = produitID;
         this.nomProduit = nomProduit;
         this.quantite = quantite;
@@ -17,11 +17,11 @@ public class Produit {
 
     // Ajoutez les getters et les setters selon vos besoins
 
-    public int getProduitID() {
+    public String getProduitID() {
         return produitID;
     }
 
-    public void setProduitID(int produitID) {
+    public void setProduitID(String produitID) {
         this.produitID = produitID;
     }
 

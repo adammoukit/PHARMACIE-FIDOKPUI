@@ -14,13 +14,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane fx:id="tabPane" prefHeight="653.0" prefWidth="415.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.EditProductDialogController">
+<TabPane fx:id="tabPane" prefHeight="678.0" prefWidth="415.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.AddProductDialog2Controller">
    <tabs>
       <Tab fx:id="informationTab" closable="false" text="Informations du produit">
          <content>
-            <VBox prefHeight="636.0" prefWidth="415.0" spacing="15.0" style="-fx-background-color: #DDF7E3;">
-               <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="385.0" text="MODIFIER PRODUIT" textFill="#30ae43" underline="true">
+            <VBox prefHeight="629.0" prefWidth="415.0" style="-fx-background-color: #DDF7E3;">
+                <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="385.0" text="NOUVEAU PRODUIT" textFill="#30ae43" underline="true">
                      <font>
                         <Font name="Courier New Bold" size="18.0" />
                      </font>
@@ -38,7 +38,7 @@
                   <VBox>
                      <children>
                         <Label text="Nom produit" />
-                        <TextField fx:id="nomProduit" promptText="Nom du produit">
+                          <TextField fx:id="nomProduit" promptText="Nom du produit">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -48,7 +48,7 @@
                   <VBox>
                      <children>
                         <Label text="Dosage" />
-                        <TextField fx:id="dosage" promptText="Dosage">
+                          <TextField fx:id="dosage" promptText="Dosage">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -57,8 +57,8 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label text="Prix produit" />
-                        <TextField fx:id="prixProduit" promptText="Prix du produit">
+                        <Label text="Prix" />
+                          <TextField fx:id="prixProduit" promptText="Prix du produit">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -68,7 +68,7 @@
                   <VBox>
                      <children>
                         <Label text="Categorie" />
-                        <ComboBox fx:id="categorieCombo" prefHeight="45.0" prefWidth="424.0" promptText="Categorie">
+                          <ComboBox fx:id="categorieCombo" prefHeight="45.0" prefWidth="424.0" promptText="Categorie">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -81,92 +81,93 @@
                      </VBox.margin>
                      <children>
                         <Label text="Description" />
-                        <TextArea fx:id="description" prefHeight="64.0" prefWidth="395.0" promptText="Description" />
+                          <TextArea fx:id="description" prefHeight="48.0" prefWidth="395.0" promptText="Description" />
                      </children>
                   </VBox>
                   <VBox>
                      <children>
                         <Label text="Fournisseur" />
-                        <ComboBox fx:id="FournisseurCombo" prefHeight="39.0" prefWidth="395.0" promptText="Fournisseur">
+                        <ComboBox fx:id="FournisseurCombo" prefHeight="55.0" prefWidth="395.0" promptText="Fournisseur">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </ComboBox>
                      </children>
                   </VBox>
-                  <HBox alignment="BOTTOM_RIGHT" prefHeight="34.0" prefWidth="395.0">
+                  <HBox alignment="BOTTOM_RIGHT">
                      <VBox.margin>
-                        <Insets top="40.0" />
+                        <Insets bottom="5.0" top="45.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="suivantBtn" alignment="CENTER" contentDisplay="RIGHT" onAction="#handleSuivant" prefHeight="41.0" prefWidth="96.0" text="Suivant" />
+                          <Button fx:id="suivantBtn" alignment="CENTER" contentDisplay="RIGHT" onAction="#handleSuivant" prefHeight="25.0" prefWidth="101.0" text="Suivant" />
                      </children>
                   </HBox>
-               </children>
-               <padding>
-                  <Insets bottom="15.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
+                </children>
+                <padding>
+                    <Insets left="10.0" right="10.0" top="10.0" />
+                </padding>
+                <spacing>15.0</spacing>
             </VBox>
          </content>
       </Tab>
       <Tab fx:id="stockTab" closable="false" text="Information du Stock">
-         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <VBox layoutX="87.0" layoutY="46.0" prefHeight="629.0" prefWidth="415.0" spacing="15.0" style="-fx-background-color: #DDF7E3;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox layoutX="87.0" layoutY="46.0" prefHeight="629.0" prefWidth="415.0" spacing="10.0" style="-fx-background-color: #DDF7E3;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox fillWidth="false">
                            <children>
                               <Label text="Quantité " />
-                              <TextField fx:id="quantite" prefHeight="35.0" prefWidth="423.0" />
+                              <TextField fx:id="quantite" prefHeight="35.0" prefWidth="392.0" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </VBox>
-                        <VBox layoutX="20.0" layoutY="20.0">
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="71.0" prefWidth="395.0">
                            <children>
                               <Label text="Date recèption" />
-                              <DatePicker fx:id="date_reception" prefHeight="34.0" prefWidth="442.0" />
+                              <DatePicker fx:id="date_reception" prefHeight="34.0" prefWidth="413.0" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </VBox>
-                        <VBox layoutX="20.0" layoutY="87.0">
+                        <VBox layoutX="20.0" layoutY="87.0" prefHeight="72.0" prefWidth="395.0">
                            <children>
                               <Label text="Date expiration" />
-                              <DatePicker fx:id="date_expiration" prefHeight="32.0" prefWidth="392.0" />
+                              <DatePicker fx:id="date_expiration" prefHeight="32.0" prefWidth="450.0" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </VBox>
-                        <VBox fillWidth="false" layoutX="20.0" layoutY="154.0">
+                        <VBox fillWidth="false" layoutX="20.0" layoutY="154.0" prefHeight="73.0" prefWidth="395.0">
                            <children>
                               <Label text="numero de lot" />
-                              <TextField fx:id="numero_lot" prefHeight="34.0" prefWidth="412.0" />
+                              <TextField fx:id="numero_lot" prefHeight="39.0" prefWidth="385.0" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </VBox>
-                        <VBox>
+                        <VBox prefHeight="81.0" prefWidth="395.0">
                            <children>
-                              <Label text="Instruction d'utilisation" />
-                              <TextArea fx:id="instructionTextArea" prefHeight="72.0" prefWidth="395.0" promptText="instruction d'utilisation" />
+                              <Label text="Instructions d'utilisation" />
+                              <TextArea fx:id="instructionTextArea" prefHeight="63.0" prefWidth="395.0" promptText="instruction d'utilisation" />
                            </children>
-                           <VBox.margin>
+                           <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </VBox.margin>
+                           </padding>
                         </VBox>
                         <HBox alignment="BOTTOM_RIGHT" prefHeight="45.0" prefWidth="395.0" spacing="7.0">
                            <children>
                               <Button fx:id="precedent" mnemonicParsing="false" onAction="#handlePrecedent" prefHeight="40.0" prefWidth="77.0" text="Precedent" />
-                              <Button fx:id="btnAjouter" mnemonicParsing="false" onAction="#processUpdate" prefHeight="40.0" prefWidth="75.0" style="-fx-background-color: #78BD7D;" text="Valider" />
+                              <Button fx:id="btnAjouter" mnemonicParsing="false" onAction="#handleAddButtonAction" prefHeight="40.0" prefWidth="75.0" style="-fx-background-color: #78BD7D;" text="Valider" />
                            </children>
                            <VBox.margin>
-                              <Insets top="200.0" />
+                              <Insets top="250.0" />
                            </VBox.margin>
                         </HBox>
                      </children>
@@ -176,7 +177,7 @@
                   </VBox>
                </children>
             </AnchorPane>
-         </content>
+        </content>
       </Tab>
    </tabs>
 </TabPane>
