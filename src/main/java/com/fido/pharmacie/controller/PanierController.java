@@ -532,11 +532,11 @@ public class PanierController implements Initializable {
     private void genererRecu() {
 
         // Vérifier si la quantité dans le panier est disponible dans le stock
-        boolean stockSuffisant = true;
+        boolean stockSuffisant = true ;
 
         List<PanierItem> elementsASupprimer = new ArrayList<>();  // Liste temporaire
 
-        for (PanierItem panierItem : panier) {
+        for (PanierItem panierItem : panier){
             // Récupérer le produit du panier
             MedicamentStock produit = panierItem.getMedicament();
 
@@ -549,7 +549,7 @@ public class PanierController implements Initializable {
                 // Émettre un bip sonore
                 Toolkit.getDefaultToolkit().beep();
 
-                stockSuffisant = false;
+                stockSuffisant = false ;
                 // Gérer le cas où la quantité achetée est supérieure à celle du stock
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erreur ");
