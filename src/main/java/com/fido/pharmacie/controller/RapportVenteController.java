@@ -83,6 +83,9 @@ public class RapportVenteController implements Initializable {
     @FXML
     private Label totalTransactionsLabel;
 
+    @FXML
+    private Label totalVente_Label;
+
     private int startIndex = 0;  // Indice de départ pour la fenêtre glissante
     private int windowSize = 20; // Taille de la fenêtre glissante
 
@@ -106,6 +109,12 @@ public class RapportVenteController implements Initializable {
         int totalTransactions = AchatObservableList.size();
         totalTransactionsLabel.setText("" + totalTransactions);
     }
+
+    private void updateTotalVentes() {
+        double totalVentes = AchatObservableList.stream().mapToDouble(Achat::getTotal).sum();
+        totalVente_Label.setText(String.format("%.2f FCFA", totalVentes));
+    }
+
 
     private void genererEtEnregistrerPDF() {
         // Utiliser JavaFX FileChooser pour obtenir le chemin du fichier
@@ -413,6 +422,10 @@ public class RapportVenteController implements Initializable {
 
             // Update the total transactions label
             updateTotalTransactions();
+
+
+            // Mettre à jour le total des ventes
+            updateTotalVentes();
 
             // Ajouter la série de données au LineChart
             lineChart.getData().add(series);

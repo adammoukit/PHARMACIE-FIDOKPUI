@@ -107,6 +107,10 @@ public class MedicamentController implements Initializable{
     private ImageView imgSupprimer;
 
     @FXML
+    private Button clearButton;
+
+
+    @FXML
     private TableColumn<MedicamentController, String> instructionColumn;
 
 
@@ -498,6 +502,27 @@ public class MedicamentController implements Initializable{
         }
     }
 
+    private void setBouton(){
+        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Close.png").toUri().toString();
+
+        final ImageView CloseIcon = new ImageView(new Image(absolutePath1));
+
+        CloseIcon.setFitWidth(20);
+        CloseIcon.setPreserveRatio(true);
+        clearButton.setGraphic(CloseIcon);
+
+        // Ajouter un gestionnaire d'événements sur le bouton clearButton
+        clearButton.setOnAction(event -> {
+            // Effacer le contenu du TextField rechercherTxtF
+            keyWordTextField.clear();
+        });
+
+
+    }
+
+    private void updateClearButtonVisibility(String text) {
+        clearButton.setVisible(!text.isEmpty());
+    }
 
 
 
@@ -521,6 +546,9 @@ public class MedicamentController implements Initializable{
 
 
 
+
+        clearButton.setVisible(false);
+        setBouton();
 
 
 
@@ -590,6 +618,7 @@ public class MedicamentController implements Initializable{
 
                         // Convertissez la recherche en minuscules et vérifiez si elle correspond à certains champs du médicament
                         String lowerCaseFilter = newValue.toLowerCase();
+                        updateClearButtonVisibility(newValue);
                         return medicament.getNomProduit().toLowerCase().contains(lowerCaseFilter)
                                 //|| medicament.getDescription().toLowerCase().contains(lowerCaseFilter)
                                 || medicament.getDosage().toLowerCase().contains(lowerCaseFilter);
@@ -944,7 +973,7 @@ public class MedicamentController implements Initializable{
                                 setStyle("");
                             } else {
                                 // Définir la limite de caractères pour passer à la ligne
-                                int limit = 15; // Vous pouvez ajuster cette valeur en fonction de vos besoins
+                                int limit = 25; // Vous pouvez ajuster cette valeur en fonction de vos besoins
 
                                 if (item.length() > limit) {
                                     // Si la chaîne est trop longue, insérer des retours à la ligne

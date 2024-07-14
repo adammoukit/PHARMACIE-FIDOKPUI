@@ -16,19 +16,19 @@
 
 <AnchorPane fx:id="mainBack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.0" prefWidth="1353.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.MedicamentController">
    <children>
-      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange; -fx-background-color: #65DD86;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="medicamentContainer" prefHeight="428.0" prefWidth="924.0" style="-fx-border-color: orange;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="TableMedicament" layoutX="10.0" layoutY="88.0" prefHeight="409.0" prefWidth="1306.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="88.0">
+            <TableView fx:id="TableMedicament" layoutX="2.0" layoutY="62.0" prefHeight="521.0" prefWidth="1351.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="61.0">
                <columns>
                   <TableColumn fx:id="code_barre_tableColumn" prefWidth="104.0" text="CODE BARRES" />
-                  <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="94.0" text="PRODUIT" />
-                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="101.0" text="DOSAGE" />
-                  <TableColumn fx:id="description_column" prefWidth="137.0" text="DESCRIPTION" />
-                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="102.0" text="PRIX  (FCFA)" />
-                  <TableColumn fx:id="categorieProduit" prefWidth="133.0" text="CATEGORIE" />
-                  <TableColumn fx:id="instructionColumn" maxWidth="248.0" prefWidth="150.0" text="INSTRUCTIONS D'UTILISATION" />
-                  <TableColumn fx:id="Quantite_tableColumn" minWidth="71.0" prefWidth="97.0" text="QTE EN STOCK" />
-                  <TableColumn fx:id="Action_tableColumn" prefWidth="113.0" text="ACTION" />
+                  <TableColumn fx:id="nomMedicament_tableColumn" prefWidth="184.0" text="PRODUIT" />
+                  <TableColumn fx:id="Dosage_tableColumn" prefWidth="146.0" text="DOSAGE" />
+                  <TableColumn fx:id="description_column" prefWidth="173.0" text="DESCRIPTION" />
+                  <TableColumn fx:id="Prix_tableColumn" minWidth="0.0" prefWidth="114.0" text="PRIX  (FCFA)" />
+                  <TableColumn fx:id="categorieProduit" prefWidth="171.0" text="CATEGORIE" />
+                  <TableColumn fx:id="instructionColumn" maxWidth="248.0" prefWidth="154.0" text="INSTRUCTIONS D'UTILISATION" />
+                  <TableColumn fx:id="Quantite_tableColumn" minWidth="71.0" prefWidth="123.0" text="QTE EN STOCK" />
+                  <TableColumn fx:id="Action_tableColumn" prefWidth="97.0" text="ACTION" />
                </columns>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -40,70 +40,79 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <HBox alignment="CENTER" layoutX="21.0" layoutY="11.0" spacing="5.0" style="-fx-border-color: silver;" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <AnchorPane layoutX="7.0" layoutY="7.0" prefHeight="58.0" prefWidth="1303.0" style="-fx-background-color: #DDF7E3; -fx-border-color: silver;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="37.0" prefWidth="302.0" spacing="5.0">
+                  <HBox alignment="CENTER" spacing="5.0" style="-fx-border-color: silver;">
                      <children>
-                        <Button fx:id="AjouterBtn" alignment="CENTER" mnemonicParsing="false" onAction="#handleCreateButtonAction2" prefHeight="5.0" text="Ajouter">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <graphic>
-                              <ImageView fx:id="imgAjouter" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <HBox alignment="CENTER" prefHeight="37.0" prefWidth="302.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="AjouterBtn" alignment="CENTER" mnemonicParsing="false" onAction="#handleCreateButtonAction2" prefHeight="5.0" text="Ajouter">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
-                                 
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="boutonModifier" mnemonicParsing="false" onAction="#handleEditButtonAction" text="Modifier" HBox.hgrow="ALWAYS">
-                           <graphic>
-                              <ImageView fx:id="imgModifier" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
-                           </graphic>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
-                        <Button fx:id="btnSupprimer" mnemonicParsing="false" text="Supprimer" HBox.hgrow="ALWAYS">
-                           <graphic>
-                              <ImageView fx:id="imgSupprimer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
-                           </graphic>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
+                                 <graphic>
+                                    <ImageView fx:id="imgAjouter" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="boutonModifier" mnemonicParsing="false" onAction="#handleEditButtonAction" text="Modifier" HBox.hgrow="ALWAYS">
+                                 <graphic>
+                                    <ImageView fx:id="imgModifier" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Button fx:id="btnSupprimer" mnemonicParsing="false" text="Supprimer" HBox.hgrow="ALWAYS">
+                                 <graphic>
+                                    <ImageView fx:id="imgSupprimer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </HBox>
+                        <Separator orientation="VERTICAL" prefHeight="13.0" prefWidth="5.0" />
+                        <HBox spacing="5.0">
+                           <children>
+                              <TextField fx:id="keyWordTextField" prefHeight="37.0" prefWidth="423.0" promptText="Rechercher par nom du produit ici" style="-fx-background-color: white; -fx-border-color: blue;">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="clearButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="52.0" />
+                           </children>
+                        </HBox>
+                        <Separator orientation="VERTICAL" prefHeight="22.0" prefWidth="4.0" />
+                        <Pane fx:id="FilteredPane" prefHeight="46.0" prefWidth="437.0" style="-fx-background-color: grey; -fx-border-width: 5;">
+                           <children>
+                              <CheckBox fx:id="checkBoxFiltrer" layoutX="7.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="192.0" text="FILTRER LES PRODUITS EN STOCK BAS (&lt;=10)" textFill="WHITE" wrapText="true">
+                                 <font>
+                                    <Font name="Courier New Bold" size="12.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="checkBoxFiltrerDate" layoutX="227.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="217.0" text="FILTRER LES PRODUITS EN PEREMTION (&lt;= 1 SEMAINE)" textFill="#2d0194" wrapText="true">
+                                 <font>
+                                    <Font name="Courier New Bold" size="12.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </Pane>
                      </children>
-                     <HBox.margin>
-                        <Insets right="5.0" />
-                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                   </HBox>
-                  <Separator orientation="VERTICAL" prefHeight="13.0" prefWidth="5.0" />
-                  <TextField fx:id="keyWordTextField" prefHeight="37.0" prefWidth="423.0" promptText="Rechercher par nom du produit ici" style="-fx-background-color: white; -fx-border-color: blue;">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                  </TextField>
-                  <Separator orientation="VERTICAL" prefHeight="22.0" prefWidth="4.0" />
-                  <Pane fx:id="FilteredPane" prefHeight="46.0" prefWidth="437.0" style="-fx-background-color: grey; -fx-border-width: 5;">
-                     <children>
-                        <CheckBox fx:id="checkBoxFiltrer" layoutX="7.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="192.0" text="FILTRER LES PRODUITS EN STOCK BAS (&lt;=10)" textFill="WHITE" wrapText="true">
-                           <font>
-                              <Font name="Courier New Bold" size="12.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="checkBoxFiltrerDate" layoutX="227.0" layoutY="6.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="217.0" text="FILTRER LES PRODUITS EN PEREMTION (&lt;= 1 SEMAINE)" textFill="#2d0194" wrapText="true">
-                           <font>
-                              <Font name="Courier New Bold" size="12.0" />
-                           </font>
-                        </CheckBox>
-                     </children>
-                  </Pane>
                </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>

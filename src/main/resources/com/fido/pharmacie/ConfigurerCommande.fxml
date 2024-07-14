@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="558.0" prefWidth="973.0" style="-fx-background-color: #DDF7E3;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fido.pharmacie.controller.ConfigurerCommandeController">
+   <children>
+      <VBox layoutX="264.0" layoutY="50.0" prefHeight="499.0" prefWidth="600.0" spacing="3.0" style="-fx-border-color: silver;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="518.0" prefWidth="745.0" style="-fx-background-color: #DDF7E3;" VBox.vgrow="ALWAYS">
+               <children>
+                  <AnchorPane layoutX="98.0" layoutY="14.0" prefHeight="518.0" prefWidth="743.0" style="-fx-background-color: #DDF7E3;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox layoutY="24.0" prefHeight="127.0" prefWidth="743.0" spacing="5.0" style="-fx-border-color: silver; -fx-border-width: 3;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <VBox prefHeight="115.0" prefWidth="505.0" spacing="2.0">
+                                 <children>
+                                    <VBox prefHeight="62.0" prefWidth="505.0" spacing="5.0">
+                                       <children>
+                                          <Label text="Rechercher:" />
+                                          <HBox spacing="3.0">
+                                             <children>
+                                                <TextField fx:id="rechercheProduitTxt" prefHeight="32.0" prefWidth="463.0" promptText="rechercher par nom produit" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="37.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="2.0" right="2.0" />
+                                       </padding>
+                                    </VBox>
+                                    <Separator prefWidth="200.0" />
+                                    <HBox spacing="10.0">
+                                       <children>
+                                          <VBox prefHeight="42.0" prefWidth="223.0">
+                                             <children>
+                                                <Label text="N° Commande" />
+                                                <TextField fx:id="numero_commande" editable="false" />
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="42.0" prefWidth="253.0">
+                                             <children>
+                                                <Label text="Libellé" />
+                                                <TextField fx:id="libelleTxt" editable="false" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                              <VBox alignment="CENTER" layoutX="305.0" layoutY="13.0" prefHeight="121.0" prefWidth="158.0" spacing="10.0">
+                                 <padding>
+                                    <Insets left="2.0" right="2.0" />
+                                 </padding>
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Produit/Code Barre" />
+                                          <TextField fx:id="codeBarres" editable="false" />
+                                       </children>
+                                    </VBox>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Fornisseur" />
+                                          <TextField fx:id="nomFournisseur" editable="false" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                              <VBox alignment="CENTER" layoutX="305.0" layoutY="13.0" prefHeight="115.0" prefWidth="133.0" spacing="10.0">
+                                 <padding>
+                                    <Insets left="2.0" right="2.0" />
+                                 </padding>
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Prix Cession" />
+                                          <TextField fx:id="prixCessionTxt" editable="false" />
+                                       </children>
+                                    </VBox>
+                                    <VBox layoutX="12.0" layoutY="10.0">
+                                       <children>
+                                          <Label text="Prix Publique" />
+                                          <TextField fx:id="prixPublicTxt" editable="false" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                              <VBox alignment="CENTER" layoutX="532.0" layoutY="13.0" prefHeight="121.0" prefWidth="102.0" spacing="10.0">
+                                 <padding>
+                                    <Insets left="2.0" right="2.0" />
+                                 </padding>
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Qte A commander" wrapText="true" />
+                                          <TextField fx:id="qteCommanderTxt">
+                                             <font>
+                                                <Font name="System Bold" size="15.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </VBox>
+                                    <Button fx:id="btnAjouter" mnemonicParsing="false" text="Ajouter" />
+                                    <VBox layoutX="12.0" layoutY="10.0" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="3.0" left="5.0" right="5.0" top="3.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutX="6.0" layoutY="130.0" prefHeight="388.0" prefWidth="743.0" style="-fx-background-color: white; -fx-border-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
+                     <children>
+                        <TableView layoutX="163.0" layoutY="58.0" prefHeight="388.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TableColumn prefWidth="114.0" text="PRODUIT" />
+                            <TableColumn prefWidth="122.0" text="LIBELLE" />
+                              <TableColumn prefWidth="141.0" text="PRIX CESSION" />
+                              <TableColumn prefWidth="155.0" text="PRIX PUBLIQUE" />
+                              <TableColumn prefWidth="155.0" text="QTE COMMANDE" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="36.0" prefWidth="600.0" style="-fx-background-color: blue;" VBox.vgrow="NEVER">
+               <children>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="745.0" spacing="5.0" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Button fx:id="btnAnnule" mnemonicParsing="false" text="Annuler" />
+                        <Button fx:id="btnValider" mnemonicParsing="false" text="Valider" />
+                     </children>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

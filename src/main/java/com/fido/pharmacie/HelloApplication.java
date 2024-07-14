@@ -43,6 +43,7 @@ package com.fido.pharmacie;
 
 import com.fido.pharmacie.controller.LoginPageController;
 import com.fido.pharmacie.controller.MainController;
+import com.fido.pharmacie.controller.FournisseursController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -65,6 +66,7 @@ public class HelloApplication extends Application {
         this.primaryStage = stage;
 
         showLoginView();
+
 
 
 
@@ -110,7 +112,7 @@ public class HelloApplication extends Application {
 
             // Créer une nouvelle fenêtre
             Stage stage = new Stage();
-            stage.setTitle("PHARMACIE FIDOKPUI 1.0.0");
+            stage.setTitle("PHARMACIE FIDOKPUI V1.0");
             stage.setScene(scene);
 
             // Chargez l'icône de l'application

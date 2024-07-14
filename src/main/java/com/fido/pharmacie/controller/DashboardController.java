@@ -293,44 +293,7 @@ public class DashboardController implements Initializable {
 
 
 
-    private void initializeArrowDownIcon(){
-        String absolutePath1 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/arrowUp.png").toUri().toString();
-        Image imgUp = new Image(absolutePath1);
 
-        String absolutePath2 = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/arrowDown.png").toUri().toString();
-        Image imgDown = new Image(absolutePath2);
-
-
-
-
-
-        arrowDownTextField.setStyle("-fx-text-fill: red;");
-        arrowUpTextField.setStyle("-fx-text-fill: green;");
-
-        arrowDownTextField1.setStyle("-fx-text-fill: red;");
-        arrowUpTextField1.setStyle("-fx-text-fill: green;");
-
-
-        arrowUp.setImage(imgUp);
-        arrowUp.setFitWidth(20); // Réglez la largeur souhaitée
-        arrowUp.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
-
-        arrowUp1.setImage(imgUp);
-        arrowUp1.setFitWidth(20); // Réglez la largeur souhaitée
-        arrowUp1.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
-
-
-        arrowDown1.setImage(imgDown);
-        arrowDown1.setFitWidth(20); // Réglez la largeur souhaitée
-        arrowDown1.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
-
-
-        arrowDown.setImage(imgDown);
-        arrowDown.setFitWidth(20); // Réglez la largeur souhaitée
-        arrowDown.setPreserveRatio(true); // Garantit que l'aspect ratio de l'image est conservé (le rapport largeur/hauteur)
-
-
-    }
 
 
 
@@ -354,7 +317,6 @@ public class DashboardController implements Initializable {
 
         caissePrice1.setStyle("-fx-text-fill: green;");
 
-        initializeArrowDownIcon();
 
 
 

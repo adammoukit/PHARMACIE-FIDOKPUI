@@ -8,6 +8,7 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import javafx.scene.layout.StackPane;
@@ -43,6 +45,7 @@ import java.util.*;
 
 
 public class MainController implements Initializable {
+
 
 
 
@@ -81,6 +84,16 @@ public class MainController implements Initializable {
     private Menu notificationMenu;
 
     private Label badgeLabel;
+
+    @FXML
+    private Button btn_chrg_fournisseur;
+
+
+    @FXML
+    private ProgressIndicator progressIndicatorFournisseurs;
+
+    @FXML
+    private ImageView imageView;
 
     private DashboardController dashboardControllerInstance;
 
@@ -133,29 +146,33 @@ public class MainController implements Initializable {
         clock.play();
     }
 
-
-
+    public MainController() {
+        // Créer le ProgressIndicator dans le constructeur
+        progressIndicatorFournisseurs = new ProgressIndicator();
+        progressIndicatorFournisseurs.setVisible(false);
+        progressIndicatorFournisseurs.setPrefSize(35, 35); // Définir la taille à 40x40 pixels
+    }
 
     /*
 
-    * ICI JE VEUX SOULIGNE UNE ERREUR QUE J'AI RENCONTRE LORS DE LEXECUTION DE L'APPLICATION
-    *
-    *       VOICI L'ERREUR :
-         ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.emptyObservableList();
+        * ICI JE VEUX SOULIGNE UNE ERREUR QUE J'AI RENCONTRE LORS DE LEXECUTION DE L'APPLICATION
+        *
+        *       VOICI L'ERREUR :
+             ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.emptyObservableList();
 
-      Le problème dans votre code est que vous initialisez MedicamentSearchObservableList en tant que liste observable vide :
-    *
-    *      SOLUTION :
+          Le problème dans votre code est que vous initialisez MedicamentSearchObservableList en tant que liste observable vide :
+        *
+        *      SOLUTION :
 
-    *  Pour résoudre ce problème, initialisez MedicamentSearchObservableList en tant que FXCollections.
-       observableArrayList() au lieu de FXCollections.emptyObservableList().
-       Voici comment vous pouvez le faire :
-    *
+        *  Pour résoudre ce problème, initialisez MedicamentSearchObservableList en tant que FXCollections.
+           observableArrayList() au lieu de FXCollections.emptyObservableList().
+           Voici comment vous pouvez le faire :
+        *
 
-    *  -----ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
+        *  -----ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
 
 
-    * */
+        * */
     ObservableList<MedicamentSearch> MedicamentSearchObservableList = FXCollections.observableArrayList();
 
 
@@ -193,15 +210,53 @@ public class MainController implements Initializable {
     }
 
 
-    /*private void chargerVueDansContainer(String fichierFXML) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fichierFXML));
-            AnchorPane vue = loader.load();
-            medicamentContainer.getChildren().setAll(vue);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } */
+    @FXML
+    private void handleChargerFournisseurs(ActionEvent event) {
+        // Cacher le bouton et afficher l'indicateur de progression
+        btn_chrg_fournisseur.setGraphic(progressIndicatorFournisseurs);
+        //btn_chrg_fournisseur.setDisable(true); // Désactivez le bouton pendant le chargement
+        progressIndicatorFournisseurs.setVisible(true);
+        imageView.setVisible(false);
+
+        // Simulation de chargement avec une tâche asynchrone
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // Ici, vous pouvez effectuer toute action de chargement nécessaire
+                // Par exemple, charger la liste des fournisseurs
+
+                // Simulation d'une tâche longue
+                Thread.sleep(2000);
+
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                // Après le chargement, afficher la vue des fournisseurs
+                afficherVueFournisseurs();
+
+                // Rétablissez l'état initial du bouton et cachez l'indicateur de progression
+               // btn_chrg_fournisseur.setDisable(false);
+               // progressIndicatorFournisseurs.setVisible(false);
+                btn_chrg_fournisseur.setGraphic(imageView);
+                progressIndicatorFournisseurs.setVisible(false);
+                imageView.setVisible(true);
+            }
+
+            @Override
+            protected void failed() {
+                super.failed();
+                // En cas d'échec du chargement, gérer les erreurs ici
+                // Exemple : afficher un message d'erreur
+                System.err.println("Échec du chargement des fournisseurs.");
+            }
+        };
+
+        // Démarrer la tâche
+        new Thread(task).start();
+    }
 
     //   ICI LA METHODE LORSQU'ON CLIC SUR UN BOUTON CA CHANGE DE VUE
     /*private void chargerVueDansContainer(String fichierFXML) {
