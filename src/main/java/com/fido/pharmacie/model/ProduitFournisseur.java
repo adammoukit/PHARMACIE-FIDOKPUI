@@ -6,11 +6,36 @@ public class ProduitFournisseur {
     private double prixCession;
     private double prixPublic;
 
+
+
+    private Integer qte;
+
+    public ProduitFournisseur(Long codeBarres, String libelle, double prixCession, double prixPublic, Integer qte) {
+        this.codeBarres = codeBarres;
+        this.libelle = libelle;
+        this.prixCession = prixCession;
+        this.prixPublic = prixPublic;
+        this.qte = qte;
+
+    }
+
+    public Double getTotal() {
+        return prixPublic * qte;
+    }
+
     public ProduitFournisseur(Long codeBarres, String libelle, double prixCession, double prixPublic) {
         this.codeBarres = codeBarres;
         this.libelle = libelle;
         this.prixCession = prixCession;
         this.prixPublic = prixPublic;
+    }
+
+    public Integer getQte() {
+        return qte;
+    }
+
+    public void setQte(Integer qte) {
+        this.qte = qte;
     }
 
     public Long getCodeBarres() {

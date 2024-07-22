@@ -1,18 +1,15 @@
 package com.fido.pharmacie.controller;
 
-import com.fido.pharmacie.model.MedicamentSearch;
 import com.fido.pharmacie.model.MedicamentStock;
 import com.fido.pharmacie.model.PanierItem;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
+
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -41,13 +38,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+
 import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,14 +51,11 @@ import java.util.*;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
-import org.controlsfx.control.textfield.TextFields;
 
 import org.krysalis.barcode4j.impl.code128.Code128Bean;
-import org.krysalis.barcode4j.impl.upcean.EAN13Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
 
-import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -1497,7 +1489,7 @@ public class PanierController implements Initializable {
                     setText(null);
                 } else {
                     // Display the price with the symbol "CFA"
-                    setText(String.format("%.2f CFA", item));
+                    setText(String.format("%.2f FCFA", item));
                     setStyle("-fx-alignment: CENTER; -fx-text-fill: green; -fx-font-weight: bold; -fx-font-size: 16;"); // Centrer le texte
 
 

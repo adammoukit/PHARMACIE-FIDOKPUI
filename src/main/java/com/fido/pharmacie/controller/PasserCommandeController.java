@@ -1,22 +1,17 @@
 package com.fido.pharmacie.controller;
 
 
-import com.fido.pharmacie.model.Commande;
 import com.fido.pharmacie.model.Fournisseur;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 
 import java.net.URL;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
-
-import static com.fido.pharmacie.controller.DatabaseConnection.connection;
 
 public class PasserCommandeController implements Initializable {
 

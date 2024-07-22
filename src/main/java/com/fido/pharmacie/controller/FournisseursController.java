@@ -1,6 +1,7 @@
 package com.fido.pharmacie.controller;
 
 
+import com.fido.pharmacie.model.CommandeFournisseur;
 import com.fido.pharmacie.model.MedicamentStock;
 import com.fido.pharmacie.model.ProduitFournisseur;
 import javafx.application.Platform;
@@ -16,14 +17,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -35,12 +40,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URL;
 
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,6 +102,9 @@ public class FournisseursController implements Initializable {
     private ProgressIndicator ProdChargement;
 
     @FXML
+    private Label nbrCommandeLabel;
+
+    @FXML
     private VBox VboxProduit;
 
     @FXML
@@ -101,6 +113,17 @@ public class FournisseursController implements Initializable {
 
     @FXML
     private ProgressIndicator progressIndicator;
+
+
+    @FXML
+    private ListView<CommandeFournisseur> commandesListview;
+
+
+
+    private ConfigurerCommandeController configurerCommandeController;
+
+    // Créer une instance de ConfigurerCommandeController
+
 
 
     private ObservableList<ProduitFournisseur> produits = FXCollections.observableArrayList();
@@ -163,7 +186,7 @@ public class FournisseursController implements Initializable {
             @Override
             protected Void call() throws Exception {
                 // Simulez une tâche longue ici
-                Thread.sleep(1000); // Par exemple, attendez 1 seconde
+                Thread.sleep(700); // Par exemple, attendez 1 seconde
                 return null;
             }
         };
@@ -285,6 +308,58 @@ public class FournisseursController implements Initializable {
         }
     }
 
+    //******************************************************************************
+
+    // Méthode pour calculer le nombre de commandes
+    public void calculerNombreCommandes() {
+        String query = "SELECT COUNT(*) AS total FROM commandefournisseur";
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                int total = resultSet.getInt("total");
+
+                // Mettre à jour le label depuis le thread JavaFX principal
+                Platform.runLater(() -> nbrCommandeLabel.setText(String.valueOf(total)));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Gérez les exceptions de manière appropriée
+        }
+    }
+
+    //******************************************************************************
+    public void loadCommandesFromDatabase() {
+        List<CommandeFournisseur> commandes = new ArrayList<>();
+        String query = "SELECT num_commande, date_commande, montant_total FROM commandefournisseur";
+
+        try (
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String numCommande = resultSet.getString("num_commande");
+                LocalDate dateCommande = resultSet.getDate("date_commande").toLocalDate();
+                BigDecimal montantTotal = resultSet.getBigDecimal("montant_total");
+
+                CommandeFournisseur commande = new CommandeFournisseur(numCommande, dateCommande, montantTotal);
+                commandes.add(commande);
+            }
+
+            // Mettre à jour l'interface graphique depuis le thread JavaFX principal
+            Platform.runLater(() -> commandesListview.setItems(FXCollections.observableArrayList(commandes)));
+
+            // Calculer le nombre de commandes
+            calculerNombreCommandes();
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Gérez les exceptions de manière appropriée
+        }
+    }
+
+    //***********************************************************************************
+
     // Méthode pour mettre à jour ou insérer un produit dans la table ProduitFournisseur
     private void updateOrInsertProduitFournisseur(long codeBarre, String libelle, double prixCession, double prixPublic, int idFournisseur) {
         try {
@@ -361,12 +436,15 @@ public class FournisseursController implements Initializable {
             String nomFournisseur = labelFournisseur.getText();
             configurerCommandeController.setNomFournisseur(nomFournisseur);
 
+            // Passer la référence de FournisseurController
+            configurerCommandeController.setFournisseurController(this);
+
             // Créer une nouvelle scène avec la vue de configuration de commande
             Scene scene = new Scene(vueConfigurerCommande);
 
             // Créer une nouvelle fenêtre (Stage)
             Stage newStage = new Stage();
-            newStage.setTitle("Configurer Commande");
+            newStage.setTitle("Configurer une commande");
             newStage.setScene(scene);
 
             String absolutePath = Paths.get("src/main/java/com/fido/pharmacie/controller/Image/Plus.png").toUri().toString();
@@ -384,9 +462,27 @@ public class FournisseursController implements Initializable {
         }
     }
 
+    private ObservableList<CommandeFournisseur> commandesList;
+
+
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        //***************************************
+
+        // Initialisation de la ListView
+        commandesListview.setItems(FXCollections.observableArrayList());
+
+        // Exécution de la récupération des données dans un thread séparé
+        Thread loadDataThread = new Thread(this::loadCommandesFromDatabase);
+        loadDataThread.setDaemon(true); // Pour que le thread se termine lorsque l'application se ferme
+        loadDataThread.start();
+
+        //*****************************************
+
         configureTableView();
       //  loadProductsFromExcel(filePath);
         rechercherProduit();
@@ -408,6 +504,79 @@ public class FournisseursController implements Initializable {
 
 
         progressIndicator.setVisible(false);
+
+        //*********************************************************************************
+        commandesList = FXCollections.observableArrayList();
+        commandesListview.setItems(commandesList);
+
+
+
+        //**************************************************************************
+
+
+
+        commandesListview.setCellFactory(new Callback<ListView<CommandeFournisseur>, ListCell<CommandeFournisseur>>() {
+            @Override
+            public ListCell<CommandeFournisseur> call(ListView<CommandeFournisseur> param) {
+                return new ListCell<CommandeFournisseur>() {
+                    @Override
+                    protected void updateItem(CommandeFournisseur item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            HBox hBox = new HBox(7); // Espacement de 7
+                            hBox.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 5px;"); // Fond gris
+                            hBox.setAlignment(Pos.CENTER_LEFT); // Alignement à gauche
+
+                            Label numCommandeLabel = createLabel(String.valueOf(item.getNum_commande()));
+                            Label dateCommandeLabel = createLabel(item.getDate_commande().toString());
+                            Label montantTotalLabel = createLabel(item.getMontant_total().toString());
+                            Label statusLabel = createLabel(item.getStatus());
+                            Button actionButton = item.getAction();
+
+                            // Configurer les labels pour utiliser toute la largeur disponible
+                            HBox.setHgrow(numCommandeLabel, Priority.ALWAYS);
+                            HBox.setHgrow(dateCommandeLabel, Priority.ALWAYS);
+                            HBox.setHgrow(montantTotalLabel, Priority.ALWAYS);
+                            HBox.setHgrow(statusLabel, Priority.ALWAYS);
+
+                            // Configurer le bouton pour utiliser l'espace restant
+                            HBox.setHgrow(actionButton, Priority.NEVER); // Le bouton n'occupe pas l'espace supplémentaire
+
+                            hBox.getChildren().addAll(numCommandeLabel, dateCommandeLabel, montantTotalLabel, statusLabel, actionButton);
+
+                            AnchorPane anchorPane = new AnchorPane();
+                            AnchorPane.setTopAnchor(hBox, 0.0);
+                            AnchorPane.setBottomAnchor(hBox, 0.0);
+                            AnchorPane.setLeftAnchor(hBox, 0.0);
+                            AnchorPane.setRightAnchor(hBox, 0.0);
+
+                            anchorPane.getChildren().add(hBox);
+
+                            // Lier la largeur du HBox à celle de l'AnchorPane
+                            hBox.prefWidthProperty().bind(anchorPane.widthProperty());
+
+                            setGraphic(anchorPane);
+                            setText(null); // Pour ne pas afficher de texte en plus du graphique
+                        }
+                    }
+
+                    private Label createLabel(String text) {
+                        Label label = new Label(text);
+                        label.setMaxWidth(Double.MAX_VALUE);
+                        label.setAlignment(Pos.CENTER_LEFT);
+                        return label;
+                    }
+                };
+            }
+        });
+
+        // Charger les données depuis la base de données
+        loadCommandesFromDatabase();
+        //**********************************************************************************
+
 
     }
 }

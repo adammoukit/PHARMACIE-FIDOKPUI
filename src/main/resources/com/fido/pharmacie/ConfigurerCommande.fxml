@@ -116,7 +116,7 @@
                                           </TextField>
                                        </children>
                                     </VBox>
-                                    <Button fx:id="btnAjouter" mnemonicParsing="false" text="Ajouter" />
+                                    <Button fx:id="btnAjouter" mnemonicParsing="false" onAction="#handleAjouter" style="-fx-background-color: grey;" text="Ajouter" textFill="#fff8f8" />
                                     <VBox layoutX="12.0" layoutY="10.0" />
                                  </children>
                               </VBox>
@@ -129,13 +129,15 @@
                   </AnchorPane>
                   <AnchorPane layoutX="6.0" layoutY="130.0" prefHeight="388.0" prefWidth="743.0" style="-fx-background-color: white; -fx-border-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
                      <children>
-                        <TableView layoutX="163.0" layoutY="58.0" prefHeight="388.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TableView fx:id="tableProduit" layoutX="163.0" layoutY="58.0" prefHeight="388.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columns>
-                            <TableColumn prefWidth="114.0" text="PRODUIT" />
-                            <TableColumn prefWidth="122.0" text="LIBELLE" />
-                              <TableColumn prefWidth="141.0" text="PRIX CESSION" />
-                              <TableColumn prefWidth="155.0" text="PRIX PUBLIQUE" />
-                              <TableColumn prefWidth="155.0" text="QTE COMMANDE" />
+                            <TableColumn fx:id="codeBarreColumn" prefWidth="174.0" text="PRODUIT" />
+                            <TableColumn fx:id="libelleColumn" prefWidth="243.0" text="LIBELLE" />
+                              <TableColumn fx:id="prixCessionColumn" prefWidth="157.0" text="PRIX CESSION" />
+                              <TableColumn fx:id="pricPublicColumn" prefWidth="135.0" text="PRIX PUBLIQUE" />
+                              <TableColumn fx:id="qteColumn" prefWidth="129.0" text="QTE COMMANDE" />
+                              <TableColumn fx:id="totalColum" prefWidth="129.0" text="TOTAL" />
+                              <TableColumn fx:id="actionColumn" prefWidth="129.0" text="ACTION" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -149,6 +151,23 @@
                <children>
                   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="745.0" spacing="5.0" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
+                        <HBox alignment="CENTER" prefHeight="36.0" prefWidth="478.0" spacing="15.0" style="-fx-background-color: #DDF7E3; -fx-border-color: silver;" HBox.hgrow="NEVER">
+                           <HBox.margin>
+                              <Insets right="150.0" />
+                           </HBox.margin>
+                           <children>
+                              <Label text="TOTAL :">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalLabel" alignment="CENTER" prefHeight="30.0" prefWidth="326.0">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <Button fx:id="btnAnnule" mnemonicParsing="false" text="Annuler" />
                         <Button fx:id="btnValider" mnemonicParsing="false" text="Valider" />
                      </children>
